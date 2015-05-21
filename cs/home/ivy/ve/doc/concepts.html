@@ -1,0 +1,50 @@
+<!doctype html public "-//w3c//dtd html 4.0 transitional//en">
+<html>
+<head>
+    <title>The VE User Manual - Concepts</title>
+</head>
+<body>
+<h1 align="center">The VE User Manual</h1>
+<h2 align="center">Concepts</h2>
+
+The VE library is largely concerned with managing an <i>environment</i>. 
+An environment is a physical space in the real world in which the user
+is typically located.  This environment interfaces with the virtual
+world by means of input devices and walls/windows.  <i>Walls</i> are
+portals in the virtual world which are rendered in the real world as 
+<i>windows</i>. 
+For example, a wall's centre may have a particular location in the virtual
+world and is oriented so that its normal is aligned with the z-axis and
+"up" is considered to be in the direction of the positive y-axis. 
+The image that would be generated if the virtual world were projected onto
+that wall would be displayed in a window, which is a real output device
+- e.g. a particular area on an X display.  A window can be thought
+of as the output of a wall.
+<p><img src="concepts.gif" alt="Diagram" height=333 width=509>
+<p>There are several co-ordinate systems or <i>spaces</i>.  We need
+to consider.  There is <i>world space</i> which is the co-ordinate
+system of the virtual world. There is <i>environment space</i> which is
+the physical real-world co-ordinate system of the virutal environment. 
+It is in this system that screens, input devices, the user, etc. are located. 
+We may at times discuss <i>eye space</i> which is the view of the world
+from the perspective of the camera or viewer and <i>screen space</i> which
+is the view of the world from the perspective of the screen onto which
+the image is rendered.  In discussing spaces, we refer to their base
+as a frame.  A <i>frame</i> relates one space to another.  The
+frame of the environment is expressed in world space co-ordinates, and
+thus relates the environment to the world.  The frame of the eye is
+expressed in environment space co-ordinates and thus relates the eye to
+the environment.  Note that we must combine frames in order to relate
+the eye to the world - frames are unique to a relation between two co-ordinate
+spaces, not to a paritcular space.
+<p>By altering the environment's frame, you can move the envrionment through
+the virtual world.  This is typically how one would simulate vehicle
+motion - i.e. motion independent of the user's movements within the environment. 
+An eye frame typically represents the user's location within the environment. 
+This information is critical to generating the correct projections of the
+world on the walls.
+<p>A frame is defined as a set of three vectors:  <i>loc</i>, which
+is the origin of the space, <i>dir</i>, which is a vector parallel to the negative
+z-axis of the space, and <i>up</i>, which is a vector parallel to the positive
+y-axis of the space.
+

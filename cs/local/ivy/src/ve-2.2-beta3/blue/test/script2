@@ -1,0 +1,5 @@
+#
+# My second script
+#
+[stdout] writeln "Hello World!"
+[stdout] writeln "Hello to you too!"

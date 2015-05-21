@@ -1,0 +1,25 @@
+#!/bin/bash
+#
+# Create a library
+#
+lm=$1
+shift
+lname=$1
+shift
+d=`dirname $0`
+case "$lm" in
+ar)
+	rm -f $lname
+	ar rc $lname "$@"
+	ranlib $lname
+	exit $?
+	;;
+lib)
+	lib -out:$lname "$@"
+	exit $?
+	;;
+*)
+	echo >&2 "unknown libmode: $lm"
+	exit 1
+	;;
+esac

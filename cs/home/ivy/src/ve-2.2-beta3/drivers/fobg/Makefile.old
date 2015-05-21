@@ -1,0 +1,8 @@
+include autocfg.mk
+include ../../Make.config
+
+TARGET = fobg$(ACFG_SOEXT)
+OBJS = fobg.o
+
+BUILD = $(TARGET)
+include ../Make.driver

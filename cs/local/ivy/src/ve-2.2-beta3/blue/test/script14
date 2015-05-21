@@ -1,0 +1,43 @@
+#
+# test if-else-elseif
+#
+proc pickcap1 {x} {
+    if { $x == "a" } {
+	return A
+    }
+}
+
+proc pickcap2 {x} {
+    if { $x == "a" } {
+	return A
+    } else {
+	return ?
+    }
+}
+
+proc pickcap3 {x} {
+    if { $x == "a" } {
+	return A
+    } elseif { $x == "b" } {
+	return B
+    }
+}
+
+proc pickcap4 {x} {
+    if { $x == "a" } {
+	return A
+    } elseif { $x == "b" } {
+	return B 
+    } elseif { $x == "c" } {
+	return C
+    } else {
+	return ?
+    }
+}
+
+foreach x {a b c d e} {
+    foreach y {1 2 3 4} {
+	set z ["pickcap$y" $x]
+	[stdout] writeln "pickcap$y $x = $z"
+    }
+}

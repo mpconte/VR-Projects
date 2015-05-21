@@ -1,0 +1,9 @@
+use keyboard
+filter keyboard.Escape { rename exit }
+filter keyboard.q { rename exit }
+#use fobtrack {
+#	optional 1
+#}
+filter fobtrack.quat {
+        headtrack format=quat {dircorr.dir=1.0 0.0 0.0} {dircorr.up=0.0 0.0 -1.0} {dirbase.dir=1.0 0.0 0.0} {dirbase.up=0.0 0.0 -1.0}
+}

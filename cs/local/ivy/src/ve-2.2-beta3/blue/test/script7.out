@@ -1,0 +1,7 @@
+number = 0
+number = 5
+number = 9
+number = 1
+number = 8
+result = error
+error: unknown value for 'number': foobar

@@ -1,0 +1,22 @@
+BASE=/Users/jenkin/Documents/Hacking
+
+include ${BASE}/ve/autocfg.mk
+include ${BASE}/ve/Make.config
+
+INCDIR=${BASE}/ve/include
+LIBDIR=${BASE}/ve/lib
+OPENGL=${ACFG_OPENGL}
+
+CFLAGS+= -I${INCDIR}
+LDFLAGS= ${CFLAGS} -L${LIBDIR} -lve 
+
+OBJS=	vem.o 
+
+
+vemlib: ${OBJS} 
+	ar r osx/libvem.a ${OBJS}
+	ranlib osx/libvem.a
+
+clean:
+	rm -f ${OBJS} osx/libvem.a
+

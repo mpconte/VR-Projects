@@ -1,0 +1,22 @@
+BASE=/cs/home/ivy
+
+include ${BASE}/ve-2.2/autocfg.mk
+include ${BASE}/ve-2.2/Make.config
+
+INCDIR=${BASE}/ve-2.2/include
+LIBDIR=${BASE}/ve-2.2/lib
+OPENGL=${ACFG_OPENGL}
+
+CFLAGS+= -I${INCDIR}
+LDFLAGS= ${CFLAGS} -L${LIBDIR} -lve 
+
+OBJS=	vem.o 
+
+
+vemlib: ${OBJS} 
+	ar r linux/libvem.a ${OBJS}
+	ranlib linux/libvem.a
+
+clean:
+	rm -f ${OBJS} linux/libvem.a
+

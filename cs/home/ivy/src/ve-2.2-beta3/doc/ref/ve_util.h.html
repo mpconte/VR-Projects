@@ -1,0 +1,391 @@
+<html>
+<head>
+<title>File: ve_util.h</title>
+</head>
+<body>
+<h1 class="cdoc-file">File: ve_util.h</h1>
+<h2 class="cdoc-contents">Contents</h2>
+<ul>
+<li class="cdoc-centry"><a href="#sect_0" class="link-section"><span class="text-section">String Maps/Hash Tables</span></a></li>
+</ul>
+
+
+<p class="cdoc-item">
+    The ve_util module provides some generic abstractions for
+    possibly unportable commands or common data structures.
+
+<p class="cdoc-item">
+<a name="function_veSysError"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veSysError</span>
+<div class="body-function">
+<div class="codeblock">char *veSysError(void);</div>    <p>Returns the generic system error string, if there is one.
+    For Unix systems this is typically the result of
+    <code>strerror(errno)</code>.
+ </div></div>
+<p class="cdoc-item">
+<a name="function_veVsnprintf"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veVsnprintf</span>
+<div class="body-function">
+<div class="codeblock">void veVsnprintf(char *, int, char *, va_list);</div>    <p>An abstraction for the common but unportable <code>vsnprintf()</code>
+    function.</p></div></div>
+<p class="cdoc-item">
+<a name="function_veSnprintf"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veSnprintf</span>
+<div class="body-function">
+<div class="codeblock">void veSnprintf(char *, int, char *, ...);</div>    <p>An abstraction for the common but unportable <code>snprintf()</code>
+    function.</p></div></div>
+<p class="cdoc-item">
+<a name="function_veWaitForData"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veWaitForData</span>
+<div class="body-function">
+<div class="codeblock">int  veWaitForData(int fd);</div>    <p>Specific to Unix - this function will block (this thread only) until
+    there is data available for reading on the given file descriptor.</p>
+
+<div class="start-param"><span class="tag-param">fd</span> - 
+    The file descriptor to block on.</div></div></div>
+<p class="cdoc-item">
+<a name="function_vePeekFd"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">vePeekFd</span>
+<div class="body-function">
+<div class="codeblock">int  vePeekFd(int fd);</div>    This function determines if data is available for reading on this
+    file descriptor.  This functino returns immediately and does not block,
+    nor does it consume any data from the file descriptor.
+    Note that the definition of the return value for
+    this function has changed in VE 2.2 and later.  In particular, the
+    exact number of available bytes is no longer returned.
+    
+<div class="start-param"><span class="tag-param">fd</span> - 
+    The file descriptor to peek at.</div>
+<div class="start-returns"><span class="label-returns">Returns:</span> 
+    A non-zero value if there is data available for reading or
+    0 is no data is available for reading (i.e. a read() call would blovk).</div></div></div>
+<p class="cdoc-item">
+<a name="function_veMicroSleep"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veMicroSleep</span>
+<div class="body-function">
+<div class="codeblock">void veMicroSleep(int usecs);</div>    <p>Put the current thread to sleep for the given number of microseconds.  
+    On most Unix systems, this is just "usleep".  Please be aware that
+    on many systems that there is a minimum amount of time (usually 10-20
+    milliseconds) that a thread may sleep for, depending upon the
+    scheduler on the system.
+    
+<div class="start-param"><span class="tag-param">usecs</span> - 
+    The number of microseconds to sleep for.</div></div></div>
+<p class="cdoc-item">
+<a name="function_veIsFile"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veIsFile</span>
+<div class="body-function">
+<div class="codeblock">int veIsFile(char *path);</div>    Predicate to check to see if the given pathname is a regular file.
+
+<div class="start-param"><span class="tag-param">path</span> - 
+    The path to check.
+    </div>
+<div class="start-returns"><span class="label-returns">Returns:</span> 
+    1 if the path exists and is a regular file or 0 otherwise.
+ </div></div></div>
+<p class="cdoc-item">
+<a name="function_veIsDir"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veIsDir</span>
+<div class="body-function">
+<div class="codeblock">int veIsDir(char *path);</div>    Predicate to check to see if the given pathname is a directory.
+
+<div class="start-param"><span class="tag-param">path</span> - 
+    The path to check.
+    </div>
+<div class="start-returns"><span class="label-returns">Returns:</span> 
+    1 if the path exists and is a directory or 0 otherwise.
+ </div></div></div>
+<p class="cdoc-item">
+<a name="function_veIsPathAbsolute"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veIsPathAbsolute</span>
+<div class="body-function">
+<div class="codeblock">int veIsPathAbsolute(char *path);</div>    Predicate to check to see if the given pathname is absolute.
+    This will vary from major platform to major platform (e.g. Windows
+    vs. Unix).
+
+<div class="start-param"><span class="tag-param">path</span> - 
+    The path to check.
+    </div>
+<div class="start-returns"><span class="label-returns">Returns:</span> 
+    1 if the path is absolute, 0 if the path is relative to the current
+    directory.</div></div></div>
+<p class="cdoc-item">
+<a name="type_VeDir"></a><div class="start-type"><span class="label-type">Type:</span> <span class="tag-type">VeDir</span>
+<div class="body-type">
+    An opaque type representing a directory whose contents are being
+    walked through.
+ 
+<div class="codeblock">typedef void *VeDir;</div></div></div>
+<p class="cdoc-item">
+<a name="function_veOpenDir"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veOpenDir</span>
+<div class="body-function">
+<div class="codeblock">VeDir veOpenDir(char *dir);</div>    Starts a walk through the contents of a directory.  Note that
+    any successful call to <code>veOpenDir()</code> should be matched with a
+    call to <code>veCloseDir()</code> to release any resources that
+    were allocated while opening this directory.
+
+<div class="start-param"><span class="tag-param">dir</span> - 
+    The name of the directory you wish to walk through.
+    </div>
+<div class="start-returns"><span class="label-returns">Returns:</span> 
+    A <code>VeDir</code> object on success, or <code>NULL</code>
+    otherwise.  The <code>veSysError()</code> function should be
+    able to provide a more specific message to as the cause of
+    failure if <code>NULL</code> is returned.</div></div></div>
+<p class="cdoc-item">
+<a name="function_veCloseDir"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veCloseDir</span>
+<div class="body-function">
+<div class="codeblock">void veCloseDir(VeDir d);</div>    Releases any resources allocated upon a successful call to
+    <code>veCloseDir()</code>.  This function should be called
+    at the end of any directory walk.
+
+<div class="start-param"><span class="tag-param">d</span> - 
+    The directory object for which to release resources.  After
+    this function is called, this object may no longer be used
+    by the application.
+ </div></div></div>
+<p class="cdoc-item">
+<a name="function_veReadDir"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veReadDir</span>
+<div class="body-function">
+<div class="codeblock">char *veReadDir(VeDir d, int flags);</div>    Returns the next directory entry in a directory walk.
+    
+<div class="start-param"><span class="tag-param">d</span> - 
+    The directory object for which to retrieve the next element
+    in the walk.</div>
+<div class="start-param"><span class="tag-param">flags</span> - 
+    Flags that control what values are returned.  Currently
+    the following flags are defined:
+    <ul>
+    <li><code>VE_DIR_HIDDEN</code> - if not specified then any
+    "hidden" files (system-specific) are not returned in a directory
+    walk.  To see all hidden files, this flag must be specified for
+    all calls to <code>veReadDir()</code>.</li>
+    </ul></div>
+<div class="start-returns"><span class="label-returns">Returns:</span> 
+    A pointer to a null-terminated character array containing the
+    name of the element in the directory on success.  This string
+    should be treated as read-only and should not be considered
+    accessible after the next call to <code>veReadDir()</code> or
+    <code>veCloseDir()</code> on this directory object.  The
+    value <code>NULL</code> is returned when the end of the walk has
+    been reached.
+ </div></div></div>
+<p class="cdoc-item">
+<a name="sect_0"></a><h2 class="tag-section">String Maps/Hash Tables</h2>
+    <p>VeStrMap and VeStrMapWalk are a simple hash-table implementation
+    which maps strings to arbitrary objects (i.e. represented as "void *")
+    in a reasonably efficient manner.  Other pieces of code that use
+    string maps should indicate what kind of data is being stored in the
+    string map.  The implementation manages its own memory for the names
+    in the hash table, but does not manage memory for data (i.e. the values).
+    Thus, before destroying a string map, it is important to walk through it
+    and dispose of the values appropriately (not the names) if you want to
+    avoid memory leaks.
+    <p>To walk through an existing string map, you need to create a walk.
+    The code should look something like this (assuming <i>m</i> is an
+    valid string map reference).
+<pre>
+        VeStrMapWalk w;
+        w = veStrMapWalkCreate(m);
+        if (veStrMapWalkFirst(w) == 0) {
+                do {
+                        name = veStrMapWalkStr(w);
+                        data = veStrMapWalkObj(w);
+                        ... do something interesting with name and data ...
+                } while (veStrMapWalkNext(w) == 0);
+        }
+        veStrMapWalkDestroy(w);
+</pre>
+
+<p class="cdoc-item">
+<a name="function_veStrMapCreate"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veStrMapCreate</span>
+<div class="body-function">
+<div class="codeblock">VeStrMap veStrMapCreate();</div>    Creates a new string map.
+
+<div class="start-returns"><span class="label-returns">Returns:</span> 
+    A reference to a new string map.  The reference can be passed by value
+    to other functions.</div></div></div>
+<p class="cdoc-item">
+<a name="type_VeStrMapFreeProc"></a><div class="start-type"><span class="label-type">Type:</span> <span class="tag-type">VeStrMapFreeProc</span>
+<div class="body-type">
+    A simple type definition to help in casting pesky functions for
+    use with <code>veStrMapDestroy()</code>.
+ 
+<div class="codeblock">typedef void (*VeStrMapFreeProc)(void *);</div></div></div>
+<p class="cdoc-item">
+<a name="function_veStrMapDestroy"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veStrMapDestroy</span>
+<div class="body-function">
+<div class="codeblock">void veStrMapDestroy(VeStrMap m, VeStrMapFreeProc freeval);</div>    Destroys a previously created string map.  This will free any memory
+    allocated to names in the map.  If the <i>freeval</i> parameter is
+    non-null, then the given function pointer will be used to free any
+    values in the map.  
+
+<div class="start-param"><span class="tag-param">m</span> - 
+    The string map to destroy.</div>
+<div class="start-param"><span class="tag-param">freeval</span> - 
+    If non-null, then this function will be called for each value in the
+    string map.  It should be used to free the memory associated with the
+    value.  If this is <code>NULL</code> then no processing will be done
+    for the values in the map.  For convenience, <code>NULL</code> values
+    will not be passed to this function.  This allows the safe use of 
+    <code>free()</code> here.</div></div></div>
+<p class="cdoc-item">
+<a name="function_veStrMapExists"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veStrMapExists</span>
+<div class="body-function">
+<div class="codeblock">int veStrMapExists(VeStrMap m, char *name);</div>    Check to see if a key exists in the map.
+
+<div class="start-param"><span class="tag-param">m</span> - 
+    The string map to search in.</div>
+<div class="start-param"><span class="tag-param">name</span> - 
+    The name to search for.</div>
+<div class="start-returns"><span class="label-returns">Returns:</span> 
+    1 if the name is found in the map, 0 if there is no entry in the
+    map for that key.
+ </div></div></div>
+<p class="cdoc-item">
+<a name="function_veStrMapLookup"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veStrMapLookup</span>
+<div class="body-function">
+<div class="codeblock">void *veStrMapLookup(VeStrMap m, char *name);</div>    Lookup a value in the string map.
+    
+<div class="start-param"><span class="tag-param">m</span> - 
+    The string map to search in.</div>
+<div class="start-param"><span class="tag-param">name</span> - 
+    The name to search for.</div>
+<div class="start-returns"><span class="label-returns">Returns:</span> 
+    The data stored under the given name if it exists, or <code>NULL</code>
+    otherwise.</div></div></div>
+<p class="cdoc-item">
+<a name="function_veStrMapInsert"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veStrMapInsert</span>
+<div class="body-function">
+<div class="codeblock">int veStrMapInsert(VeStrMap m, char *name, void *obj);</div>    Adds a name and value pair to the string map.  If a value with the
+    same name already exists, the previous value is overwritten.  Be
+    careful of this if you want to avoid memory leaks - if you need
+    to dispose of values, you need to do it before you insert an object.
+
+<div class="start-param"><span class="tag-param">m</span> - 
+    The string to map to insert into.
+    </div>
+<div class="start-param"><span class="tag-param">name</span> - 
+    The name to be associated with the value.
+    </div>
+<div class="start-param"><span class="tag-param">obj</span> - 
+    The value you are storing.  The string map stores this value and
+    returns it when requested but does not otherwise interpret it.</div>
+<div class="start-returns"><span class="label-returns">Returns:</span> 
+    0 on success, non-zero on failure.</div></div></div>
+<p class="cdoc-item">
+<a name="function_veStrMapDelete"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veStrMapDelete</span>
+<div class="body-function">
+<div class="codeblock">int veStrMapDelete(VeStrMap m, char *name);</div>    Removes the value with the given name from the string map if it
+    exists.
+
+<div class="start-param"><span class="tag-param">m</span> - 
+    The string map to remove the value from.</div>
+<div class="start-param"><span class="tag-param">name</span> - 
+    The name of the value to remove.</div>
+<div class="start-returns"><span class="label-returns">Returns:</span> 
+    0 on success, non-zero on failure.  If the value does not exist
+    in the string map, 0 is still returned.</div></div></div>
+<p class="cdoc-item">
+<a name="function_veStrMapWalkCreate"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veStrMapWalkCreate</span>
+<div class="body-function">
+<div class="codeblock">VeStrMapWalk veStrMapWalkCreate(VeStrMap m);</div>    Creates a new walk through a string map.  To visit an arbitrary
+    set of elements in a string map without prior knowledge of their
+    names, you need to use a VeStrMapWalk object.  When initialized
+    the walk will reference the given map but will not point to any
+    particular place in the map.  Several walks can be progress at
+    any point in time.  The order of a walk is arbitrary, but every
+    node will be visited.  An object pointed to by a walk can be
+    safely deleted, but after being deleted a walk may only be advanced
+    or reset, not dereferenced.
+
+<div class="start-param"><span class="tag-param">m</span> - 
+    The string map to associate this walk with.</div>
+<div class="start-returns"><span class="label-returns">Returns:</span> 
+    A reference to a newly-created walk.</div></div></div>
+<p class="cdoc-item">
+<a name="function_veStrMapWalkDestroy"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veStrMapWalkDestroy</span>
+<div class="body-function">
+<div class="codeblock">void veStrMapWalkDestroy(VeStrMapWalk w);</div>    Destroys a previously created walk, freeing any memory associated
+    with it.  This does not affect the string map.
+
+<div class="start-param"><span class="tag-param">w</span> - 
+    The walk to destroy.</div></div></div>
+<p class="cdoc-item">
+<a name="function_veStrMapWalkFirst"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veStrMapWalkFirst</span>
+<div class="body-function">
+<div class="codeblock">int veStrMapWalkFirst(VeStrMapWalk w);</div>    Sets the position of the walk to the first value in the map.
+
+<div class="start-param"><span class="tag-param">w</span> - 
+    The walk whose position should be set.
+    </div>
+<div class="start-returns"><span class="label-returns">Returns:</span> 
+    0 if successful.  If unsuccessful, or if there are no values in
+    the map, a non-zero value is returned.</div></div></div>
+<p class="cdoc-item">
+<a name="function_veStrMapWalkNext"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veStrMapWalkNext</span>
+<div class="body-function">
+<div class="codeblock">int veStrMapWalkNext(VeStrMapWalk w);</div>    Advances the position of the walk to the subsequent value in the map.
+    
+<div class="start-param"><span class="tag-param">w</span> - 
+    The walk whose position should be set.</div>
+<div class="start-returns"><span class="label-returns">Returns:</span> 
+    0 if successful.  If unsuccessful, or if there is no subsequent value
+    (i.e. the walk has been exhausted), a non-zero value is returned.</div></div></div>
+<p class="cdoc-item">
+<a name="function_veStrMapWalkObj"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veStrMapWalkObj</span>
+<div class="body-function">
+<div class="codeblock">void *veStrMapWalkObj(VeStrMapWalk w);</div>    Dereferences a walk to retrieve the value stored at the current position
+    of the walk.
+    
+<div class="start-param"><span class="tag-param">w</span> - 
+    The walk which should be dereferenced.
+    </div>
+<div class="start-returns"><span class="label-returns">Returns:</span> 
+    The value at the current position of the walk or <code>NULL</code>
+    if the walk is not at a valid position.</div></div></div>
+<p class="cdoc-item">
+<a name="function_veStrMapWalkObj"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veStrMapWalkObj</span>
+<div class="body-function">
+<div class="codeblock">char *veStrMapWalkStr(VeStrMapWalk w);</div>    Dereferences a walk to retrieve the name of the value stored at the 
+    current position of the walk.
+        
+<div class="start-param"><span class="tag-param">w</span> - 
+    The walk which should be dereferenced.
+    </div>
+<div class="start-returns"><span class="label-returns">Returns:</span> 
+    The name of the value at the current position of the walk or 
+    <code>NULL</code> if the walk is not at a valid position.</div></div></div>
+<p class="cdoc-item">
+<a name="function_veStrMapStats"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veStrMapStats</span>
+<div class="body-function">
+<div class="codeblock">void veStrMapStats(VeStrMap m);</div>    Prints out some statistics on stderr of the current properties of
+    the hash table.  Strictly for debugging and tuning purposes.
+    
+<div class="start-param"><span class="tag-param">m</span> - 
+    The map to print out statistics for.
+ </div></div></div>
+
+<h2 class="cdoc-index">Index</h2>
+<ul>
+<li><a class="link-function" href="#function_veCloseDir">veCloseDir (function)</a></li>
+<li><a class="link-function" href="#function_veIsDir">veIsDir (function)</a></li>
+<li><a class="link-function" href="#function_veIsFile">veIsFile (function)</a></li>
+<li><a class="link-function" href="#function_veIsPathAbsolute">veIsPathAbsolute (function)</a></li>
+<li><a class="link-function" href="#function_veMicroSleep">veMicroSleep (function)</a></li>
+<li><a class="link-function" href="#function_veOpenDir">veOpenDir (function)</a></li>
+<li><a class="link-function" href="#function_vePeekFd">vePeekFd (function)</a></li>
+<li><a class="link-function" href="#function_veReadDir">veReadDir (function)</a></li>
+<li><a class="link-function" href="#function_veSnprintf">veSnprintf (function)</a></li>
+<li><a class="link-function" href="#function_veStrMapCreate">veStrMapCreate (function)</a></li>
+<li><a class="link-function" href="#function_veStrMapDelete">veStrMapDelete (function)</a></li>
+<li><a class="link-function" href="#function_veStrMapDestroy">veStrMapDestroy (function)</a></li>
+<li><a class="link-function" href="#function_veStrMapExists">veStrMapExists (function)</a></li>
+<li><a class="link-function" href="#function_veStrMapInsert">veStrMapInsert (function)</a></li>
+<li><a class="link-function" href="#function_veStrMapLookup">veStrMapLookup (function)</a></li>
+<li><a class="link-function" href="#function_veStrMapStats">veStrMapStats (function)</a></li>
+<li><a class="link-function" href="#function_veStrMapWalkCreate">veStrMapWalkCreate (function)</a></li>
+<li><a class="link-function" href="#function_veStrMapWalkDestroy">veStrMapWalkDestroy (function)</a></li>
+<li><a class="link-function" href="#function_veStrMapWalkFirst">veStrMapWalkFirst (function)</a></li>
+<li><a class="link-function" href="#function_veStrMapWalkNext">veStrMapWalkNext (function)</a></li>
+<li><a class="link-function" href="#function_veStrMapWalkObj">veStrMapWalkObj (function)</a></li>
+<li><a class="link-function" href="#function_veStrMapWalkObj">veStrMapWalkObj (function)</a></li>
+<li><a class="link-function" href="#function_veSysError">veSysError (function)</a></li>
+<li><a class="link-function" href="#function_veVsnprintf">veVsnprintf (function)</a></li>
+<li><a class="link-function" href="#function_veWaitForData">veWaitForData (function)</a></li>
+<li><a class="link-type" href="#type_VeDir">VeDir (type)</a></li>
+<li><a class="link-type" href="#type_VeStrMapFreeProc">VeStrMapFreeProc (type)</a></li>
+</ul>
+</body>
+</html>

@@ -1,0 +1,610 @@
+#!/bin/bash
+# - currently this is a little Unix-centric (duh)
+#
+# usage:  autocfg [-v] [-D] [-F] [-i init] [path-to-autocfg-dir]
+#
+verbose=
+debug=
+
+msg() {
+	if [ "$verbose" ]; then
+		echo "$@"
+	fi
+}
+
+dbg() {
+	if [ "$debug" ]; then
+		echo "$@"
+	fi
+}
+
+die() {
+	echo >&2 "*** $@"
+	cleanup 1
+}
+
+not() {
+	if "$@"
+	then
+		return 1
+	else
+		return 0
+	fi
+}
+
+tmpdir=/tmp
+tmpbase=$tmpdir/autocfg.$$
+tmpidx=0
+# find a base
+if not mkdir $tmpbase
+then
+	i=0
+	while not mkdir $tmpbase.$i
+	do
+		i=`expr $i + 1`
+	done
+	# save result
+	tmpbase="$tmpbase.$i"
+fi
+
+# make sure we cleanup tmpbase on failure
+cleanup() {
+	rm -rf $tmpbase
+	exit $1
+}
+
+trap "echo >&2 '*** dying on signal'; cleanup 1" 3 15
+
+# helper functions
+exists() {
+	if [ "X`ls $1 2>/dev/null`" = "X" ]; then
+		return 1
+	else
+		return 0
+	fi
+}
+
+# usage haslibrary <fnname> <libflags> -- <extraldflags>
+haslibrary() {
+	__libfn=$1
+	shift
+	__vargs=
+	while [ $# -gt 0 ]
+	do
+		if [ "X$1" = "X--" ]; then
+			shift
+			break
+		fi
+		__vargs="$__vargs $1"
+		shift
+	done
+	
+	_f=$tmpbase/libtest.c
+	cat >$_f <<EOF
+extern void $__libfn();
+int main() {
+	void *v;
+	v = (void *)$__libfn;
+	return 0;
+}
+EOF
+	if testc $_f $__vargs "$@" # >/dev/null 2>&1
+	then
+		echo $__vargs
+		rm -f $_f
+		return 0
+	else
+		rm -f $_f
+		return 1
+	fi
+}
+
+# usage hasinclude <header> <inclflags> -- <extraincl>
+hasinclude() {
+    _f=$tmpbase/incltest.c
+    _h=$1
+    shift
+    __vargs=
+    while [ $# -gt 0 ]
+    do
+	if [ "X$1" = "X--" ]; then
+		shift
+		break
+	fi
+	__vargs="$__vargs $1"
+	shift
+    done
+    _cfsave=`getcfg CFLAGS`
+    setcfg CFLAGS "$_cfsave $__vargs"
+    >$_f
+    for _x
+    do
+	echo "#include <$_x>" >>$_f
+    done
+    cat >>$_f <<EOF
+#include <$_h>
+int main() { return 0; }
+EOF
+    if ccompile $_f $_f.o; then
+	echo "$__vargs"
+	rm -f $_f $_f.o
+	# restore CFLAGS
+	setcfg CFLAGS "$_cfsave"
+	return 0
+    else
+	rm -f $_f $_f.o
+	# restore CFLAGS
+	setcfg CFLAGS "$_cfsave"
+	return 1
+    fi
+}
+
+tmpfile() {
+	tmpidx=`expr $tmpidx + 1`
+	while exists $tmpbase/$tmpidx
+	do
+		tmpidx=`expr $tmpidx + 1`
+	done
+	>$tmpbase/$tmpidx
+	echo "$tmpbase/$tmpidx"
+}
+
+smkdir() {
+	mkdir "$@" >/dev/null 2>&1
+}
+
+tmpdir() {
+	tmpidx=`expr $tmpidx + 1`
+	while not smkdir $tmpbase/$tmpidx
+	do
+		tmpidx=`expr $tmpidx + 1`
+	done
+	echo "$tmpbase/$tmpidx"
+}
+
+
+adir=autocfg.d
+
+usage() {
+	echo >&2 "`basename $0` [-v] [-F] [path-to-autocfg-data]"
+}
+
+main() {
+	# - parse-cmd-line
+        fakeit=
+	while getopts "vDFi:" c
+	do
+		case $c in
+		v)
+			verbose=yes
+			;;
+		D)
+			debug=yes
+			verbose=yes
+			;;
+		i)
+			. $OPTARG
+			if [ $? -ne 0 ]; then
+				die "failed to read initialization file"
+			fi
+			;;
+		F)
+		        fakeit=yes
+			;;
+		*) 
+			usage
+			exit 1
+			;;
+		esac
+	done
+
+	shift `expr $OPTIND - 1`
+
+	dirs=
+	for x
+	do
+		case "$x" in
+		*=*)
+			_name=`echo "$x" | sed 's/=.*//'`
+			_value=`echo "$x" | sed 's/^[^=]*=//'`
+			setcfg $_name "$_value"
+			;;
+		*)
+			dirs="$dirs $x"
+			;;
+		esac
+	done
+	if [ "X$dirs" = "X" ]; then
+		dirset=`find . -type d -print`
+		for d in $dirset
+		do
+			if [ -d $d/$adir -o -f $d/$adir ]; then
+				dirs="$dirs $d/$adir"
+			fi
+		done
+	fi
+
+	# in cases where we need the files to be present
+	# for scripts/makefiles to process properly but
+	# autocfg may not complete...
+	if [ "$fakeit" ]; then
+		for d in $dirs
+		do
+			dd=`dirname $d`
+			>$dd/autocfg.mk
+			>$dd/autocfg.sh
+			>$dd/autocfg.h
+		done
+		exit 0
+	fi
+
+	cache=`tmpfile`
+
+	# we deliberately do not clean the
+	# set of "learned" information between passes
+	# - in the case of "found" dirs this means that
+	#   deeper dirs can depend upon information learned
+	#   at upper levels
+	for d in $dirs
+	do
+		savedir=`pwd`
+		msg "configuring $d"
+	        if [ -f $d ]; then
+		    # simple mode
+		    mkcfg=autocfg.mk
+		    shcfg=autocfg.sh
+		    hcfg=autocfg.h
+		    cd `dirname $d`
+		    files=`basename $d`
+		elif [ -d $d ]; then
+		    cd $d
+		    mkcfg=../autocfg.mk
+		    shcfg=../autocfg.sh
+		    hcfg=../autocfg.h
+		    files=
+		    for x in [0-9]*
+		    do
+		      case "$x" in
+		      *~)  
+	                  continue 
+			  ;;
+		      esac
+		      if [ -f $x ]; then
+			  files="$files $x"
+		      fi
+		    done
+		else
+		    die "invalid path $d (neither file nor dir)"
+		fi
+	
+		# initialize
+		findcc
+		# gather information about when we configured
+		setcfg CFGHOST "`hostname 2>/dev/null`"
+		setcfg CFGDATE "`date 2>/dev/null`"
+		setcfg CFGUSER "`whoami 2>/dev/null`"
+
+		for x in $files
+		do
+			msg "processing ruleset `basename $x`"
+			. $x
+		done
+
+		dumpcfg sh >$shcfg
+		dumpcfg make >$mkcfg
+		dumpcfg h >$hcfg
+
+		cd $savedir
+	done
+}
+
+cfgvars=
+
+hascfg() {
+	for _x in $cfgvars
+	do
+		if [ "X$_x" = "X$1" ]; then
+			return 0
+		fi
+	done
+	return 1
+}
+
+unsetcfg() {
+	_ov="$cfgvars"
+	cfgvars=
+	for _x in $_ov
+	do
+		if [ "X$_x" != "X$1" ]; then
+			cfgvars="$cfgvars $_x"
+		fi
+	done
+}
+
+getcfg() {
+	eval echo "\"\$ACFG_$1\""
+}
+
+# $1 = var
+# $2 = value
+setcfg() {
+	_z=`echo "$2" | sed -e 's,",\\\\",g'`
+	eval "ACFG_$1=\"$_z\""
+	if not hascfg $1
+	then
+		cfgvars="$cfgvars $1"
+	fi
+}
+
+appcfg() {
+	_z=`echo "$2" | sed -e 's,",\\\\",g'`
+	_x=`getcfg $1 | sed -e 's,",\\\\",g'`
+	eval "ACFG_$1=\"$_x $_z\""
+	if not hascfg $1
+	then
+		cfgvars="$cfgvars $1"
+	fi
+}
+
+dumpcfg() {
+        # dump features
+	for _x in $cfgvars
+	do
+		case "$1" in
+		sh)
+			echo "HAS_$_x=1"
+			;;
+		h)
+			echo "#define HAS_$_x 1"
+			;;
+		make)
+			echo "HAS_$_x = 1"
+			;;
+		esac
+	done
+
+	for _x in $cfgvars
+	do
+		case "$1" in
+		sh)
+			getcfg $_x | sed -e 's,",\\",g' -e "s,^,ACFG_$_x=\"," -e 's,$,",'
+			;;
+		make)
+			echo "ACFG_$_x = `getcfg $_x`"
+			;;
+		h)
+			# supply both normal and "stringified" versions
+			echo "#define ACFG_$_x `getcfg $_x`"
+			getcfg $_x | sed -e 's,",\\",g' -e "s,^,#define ACFGS_$_x \"," -e 's,$,",'
+			;;
+		esac
+	done
+}
+
+
+# "built-ins"
+
+# - special case - find a C compiler (we need one)
+findcc() {
+	# find a (working) C compiler w/a C library
+	_d=`tmpdir`
+	_f=$_d/findcc.c
+
+	cat >$_f <<EOF
+#include <stdio.h>
+int main(int argc, char **argv) {
+	printf("compilerfound\n");
+	return 0;
+}
+EOF
+	_comps="gcc cc"
+	if [ "X$CC" != "X" ]; then
+		_comps="$_comps $CC"
+	fi
+	unsetcfg CC
+
+	msg "locating C compiler"
+
+	for _c in $_comps
+	do
+		CC=$_c
+		if testc $_f >/dev/null
+		then
+			# keep CC environment var
+			# - save configuration
+			setcfg CC $CC
+			break
+		fi
+		# clear it
+		CC=
+	done
+	if [ "X$CC" = "X" ]; then
+		die "cannot find working C compiler"
+	else
+		msg "C compiler is $CC"
+	fi
+}
+
+#
+# pick from a set of choices that satisfies the test
+# $1 = set of choices
+#
+search() {
+	__set="$1"
+	shift	
+	for _x in $__set
+	do
+		__chk=`"$@" "$_x"`
+		if [ $# -eq 0 ]; then
+			echo $__chk
+			return 0
+		fi
+	done
+	return 1
+}
+
+searchpath() {
+	for _x in `echo $PATH | tr ':' ' '`
+	do
+		if [ -f $_x/$1 -a -x $_x/$1 ]
+		then
+			echo $_x/$1
+			return 0
+		fi
+	done
+	return 1
+}
+
+# compile a C program
+ccompile() {
+	if hascfg CC
+	then
+		CC=`getcfg CC`
+	elif [ "X$CC" = "X" ]; then
+		# use unix default...
+		CC=cc
+	fi
+	if hascfg CFLAGS
+	then
+		CFLAGS=`getcfg CFLAGS`
+	fi
+	_in=$1
+	if [ "X$_in" = "X" ]; then
+		# create hello world
+		_in=$tmpbase/hello.c
+		cat >$_in <<EOF
+#include <stdio.h>
+int main() { printf("yes\n"); return 0; }
+EOF
+	fi
+	_out=$2
+	if [ "X$_out" = "X" ]; then
+		_out=$tmpbase/junk
+	fi
+	
+	shift 2
+	if [ "$debug" ]; then
+		$CC $CFLAGS -o $_out $_in "$@"
+	else
+		$CC $CFLAGS -o $_out $_in "$@" >/dev/null 2>&1
+	fi
+	return $?
+}
+
+# test a "c" program
+# - $1 = program
+# - $2 ... = FLAGS
+# - return codes:
+#   0 = compiles, executes and exits with status 0
+#   1 = compiles, fails to execute or exits with non-zero status
+#   2 = fails to compile
+
+testc() {
+	__cp=$1
+	shift
+	_o=`tmpfile`
+	if ccompile $__cp $_o "$@" && [ -x $_o ]
+	then
+		:
+	else
+		rm -f $_o
+		return 2
+	fi
+	if [ "$debug" ]; then
+		$_o
+	else
+		$_o 2>/dev/null
+	fi
+	if [ $? -eq 0 ]
+	then
+		rm -f $_o
+		return 0
+	else
+		rm -f $_o
+		return 1
+	fi
+}
+
+# test shell script/program
+testsh() {
+	if [ "$verbose" ]; then
+		_rd=
+	else
+		_rd="2>&1"
+	fi
+	if [ "$verbose" ]; then
+		"$@"
+	else
+		"$@" 2>/dev/null
+	fi
+	return $?
+}
+
+#
+# Actual commands to use directory in scripts
+# - test for a feature:
+# feature [set|append] <name> [cmd ...]
+#
+feature() {
+	if [ $# -lt 3 ]; then
+		die "invalid feature args: $@"
+	fi
+	__mode=$1
+	__name=$2
+	shift 2
+	if [ "$__mode" = "set" ] && hascfg "$__name"
+	then
+		msg "feature $__name:  cached"
+		return 0
+	fi
+	# try command...
+	__val=`"$@"`
+	if [ $? -ne 0 ]; then
+		msg "feature $__name:  not available"
+		return 1
+	fi
+	case "$__mode" in
+	set)
+		setcfg $__name "$__val"
+		;;
+	append)
+		appcfg $__name "$__val"
+		;;
+	*)
+		die "fature $__name:  invalid mode $__mode"
+	esac
+	msg "feature $__name = '`getcfg $__name`'"
+}
+
+require() {
+	if hascfg $1
+	then
+		:
+	else
+		m="missing requirement $1"
+		shift
+		if [ $# -gt 0 ]; then
+			m="$m: $@"
+		fi
+		die $m
+	fi
+}
+
+#
+# value $1 test ...
+# output $1 (and only $1) if the test succeeds
+#
+value() {
+	__value=$1
+	shift
+	if [ $# -eq 0 ] || "$@" >/dev/null 2>&1
+	then
+		echo "$__value"
+		return 0
+	else
+		return 1
+	fi
+}
+
+main "$@"
+cleanup 0

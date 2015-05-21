@@ -1,0 +1,55 @@
+<!-- This is a template for documentation of drivers -->
+<html>
+<head>
+<title>VE - Drivers - DriverNameHere</title>
+</head>
+<body>
+<h1>VE - Drivers</h1>
+<h1>DriverNameHere</h1>
+
+<h2>Overview</h2>
+
+Describe what kinds of devices this driver supports.
+
+<h2>Devices</h2>
+
+<h3>device-type</h3>
+
+<dl>
+<dt><b>element</b> [type]</dt>
+<dd>Element description, conditions...
+May be generic in cases where actual element set is
+decided at runtime.
+</dd>
+
+... other elements
+
+</dl>
+
+... other device types
+
+<h2>Options</h2>
+
+<dl>
+<dt><b>option-name</b></dt>
+<dd>Description of option purpose and valid values.
+If values are a small set of constant names, list names
+as an "ul" and describe each value</dd>
+
+... other options
+
+</dl>
+
+<h2>Using the Driver</h2>
+
+<p>Driver name: <code>name of shared object</code></p>
+<p>Example:
+<pre>
+    driver devtype soname
+    device egdevice devtype {
+        sample options
+    }
+</pre>
+
+</body>
+</html>

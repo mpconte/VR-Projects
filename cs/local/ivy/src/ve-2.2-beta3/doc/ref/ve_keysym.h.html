@@ -1,0 +1,50 @@
+<html>
+<head>
+<title>File: ve_keysym.h</title>
+</head>
+<body>
+<h1 class="cdoc-file">File: ve_keysym.h</h1>
+
+
+<p class="cdoc-item">
+    This module defines keycodes for keyboard devices.  All input
+    keyboard devices
+    should return these keycodes when the appropriate keys are pressed.
+    They are all defined as macros, based upon the X11 keysym definitions.
+    All macros begin with the <code>VEK_</code> prefix.  See the header
+    file for the list of macros.
+ 
+<p class="cdoc-item">
+<a name="function_veKeysymToString"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veKeysymToString</span>
+<div class="body-function">
+<div class="codeblock">char *veKeysymToString(int ks);</div>    Converts the given keysym to a printable string.
+    For all keysyms corresponding to printable ASCII characters, this
+    is just the character itself.  Other keysyms have symbolic names,
+    e.g. "Home" or "Page_Up".  Not all keysyms have names.
+
+<div class="start-param"><span class="tag-param">ks</span> - 
+    The keysym to convert.</div>
+<div class="start-returns"><span class="label-returns">Returns:</span> 
+    A pointer to a static buffer containing the name of the keysym or
+    <code>NULL</code> if there is no known name for the keysym.
+ </div></div></div>
+<p class="cdoc-item">
+<a name="function_veStringToKeysym"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veStringToKeysym</span>
+<div class="body-function">
+<div class="codeblock">int veStringToKeysym(char *str);</div>    The inverse operation of veKeysymToString.  Converts a keysym
+    name to the actual keysym value.  As with veKeysymToString, not
+    all keysyms are supported by this function.
+
+<div class="start-param"><span class="tag-param">str</span> - 
+    The string containing the keysym name.</div>
+<div class="start-returns"><span class="label-returns">Returns:</span> 
+    The retrieved keysym or <code>VEK_UNKNOWN</code> if the name of 
+    the keysym is not recognized.</div></div></div>
+
+<h2 class="cdoc-index">Index</h2>
+<ul>
+<li><a class="link-function" href="#function_veKeysymToString">veKeysymToString (function)</a></li>
+<li><a class="link-function" href="#function_veStringToKeysym">veStringToKeysym (function)</a></li>
+</ul>
+</body>
+</html>

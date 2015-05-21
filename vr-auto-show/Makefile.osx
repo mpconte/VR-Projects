@@ -1,0 +1,23 @@
+BASE=/Users/jenkin/Documents/Hacking
+
+include ${BASE}/ve-2.2/autocfg.mk
+include ${BASE}/ve-2.2/Make.config
+
+INCDIR=${BASE}/ve-2.2/include
+LIBDIR=${BASE}/ve-2.2/lib 
+OPENGL=${ACFG_OPENGL}
+
+CFLAGS+= -I${INCDIR} -I../3ds -I../vem
+LDFLAGS= ${CFLAGS} -L${LIBDIR} -L../3ds/osx -lve  -l3ds -L../vem/osx -lvem
+
+
+OBJS=	3dsviewer.o 
+
+
+3dsviewer : ${OBJS} 
+	$(CC) ${OBJS} $(LDFLAGS) -o 3dsviewer.osx ${LIBPATH}  ${OPENGL} ${OSLIBS} -framework AGL
+
+clean:
+	rm -f ${OBJS} 
+
+

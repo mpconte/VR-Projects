@@ -1,0 +1,239 @@
+<html>
+<head>
+<title>File: ve_render.h</title>
+</head>
+<body>
+<h1 class="cdoc-file">File: ve_render.h</h1>
+<h2 class="cdoc-contents">Contents</h2>
+<ul>
+<li class="cdoc-centry"><a href="#sect_0" class="link-section"><span class="text-section">Renderer Driver Interfaces</span></a></li>
+<li class="cdoc-centry"><a href="#sect_1" class="link-section"><span class="text-section">Rendering Callbacks</span></a></li>
+<li class="cdoc-centry"><a href="#sect_2" class="link-tag-subsection"><span class="text-tag-subsection">Calling Callbacks</span></a></li>
+</ul>
+
+
+<p class="cdoc-item">
+    The ve_render module defines those interfaces that a renderer
+    implementation must provide.
+
+<p class="cdoc-item">
+<a name="function_veRenderInit"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veRenderInit</span>
+<div class="body-function">
+<div class="codeblock">void veRenderInit(void);</div>    Provided by renderer.  Initializes the renderer.  This should not
+    open windows or outputs.
+ </div></div>
+<p class="cdoc-item">
+<a name="function_veRenderOpenWindow"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veRenderOpenWindow</span>
+<div class="body-function">
+<div class="codeblock">int veRenderOpenWindow(VeWindow *w);</div>    Opens a window and prepares it for rendering.  An implementation may
+    consider it an error for the same window to be opened twice.
+
+<div class="start-param"><span class="tag-param">w</span> - 
+    The window to open.</div>
+<div class="start-returns"><span class="label-returns">Returns:</span> 
+    0 if successful, non-zero if not successful.  If not sucessful
+    an error should also be printed on stderr.
+ </div></div></div>
+<p class="cdoc-item">
+<a name="function_veRenderCloseWindow"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veRenderCloseWindow</span>
+<div class="body-function">
+<div class="codeblock">void veRenderCloseWindow(VeWindow *w);</div>    Closes a previously-opened window.
+
+<div class="start-param"><span class="tag-param">w</span> - 
+    The window to close.</div></div></div>
+<p class="cdoc-item">
+<a name="function_veRenderWindow"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veRenderWindow</span>
+<div class="body-function">
+<div class="codeblock">void veRenderWindow(VeWindow *w);</div>    Renders the given window.  Render callbacks are called as required.
+    For double-buffered renderers this should not swap the window at all.
+ </div></div>
+<p class="cdoc-item">
+<a name="function_veRenderSwap"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veRenderSwap</span>
+<div class="body-function">
+<div class="codeblock">void veRenderSwap(VeWindow *w);</div>    For double-buffered renderers, this swaps buffers on the windows.
+    No effect is required for single-buffered renderers.
+ </div></div>
+<p class="cdoc-item">
+<a name="function_veRenderGetWinInfo"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veRenderGetWinInfo</span>
+<div class="body-function">
+<div class="codeblock">void veRenderGetWinInfo(VeWindow *win, int *x, int *y, int *w, int *h);</div>    Returns geometry information about an open window.  The window
+    must be open in order for this function to succeed.
+
+<div class="start-param"><span class="tag-param">win</span> - 
+    The window to query.</div>
+<div class="start-param"><span class="tag-param">x</span> - 
+    A pointer to the variable where the x-coordinate of the window's
+    origin will be stored.</div>
+<div class="start-param"><span class="tag-param">y</span> - 
+    A pointer to the variable where the y-coordinate of the window's
+    origin will be stored.</div>
+<div class="start-param"><span class="tag-param">w</span> - 
+    A pointer to the variable where the width of the window will be
+    stored.</div>
+<div class="start-param"><span class="tag-param">h</span> - 
+    A pointer to the variable where the height of the window will be
+    stored.</div></div></div>
+<p class="cdoc-item">
+<a name="function_veRenderReloadView"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veRenderReloadView</span>
+<div class="body-function">
+<div class="codeblock">void veRenderReloadView(VeWindow *w, long tm, float znear, float zfar,
+			VeWallView *wv);</div>    Rebuilds the wall-view structure and loads the default projection
+    and viewing matrices.  The eye and eye_frame members of the wall-view
+    structure must already be defined.  This function primarily exists to
+    allow the on-the-fly changing of the Z clipping planes.
+
+<div class="start-param"><span class="tag-param">w</span> - 
+    The window being rendered.</div>
+<div class="start-param"><span class="tag-param">tm</span> - 
+    An estimate of the time at which this window will be displayed.
+    </div>
+<div class="start-param"><span class="tag-param">znear</span> - 
+    The near Z clip plane.</div>
+<div class="start-param"><span class="tag-param">zfar</span> - 
+    The far Z clip plane.</div>
+<div class="start-param"><span class="tag-param">wv</span> - 
+    A pointer to the wall-view structure.  The "eye" and "eye_frame"
+    members will be used to regenerate the remaining fields (which
+    may be overwritten).
+ </div></div></div>
+<p class="cdoc-item">
+<a name="sect_0"></a><h2 class="tag-section">Renderer Driver Interfaces</h2>
+    The calls above are the calls that applications should make.
+    The renderer drivers should provide functions with the same prototypes,
+    but with the following names:
+    <ul>
+    <li><code>veRImplInit()</code>
+    <li><code>veRImplOpenWindow()</code>
+    <li><code>veRImplCloseWindow()</code>
+    <li><code>veRImplWindow()</code>
+    <li><code>veRImplSwap()</code>
+    <li><code>veRImplGetWinInfo()</code>
+    <li><code>veRImplReloadView()</code>
+    </ul>
+ 
+<p class="cdoc-item">
+<a name="sect_1"></a><h2 class="tag-section">Rendering Callbacks</h2>
+
+As of VE 2.2 basic rendering callbacks are standard across all
+implementations.  The following interfaces do not need to be
+provided by the rendering implementation.  They are managed as
+part of the library.  See the notes on the <code>veRenderCall*()</code>
+functions below for more information.
+
+ 
+<p class="cdoc-item">
+<a name="function_veRenderSetupCback"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veRenderSetupCback</span>
+<div class="body-function">
+<div class="codeblock">void veRenderSetupCback(VeRenderSetupProc cback);</div>    Applications should set a window setup callback.  This callback will
+    be called once for each window after it has been created.  When
+    called, the window's rendering context will be active.  This callback
+    should be used for initial setup of the rendering environment, loading
+    textures (if known ahead of time).  The callback has the following type:
+    <blockquote><code>void (*VeRenderSetupProc)(VeWindow *)</code></blockquote>
+    The single argument is a pointer to the window structure representing
+    the window being initialized.
+
+<div class="start-param"><span class="tag-param">cback</span> - 
+    The callback to set.  Only one window callback exists at a time.
+    If this value is <code>NULL</code> then any existing callback is
+    removed.</div></div></div>
+<p class="cdoc-item">
+<a name="function_veRenderCback"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veRenderCback</span>
+<div class="body-function">
+<div class="codeblock">void veRenderCback(VeRenderProc cback);</div>    Every application should create a rendering callback.  This is the function
+    that is called once per window per frame to actually render data to that
+    window.  On multiple display systems, this function may be called by
+    multiple threads at the same time.  If you cannot make your rendering
+    function thread-safe, be sure to lock it as a critical section
+    appropriately (see the <code>ve_thread.h</code> module).  The display
+    callback has the following type:
+    <blockquote><code>void (*VeRenderProc)(VeWindow *w, long tm, VeWallView *wv)</code></blockquote>
+    The arguments are:
+    <ul>
+    <li><i>w</i> - a pointer to the window structure for the window being
+    rendered.
+    <li><i>tm</i> - a timestamp (relative to the clock) for the time that
+    this frame is expected to be rendered at.  This is an estimate.
+    <li><i>wv</i> - a pointer to the wall view structure indicating the
+    geometry for this window.
+    </ul>
+    <p>Rendering functions should not initialize projection or view
+    matricies (the VE library handles that) but may multiply the view
+    matrix if necessary for rendering.  Proper matrix stack handling
+    should be observed (i.e. appropriate push/pop call nesting).
+    
+<div class="start-param"><span class="tag-param">cback</span> - 
+    The display callback to set.
+ </div></div></div>
+<p class="cdoc-item">
+<a name="function_veRenderPreCback"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veRenderPreCback</span>
+<div class="body-function">
+<div class="codeblock">void veRenderPreCback(VeRenderPreProc cback);</div>    An application can set a function to be called immediately before
+    all windows are displayed.  Unlike the display callback itself, this
+    function is only called once per frame (rather than once per thread).
+    See also <code>veRenderPostCback()</code>.  The callback must
+    have the following type:
+    <blockquote><code>typedef void (*VeRenderPreProc)(void);</code></blockquote>
+
+<div class="start-param"><span class="tag-param">cback</span> - 
+    The new callback to set.  If this value is <code>NULL</code> then
+    any existing callback is cleared.
+ </div></div></div>
+<p class="cdoc-item">
+<a name="function_veRenderPostCback"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veRenderPostCback</span>
+<div class="body-function">
+<div class="codeblock">void veRenderPostCback(VeRenderPostProc cback);</div>    An application can set a function to be called immediately after
+    all windows are displayed.  Unlike the display callback itself, this
+    function is only called once per frame (rather than once per thread).
+    See also <code>veRenderPreCback()</code>.  The callback must
+    have the following type:
+    <blockquote><code>typedef void (*VeRenderPostProc)(void);</code></blockquote>
+
+<div class="start-param"><span class="tag-param">cback</span> - 
+    The new callback to set.  If this value is <code>NULL</code> then
+    any existing callback is cleared.
+ </div></div></div>
+<p class="cdoc-item">
+<a name="sect_2"></a><h3 class="tag-subsection">Calling Callbacks</h3>
+    Applications do not need to worry about calling rendering callbacks.
+    The following functions are provided for rendering modules to call
+    callbacks.
+ 
+<p class="cdoc-item">
+<a name="function_veRenderCallSetupCback"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veRenderCallSetupCback</span>
+<div class="body-function">
+<div class="codeblock">void veRenderCallSetupCback(VeWindow *w);</div> </div></div>
+<p class="cdoc-item">
+<a name="function_veRenderCallCback"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veRenderCallCback</span>
+<div class="body-function">
+<div class="codeblock">void veRenderCallCback(VeWindow *w, long tm, VeWallView *wv);</div> </div></div>
+<p class="cdoc-item">
+<a name="function_veRenderCallPreCback"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veRenderCallPreCback</span>
+<div class="body-function">
+<div class="codeblock">void veRenderCallPreCback(void);</div> </div></div>
+<p class="cdoc-item">
+<a name="function_veRenderCallPostCback"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veRenderCallPostCback</span>
+<div class="body-function">
+<div class="codeblock">void veRenderCallPreCback(void);</div> </div></div>
+
+<h2 class="cdoc-index">Index</h2>
+<ul>
+<li><a class="link-function" href="#function_veRenderCallCback">veRenderCallCback (function)</a></li>
+<li><a class="link-function" href="#function_veRenderCallPostCback">veRenderCallPostCback (function)</a></li>
+<li><a class="link-function" href="#function_veRenderCallPreCback">veRenderCallPreCback (function)</a></li>
+<li><a class="link-function" href="#function_veRenderCallSetupCback">veRenderCallSetupCback (function)</a></li>
+<li><a class="link-function" href="#function_veRenderCback">veRenderCback (function)</a></li>
+<li><a class="link-function" href="#function_veRenderCloseWindow">veRenderCloseWindow (function)</a></li>
+<li><a class="link-function" href="#function_veRenderGetWinInfo">veRenderGetWinInfo (function)</a></li>
+<li><a class="link-function" href="#function_veRenderInit">veRenderInit (function)</a></li>
+<li><a class="link-function" href="#function_veRenderOpenWindow">veRenderOpenWindow (function)</a></li>
+<li><a class="link-function" href="#function_veRenderPostCback">veRenderPostCback (function)</a></li>
+<li><a class="link-function" href="#function_veRenderPreCback">veRenderPreCback (function)</a></li>
+<li><a class="link-function" href="#function_veRenderReloadView">veRenderReloadView (function)</a></li>
+<li><a class="link-function" href="#function_veRenderSetupCback">veRenderSetupCback (function)</a></li>
+<li><a class="link-function" href="#function_veRenderSwap">veRenderSwap (function)</a></li>
+<li><a class="link-function" href="#function_veRenderWindow">veRenderWindow (function)</a></li>
+<li><a class="link-subsection" href="#subsection_Calling">Calling (subsection)</a></li>
+</ul>
+</body>
+</html>

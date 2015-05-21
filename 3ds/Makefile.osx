@@ -1,0 +1,22 @@
+BASE=/Users/Jenkin/Documents/Hacking
+
+include ${BASE}/ve/autocfg.mk
+include ${BASE}/ve/Make.config
+
+INCDIR=${BASE}/ve/include
+LIBDIR=${BASE}/ve/lib
+OPENGL=${ACFG_OPENGL}
+
+CFLAGS+= -I${INCDIR}
+LDFLAGS= ${CFLAGS} -L${LIBDIR} -lve 
+
+OBJS=	loadTexture.o 3ds.o 3dsRenderer.o 
+
+
+3dslib: ${OBJS} 
+	ar r osx/lib3ds.a ${OBJS}
+	ranlib osx/lib3ds.a
+
+clean:
+	rm -f ${OBJS} osx/lib3ds.a
+

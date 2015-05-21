@@ -1,0 +1,138 @@
+libnid - Network Input Device library
+
+Provides a simple protocol that allows input devices to be connected
+to remote machines.  Protocol is kept simple and general to ease
+implementation on potentially alien architectures.
+
+Datatypes:
+int       - signed 32-bit integer, network-order
+unsigned  - unsigned 32-bit integer, network-order
+
+Some assumptions:
+- devices do not appear and disappear during a session thus 
+  an ENUM_DEVICES or ENUM_ELEMENTS query should always return the
+  same thing
+- zero ("0") as an element or device id is reserved.  Special uses
+  of id 0 are noted in packets.
+
+All packets have the following format:
+
+unsigned: size           (an unsigned 32-bit integer)
+"size" bytes: payload   (the actual data which is "size" bytes long)
+
+All payloads have at least the following header:
+
+unsigned: request id     (client-determined request identifier)
+unsigned: request type   (the type of the request)
+
+The remainder of the data depends upon the request.
+All values passed are either strings with a fixed maximum length or
+signed or unsigned integers.
+
+
+Packet Types:
+
+NID_PKT_HANDSHAKE (0x0)
+payload:
+	unsigned protocol_major - major part of protocol version
+	unsigned protocol_minor - minor part of protocol version
+
+- contains protocol versions.  Every conversation starts with each 
+  side sending a NID_PKT_HANDSHAKE with request 0 containing the protocol
+  version which is spoken by that end.  If the receiver of the HANDSHAKE
+  packet can cope with receiving that protocol, then they respond with 
+  NID_PKT_ACK, else they respond with NID_PKT_NAK and close the connection.
+
+NID_PKT_ACK (0x1)
+generic "success" response.
+no payload
+
+NID_PKT_NAK (0x2)
+generic "failure" response.
+payload:
+	unsigned reason - an index into a table of errors
+- errors are defined elsewhere and are specific to a protocol version
+- unrecognized error codes should be treated as generic errors
+
+(Codes 0x3 - 0xf are reserved for future general packets)
+
+Client Request Packet Types:
+
+NID_PKT_ENUM_DEVICES (0x10)
+no payload
+
+- requests a list of all devices provided by the server and their
+  id numbers - 
+
+NID_PKT_ENUM_ELEMENTS (0x11)
+payload:
+	unsigned id    - id of device to query
+
+- returns a list of elements for the given device
+
+NID_PKT_QUERY_ELEMENTS (0x12)
+NID_PKT_LISTEN_ELEMENTS (0x13)
+NID_PKT_IGNORE_ELEMENTS (0x14)
+payload:
+	unsigned num_requests
+	num_requests of:
+		unsigned devid   - device to query
+		unsigned elemid  - element of device to query
+
+- all have the same structure, with the following semantics:
+- QUERY: requests current state of all listed elements
+	- server responds with NAK on error, or ELEMENT_STATES on success
+- LISTEN: requests that changes to elements be sent asynchronously
+	- server responds with NAK on error, or ACK on success
+	- server will then sent ELEMENT_EVENTS asynchronously
+- IGNORE: requests that changes to elements *not* be sent asynchronously
+	(cancels previous LISTEN request)
+
+Server Response Packet Types:
+
+NID_PKT_DEVICE_LIST (0x50)
+payload:
+	unsigned num_devices
+	num_devices of:
+		unsigned id    - numeric id of device
+		char name[16]  - maximum 15-character string which is the
+				 name of the device - always null-terminated
+		char type[16]  - maximum 15-character string which is the
+				 type of the device - always null-terminated
+				 type is server-dependent - may or may not
+				 be meaningful to client (i.e. no standard
+				 types defined)
+
+NID_PKT_ELEMENT_LIST (0x51)
+payload:
+	unsigned id           - device id
+	unsigned num_elems
+	num_elems of:
+		unsigned eid   - element id
+		unsigned type  - type of element (see below)
+		int min        - minimum value (valuator)
+		int max        - maximum value (valuator)
+
+NID_PKT_ELEMENT_STATES (0x52)
+NID_PKT_ELEMENT_EVENTS (0x53)
+payload:
+	unsigned num_states
+	num_states of:
+		unsigned devid
+		unsigned elemid
+		int state  (0 for trigger, [0..1] for switch,
+				 [min..max] for valuator)
+- NID_PKT_ELEMENT_STATES and NID_PKT_ELEMENT_EVENTS have the same
+  structure but different ids - STATES are returned in response to
+  a query of an element, while EVENTS are sent asynchronously after
+  a LISTEN.
+
+
+Element types:
+NID_ELEM_TRIGGER  (0x0) - a basic event - indicates that "something happened"
+	- no state, only occurances
+NID_ELEM_SWITCH   (0x1) - a two-state device - NID_SWITCH_UP (0x0) (i.e. "off")
+	and NID_SWITCH_DOWN (0x1) (i.e. "on")
+NID_ELEM_VALUATOR (0x2) - a variable device, has a range of values.  Minimum
+	and maximum values can be retrieved via NID_PKT_ENUM_ELEMENTS for
+	that device.

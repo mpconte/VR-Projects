@@ -1,0 +1,31 @@
+#
+# Tests for isproc/isset
+#
+
+set x 0
+if { ![isset x] } {
+    error "isset returns 0 for x"
+}
+[stdout] writeln "x is set"
+if { [isset y] } {
+    error "isset claims y is set"
+}
+[stdout] writeln "y is not set"
+unset x
+if { [isset x] } {
+    error "isset return 1 for x after unset"
+}
+[stdout] writeln "x is not set after 'unset'"
+
+proc foo {} {
+    [stdout] writeln "I am not a real procedure"
+}
+
+if { ![isproc foo] } {
+    error "isproc claims foo does not exist"
+}
+[stdout] writeln "proc foo exists"
+if { [isproc obviouslyphonyproc] } {
+    error "isproc claims obviouslyphonyproc exists"
+}
+[stdout] writeln "proc obviouslyphonyproc does not exist"

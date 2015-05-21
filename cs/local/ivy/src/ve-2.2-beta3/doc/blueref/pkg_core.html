@@ -1,0 +1,513 @@
+<html>
+<head>
+<title>BlueScript: Core Procedures</title>
+<link rel="stylesheet" href="bluescript.css" type="text/css" />
+</head>
+<body>
+<h1>BlueScript: Core Procedures</h1>
+<h2>Contents</h2>
+<ul>
+<li><a href="#procs">Procedures</a>
+<ul>
+<li><a href="#proc_block">block</a></li>
+<li><a href="#proc_break">break</a></li>
+<li><a href="#proc_catch">catch</a></li>
+<li><a href="#proc_continue">continue</a></li>
+<li><a href="#proc_cproc">cproc</a></li>
+<li><a href="#proc_error">error</a></li>
+<li><a href="#proc_expr">expr</a></li>
+<li><a href="#proc_foreach">foreach</a></li>
+<li><a href="#proc_get">get</a></li>
+<li><a href="#proc_global">global</a></li>
+<li><a href="#proc_if">if</a></li>
+<li><a href="#proc_isproc">isproc</a></li>
+<li><a href="#proc_isset">isset</a></li>
+<li><a href="#proc_proc">proc</a></li>
+<li><a href="#proc_return">return</a></li>
+<li><a href="#proc_set">set</a></li>
+<li><a href="#proc_try">try</a></li>
+<li><a href="#proc_unset">unset</a></li>
+<li><a href="#proc_while">while</a></li>
+</ul>
+</ul>
+<h2>Description</h2>
+Core BlueScript functionality which is included in most
+	BlueScript interpreters.
+<h2>Documentation</h2>
+
+	Core procedures are present in most BlueScript interpreters.
+	Core procedures include the main control constructs 
+	(<code>if</code>, <code>while</code>, <code>foreach</code>,
+	 etc.), variable storage and retrieval (<code>set</code>,
+						<code>get</code>),
+	and other basic functionality.
+    
+<a name="procs"></a>
+<h2>Procedures</h2>
+<ul>
+<li><a href="#proc_block">block</a></li>
+<li><a href="#proc_break">break</a></li>
+<li><a href="#proc_catch">catch</a></li>
+<li><a href="#proc_continue">continue</a></li>
+<li><a href="#proc_cproc">cproc</a></li>
+<li><a href="#proc_error">error</a></li>
+<li><a href="#proc_expr">expr</a></li>
+<li><a href="#proc_foreach">foreach</a></li>
+<li><a href="#proc_get">get</a></li>
+<li><a href="#proc_global">global</a></li>
+<li><a href="#proc_if">if</a></li>
+<li><a href="#proc_isproc">isproc</a></li>
+<li><a href="#proc_isset">isset</a></li>
+<li><a href="#proc_proc">proc</a></li>
+<li><a href="#proc_return">return</a></li>
+<li><a href="#proc_set">set</a></li>
+<li><a href="#proc_try">try</a></li>
+<li><a href="#proc_unset">unset</a></li>
+<li><a href="#proc_while">while</a></li>
+</ul>
+<a name="proc_block"></a>
+<div class="proctitle">block</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>block </b><i>body</i><b></b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">The result of the last command executed in the block.</div>
+<div class="label">Description</div>
+<div class="text">Processes a script as a nested block.</div>
+<div class="label"></div>
+
+	<p>
+	A nested block is a script that uses a separate context from
+	the context in which it is called.  This new context is
+	<em>nested</em> in the calling context.  This has the
+	following effects:
+	<ul>
+	<li>Variables in the calling context are visible and
+	modifiable in the nested context.</li>
+	<li>Procedures in the calling context are visible and
+	modifiable in the nested context.</li>
+	<li>Variables that are created in the nested context only
+	exist in the nested context and are unset when the block call
+	finishes.</li>
+	<li>The nested context is created each time the block call is
+	evaluated.  That is, variables that are set in the nested
+	context are not visible from call to call.</li>
+	<li><code>BREAK</code>, <code>CONTINUE</code>,
+	<code>RETURN</code>, and <code>ERROR</code> conditions all
+	have the same effect as though they were generated in the
+	calling context.</li>
+	</ul>
+	</p>
+	<p>Consider the following example:
+	<div class="eg">
+	set x 10
+	block {
+	    &nbsp; &nbsp; set y 20
+	    &nbsp; &nbsp; set x 30
+	}
+	</div>
+	After the block call, the variable <i>y</i> is no longer,
+	visible, but <i>x</i> will be set to 30.
+	</p>
+    
+<a name="proc_break"></a>
+<div class="proctitle">break</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>break</b><br />
+</div>
+<div class="label">Description</div>
+<div class="text">Halts processing with a <code>BREAK</code> condition.  This
+	condition will halt processing of a loop 
+	(e.g. the body of <code>while</code> or <code>foreach</code>)
+	and continue execution of the script after the end of the loop
+	construct.  If execution is not currently within a loop then
+	an error will be raised.</div>
+<a name="proc_catch"></a>
+<div class="proctitle">catch</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>catch </b><i>body</i><b> </b>[<b></b><i>var</i><b></b>]<b></b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">The exception code corresponding to the termination code
+	of the given script <i>body</i>.  A termination code of 0
+	corresponds to normal termination.  See the description for
+	other termination codes.</div>
+<div class="label">Description</div>
+<div class="text">
+	<p>
+	  Evaluates the given script trapping errors if they occur.
+	  If an optional variable name is specified then the result of
+	  evaluating the script is stored in the given variable,
+	  regardless of whether the script generates a result or an
+	  error.  In other words, if the script generates a result,
+	  the result is stored in the given variable and if the script
+	  generates an error, the error message is stored in the given
+	  variable.  If no variable name is specified then the result
+	  of evaluating the script is discarded.
+	</p>
+	<p>
+	  This procedure returns the result code generated by
+	  evaluting the script, as an integer.  
+	  The following result codes are
+	  defined:
+	<dl>
+	  <dt><b>0</b></dt>
+	  <dd>OK - indicates that evaluation completed
+	    successfully.</dd>
+	  <dt><b>1</b></dt>
+	  <dd>ERROR - indicates than an error was generated.</dd>
+	  <dt><b>2</b></dt>
+	  <dd>CONTINUE - indicates that an uncaught "continue" 
+	    command was encountered.</dd>
+	  <dt><b>3</b></dt>
+	  <dd>BREAK - indicates that an uncaught "break" command
+	    was encountered.</dd>
+	  <dt><b>4</b></dt>
+	  <dd>RETURN - indicates that a return command was
+	    encoutnered.</dd> 
+	</dl>
+	  Integers are used so that a Boolean test on the result can
+	  be performed to detect abnormal termination.  For example:
+	  <div class="eg">if [catch {cmd x y z}] { ... do something on error
+	      ... }</div>
+	</p>
+    </div>
+<a name="proc_continue"></a>
+<div class="proctitle">continue</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>continue</b><br />
+</div>
+<div class="label">Description</div>
+<div class="text">Halts processing with a <code>CONTINUE</code> condition.
+	This condition will halt processing of the <em>current</em>
+	iteration of a loop
+	(e.g. the body of <code>while</code> or <code>foreach</code>)
+	and continue on to the next iteration of the loop.  If the
+	loop involves a test condition, then the test condition is
+	evaluated before starting the next interation.</div>
+<a name="proc_cproc"></a>
+<div class="proctitle">cproc</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>cproc </b><i>name</i><b> </b><i>arglist</i><b> </b><i>body</i><b></b><br />
+</div>
+<div class="label">Description</div>
+<div class="text">
+	<p>Creates a contextual procedure.  A contextual procedure is
+	  like a global procedure except that it is only visible in the
+	  current context as well as any nested context (e.g. the inside
+	  of a foreach or while loop).  The procedure is removed when
+	  the context is destroyed (e.g. the
+	  function returns).</p>
+	<p>See the <code>proc</code> command below for details on
+	  arguments.</p>
+    </div>
+<a name="proc_error"></a>
+<div class="proctitle">error</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>error </b>[<b></b><i>string</i><b></b>]<b></b><br />
+</div>
+<div class="label">Description</div>
+<div class="text">Halts processing with an <code>ERROR</code> condition.
+	The result of the interpreter is set to the argument, which is
+	analogous to an error message.  An error exception will then
+	be generated which will halt processing entirely, unless it is
+	caught (e.g. by a <code>catch</code> call).
+    </div>
+<a name="proc_expr"></a>
+<div class="proctitle">expr</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>expr </b><i>expression</i><b></b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">The result of evaluating the expression.</div>
+<div class="label">Description</div>
+<div class="text"><p>Evaluates the given infix expression.  Any variable or
+	procedure calls in the expression are evaluated in the context
+	of the <code>expr</code> call.  The result of the evaluation
+	is returned.</p>
+	<p>For efficiency, it is better to use a list construct rather
+	than a string construct.  For example, the following:
+	<div class="eg">expr {$x + $y}</div>
+	is generally more efficient than:
+	<div class="eg">expr "$x + $y"</div>
+	If the argument to the expression is static, then the
+	interpreter can cache the parse tree for the expression.  In
+	the latter case, the argument to expr is not static - it is
+	the result of a substitution, so the parse tree of the infix
+	expression must be rebuilt on each call to the
+	<code>expr</code> procedure.
+	</p></div>
+<a name="proc_foreach"></a>
+<div class="proctitle">foreach</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>foreach </b><i>var</i><b> </b><i>list</i><b> </b><i>body</i><b></b><br />
+</div>
+<div class="label">Description</div>
+<div class="text">The script <i>body</i> is evaluated once for each element in
+	<i>list</i>, in the order in which the elements appear in
+	<i>list</i>.  For each iteration, the variable <i>var</i> is
+	set to the current element of <i>list</i> for which
+	<i>body</i> is being evaluated.</div>
+<a name="proc_get"></a>
+<div class="proctitle">get</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>get </b><i>var</i><b></b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">The value of variable <i>var</i> if is set,
+	or an empty string otherwise.</div>
+<a name="proc_global"></a>
+<div class="proctitle">global</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>global </b><i>var</i><b> </b>[<b></b><i>var</i><b> </b>...<b></b>]<b></b><br />
+</div>
+<div class="label">Description</div>
+<div class="text">
+	<p>
+	  Declares that variable <i>var</i> is global.  Any references
+	  to the variable <i>var</i> after a <code>global</code>
+	  command, within the same context or a nested context will
+	  refer to the variable <i>var</i> in the global context
+	  rather than the local context.  The variable <i>var</i> need
+	  not already exist in the global context.  However if it does
+	  not exist in the global context it will not be set to any
+	  value until it is explicitly set (e.g. via the
+	  <code>set</code> command).
+	</p>
+	<p>
+	  Note that the use of <code>global</code> in the middle of a
+	  script can have some unintended side effects.  For example,
+	  if the following script is part of a procedure body:
+	</p>
+	<div class="eg">
+	  set x 100
+	  global x
+	  set x 200
+	</div>
+	<p>
+	  Then the first reference to <i>x</i> (before the call to
+	  <code>global</code>) refers to <i>x</i> in the local
+	  context.  The call to <code>global</code> actually destroys
+	  the local variable <i>x</i> - the value is lost and cannot
+	  be retrieved.  Also note that there is no way to undo the
+	  effects of a <code>global</code> in the current context.
+	  In this case, the reference to <i>x</i> will be to the
+	  global <i>x</i> until the local context is destroyed.
+	</p>
+	<p>
+	  Calling <code>global</code> while in the global context has
+	  no effect.
+	</p>
+    </div>
+<a name="proc_if"></a>
+<div class="proctitle">if</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>if </b><i>expr</i><b> </b><i>true-cond</i><b> </b>[<b>elseif </b><i>expr</i><b> </b><i>true-cond</i><b> </b>...<b></b>]<b> </b>[<b>else
+							      </b><i>false-cond</i><b></b>]<b></b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">The last result of the evaluated condition, or an empty
+	string if no condition is executed.</div>
+<div class="label">Description</div>
+<div class="text">A classical "if" construct.</div>
+<a name="proc_isproc"></a>
+<div class="proctitle">isproc</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>isproc </b><i>name</i><b></b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">True (1) if <i>name</i> is the name of a procedure in the
+	current context or false (0) if there is no such procedure.
+    </div>
+<a name="proc_isset"></a>
+<div class="proctitle">isset</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>isset </b><i>name</i><b></b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">True (1) if <i>name</i> is the name of a variable that
+	is set in the current context, or false (0) if there is no such
+	variable.</div>
+<a name="proc_proc"></a>
+<div class="proctitle">proc</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>proc </b><i>name</i><b> </b><i>arglist</i><b> </b><i>body</i><b></b><br />
+</div>
+<div class="label">Description</div>
+<div class="text">
+	<p>
+	Creates a global procedure.  A global procedure is one that
+	can be accessed from any context.  Procedures use a
+	different namespace from variables.  Thus it is valid to
+	have a procedure and a variable with the same name.  These
+	two objects will be unrelated.
+	</p>
+	<p>
+	<i>args</i> specifies the number and names of arguments that
+	the procedure takes as a list.  For example an <i>args</i>
+	value of:
+	</p>
+	<div class="eg">
+	x y z
+	</div>
+	<p>
+	specifies that the procedure takes three arguments.  
+	When the procedure is called, then a new local context is
+	created and the three arguments will be stored in the local
+	variables <i>x</i>, <i>y</i>, <i>z</i> in the new context.
+	</p>
+	<p>
+	The argument list has two mechanisms for supporing variable
+	numbers of arguments.  The first is the specification of
+	<i>default values</i>.  For example, the specification of an
+	argument list as:
+	</p>
+	<div class="eg">
+	x y {z foo}
+	</div>
+	<p>
+	means that if the third argument (<i>z</i>) is not specified
+	in a call to the procedure, then it should take on the
+	default value "foo".  Default values can only be defined for
+	the right-most arguments.  For example, the following
+	definition is invalid:
+	</p>
+	<div class="eg">
+	x {y junk} z
+	</div>
+	<p>
+	However, more than one argument can be given a default value
+	so long as, for every argument with a default value, every
+	argument to its right must also have a default value.  For
+	example, the following:
+	</p>
+	<div class="eg">
+	{x foo} {y bar} {z glue}
+	</div>
+	<p>
+	is a valid way of specifying default values for all
+	arguments.
+	</p>
+	<p>
+	The second method is the <i>catch-all</i> argument.  If the
+	last argument name in the argument list is <i>args</i> then
+	any arguments passed to the procedure that are not consumed
+	by other arguments in the list are placed in a local
+	variable called <i>args</i>.  In other words, <i>args</i>
+	will contain a list of all arguments not handled by other
+	arguments (which will be empty if there are no extra
+		   arguments).  For example, if a procedure has the following
+	argument list:
+	</p>
+	<div class="eg">
+	x y args
+	</div>
+	<p>
+	and the procedure is called with the following arguments:
+	</p>
+	<div class="eg">
+	a b c d e
+	</div>
+	<p>
+	The variable <i>x</i> would be set to "a", the variable
+	<i>y</i> would be set to "b" and the variable <i>args</i>
+	would be set to the list "c d e".
+	</p>
+	<p>
+	Default values and catch-all arguments can be combined, for
+	example: the following argument list is valid:
+	</p>
+	<div class="eg">
+	x {y foo} {z bar} args
+	</div>
+    </div>
+<a name="proc_return"></a>
+<div class="proctitle">return</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>return </b>[<b></b><i>value</i><b></b>]<b></b><br />
+</div>
+<div class="label">Description</div>
+<div class="text">Halts processing with a <code>RETURN</code> condition.
+	The result of the interpreter is set to the argument.  If the
+	argument is not specified then the result of the interpreter
+	is set to the empty string.</div>
+<a name="proc_set"></a>
+<div class="proctitle">set</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>set </b><i>var</i><b> </b>[<b></b><i>value</i><b></b>]<b></b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">The value of variable <i>var</i>.</div>
+<div class="label">Description</div>
+<div class="text">
+	If <i>value</i> is specified, then the value of variable
+	<i>var</i> is set to <i>value</i>.  The value of variable
+	<i>var</i> is returned if and only if it is set.
+    </div>
+<a name="proc_try"></a>
+<div class="proctitle">try</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>try </b><i>script</i><b> </b><i>post</i><b></b><br />
+</div>
+<div class="label">Description</div>
+<div class="text">
+	<p>
+	  Evaluates <i>script</i> until it halts - whether from
+	  reaching the end, encountering an exceptional condition
+	  (<code>break</code>, <code>continue</code>,
+	  <code>return</code>), or encountering an error.  The script
+	  <i>post</i> will be executed regardless of how <i>script</i>
+	  halts.  The idea is that <i>post</i> can be used to contain
+	  "clean-up" code (e.g. closing an open file).  After
+	  <i>post</i> is evaluated, the procedure returns as though
+	  <i>post</i> had never been called - i.e. with whatever
+	  condition came out of <i>script</i>.
+	</p>
+	<p>
+	  Note that if an error is generated while processing
+	  <i>post</i>, processing of <i>post</i> will halt and an
+	  error will be generated.
+	</p>
+    </div>
+<a name="proc_unset"></a>
+<div class="proctitle">unset</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>unset </b><i>var</i><b></b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">An empty string.</div>
+<div class="label">Description</div>
+<div class="text">
+	"Unsets" the given variable <i>var</i> if it is set.
+	If it is not set, then this procedure call has no effect.
+	After it is "unset", it is as though the variable had never
+	been set.
+    </div>
+<a name="proc_while"></a>
+<div class="proctitle">while</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>while </b><i>expr</i><b> </b><i>body</i><b></b><br />
+</div>
+<div class="label">Description</div>
+<div class="text">A classic "while" construct.  The script <i>body</i> is
+	evaluated so long as the infix expression <i>expr</i>
+	evaluates to a true value.</div>

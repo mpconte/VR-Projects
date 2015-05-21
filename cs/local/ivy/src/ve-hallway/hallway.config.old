@@ -1,0 +1,8 @@
+% the hallway configuration file
+% --------------------------------
+% Length (meters)
+% Width height (meters)
+% strip length (meters)
+100.0
+2.5 3.5
+1.0

@@ -1,0 +1,354 @@
+<html>
+<head>
+<title>File: ve_util.h</title>
+</head>
+<body>
+<h1>File: ve_util.h</h1>
+<h2>Contents</h2>
+<ul>
+<li><a href="#sect_0"><b>String Maps/Hash Tables</b></a></li>
+</ul>
+
+
+<p>
+    The ve_util module provides some generic abstractions for
+    possibly unportable commands or common data structures.
+
+<p>
+<a name="function_veDupString"></a><p><em>Function:</em> <b>veDupString</b>
+<blockquote>
+<pre>
+char *veDupString(char *s);</pre>    <p>Returns a duplicate of the given string.  The result
+    has been newly allocated from the heap.</p>
+    
+<p><b>s</b> - 
+    The string to duplicate.
+    
+<p><i>Returns:</i> 
+    A duplicate of the given string.
+
+</blockquote>
+<p>
+<a name="function_veVsnprintf"></a><p><em>Function:</em> <b>veVsnprintf</b>
+<blockquote>
+<pre>
+void veVsnprintf(char *, int, char *, va_list);</pre>    <p>An abstraction for the common but unportable <code>vsnprintf()</code>
+    function.</p>
+
+</blockquote>
+<p>
+<a name="function_veSnprintf"></a><p><em>Function:</em> <b>veSnprintf</b>
+<blockquote>
+<pre>
+void veSnprintf(char *, int, char *, ...);</pre>    <p>An abstraction for the common but unportable <code>snprintf()</code>
+    function.</p>
+
+</blockquote>
+<p>
+<a name="function_veWaitForData"></a><p><em>Function:</em> <b>veWaitForData</b>
+<blockquote>
+<pre>
+int  veWaitForData(int fd);</pre>    <p>Specific to Unix - this function will block (this thread only) until
+    there is data available for reading on the given file descriptor.</p>
+
+<p><b>fd</b> - 
+    The file descriptor to block on.
+
+</blockquote>
+<p>
+<a name="function_vePeekFd"></a><p><em>Function:</em> <b>vePeekFd</b>
+<blockquote>
+<pre>
+int  vePeekFd(int fd);</pre>    <p>Specific to Unix - returns the minimum number of bytes available for
+    reading on the given file descriptor.  It is guaranteed that a read 
+    of this many bytes on this file descriptor will not block.</p>
+    
+<p><b>fd</b> - 
+    The file descriptor to peek at.
+
+<p><i>Returns:</i> 
+    The number of bytes available for reading on the given file descriptor.
+
+</blockquote>
+<p>
+<a name="function_veMicroSleep"></a><p><em>Function:</em> <b>veMicroSleep</b>
+<blockquote>
+<pre>
+void veMicroSleep(int usecs);</pre>    <p>Put the current thread to sleep for the given number of microseconds.  
+    On most Unix systems, this is just "usleep".  Please be aware that
+    on many systems that there is a minimum amount of time (usually 10-20
+    milliseconds) that a thread may sleep for, depending upon the
+    scheduler on the system.
+    
+<p><b>usecs</b> - 
+    The number of microseconds to sleep for.
+
+</blockquote>
+<p>
+<a name="function_veIsPathAbsolute"></a><p><em>Function:</em> <b>veIsPathAbsolute</b>
+<blockquote>
+<pre>
+int veIsPathAbsolute(char *path);</pre>    Predicate to check to see if the given pathname is absolute.
+    This will vary from major platform to major platform (e.g. Windows
+    vs. Unix).
+
+<p><b>path</b> - 
+    The path to check.
+    
+<p><i>Returns:</i> 
+    1 if the path is absolute, 0 if the path is relative to the current
+    directory.
+
+</blockquote>
+<p>
+<a name="sect_0"></a><h2>String Maps/Hash Tables</h2>
+    <p>VeStrMap and VeStrMapWalk are a simple hash-table implementation
+    which maps strings to arbitrary objects (i.e. represented as "void *")
+    in a reasonably efficient manner.  Other pieces of code that use
+    string maps should indicate what kind of data is being stored in the
+    string map.  The implementation manages its own memory for the names
+    in the hash table, but does not manage memory for data (i.e. the values).
+    Thus, before destroying a string map, it is important to walk through it
+    and dispose of the values appropriately (not the names) if you want to
+    avoid memory leaks.
+    <p>To walk through an existing string map, you need to create a walk.
+    The code should look something like this (assuming <i>m</i> is an
+    valid string map reference).
+<pre>
+        VeStrMapWalk w;
+        w = veStrMapWalkCreate(m);
+        if (veStrMapWalkFirst(w) == 0) {
+                do {
+                        name = veStrMapWalkStr(w);
+                        data = veStrMapWalkObj(w);
+                        ... do something interesting with name and data ...
+                } while (veStrMapWalkNext(w) == 0);
+        }
+        veStrMapWalkDestroy(w);
+</pre>
+
+<p>
+<a name="function_veStrMapCreate"></a><p><em>Function:</em> <b>veStrMapCreate</b>
+<blockquote>
+<pre>
+VeStrMap veStrMapCreate();</pre>    Creates a new string map.
+
+<p><i>Returns:</i> 
+    A reference to a new string map.  The reference can be passed by value
+    to other functions.
+
+</blockquote>
+<p>
+<a name="type_VeStrMapFreeProc"></a><p><em>Type:</em> <b>VeStrMapFreeProc</b>
+<blockquote>
+    A simple type definition to help in casting pesky functions for
+    use with <code>veStrMapDestroy()</code>.
+ 
+<pre>
+typedef void (*VeStrMapFreeProc)(void *);</pre></blockquote>
+<p>
+<a name="function_veStrMapDestroy"></a><p><em>Function:</em> <b>veStrMapDestroy</b>
+<blockquote>
+<pre>
+void veStrMapDestroy(VeStrMap m, VeStrMapFreeProc freeval);</pre>    Destroys a previously created string map.  This will free any memory
+    allocated to names in the map.  If the <i>freeval</i> parameter is
+    non-null, then the given function pointer will be used to free any
+    values in the map.  
+
+<p><b>m</b> - 
+    The string map to destroy.
+
+<p><b>freeval</b> - 
+    If non-null, then this function will be called for each value in the
+    string map.  It should be used to free the memory associated with the
+    value.  If this is <code>NULL</code> then no processing will be done
+    for the values in the map.  For convenience, <code>NULL</code> values
+    will not be passed to this function.  This allows the safe use of 
+    <code>free()</code> here.
+
+</blockquote>
+<p>
+<a name="function_veStrMapLookup"></a><p><em>Function:</em> <b>veStrMapLookup</b>
+<blockquote>
+<pre>
+void *veStrMapLookup(VeStrMap m, char *name);</pre>    Lookup a value in the string map.
+    
+<p><b>m</b> - 
+    The string map to search in.
+
+<p><b>name</b> - 
+    The name to search for.
+
+<p><i>Returns:</i> 
+    The data stored under the given name if it exists, or <code>NULL</code>
+    otherwise.
+
+</blockquote>
+<p>
+<a name="function_veStrMapInsert"></a><p><em>Function:</em> <b>veStrMapInsert</b>
+<blockquote>
+<pre>
+int veStrMapInsert(VeStrMap m, char *name, void *obj);</pre>    Adds a name and value pair to the string map.  If a value with the
+    same name already exists, the previous value is overwritten.  Be
+    careful of this if you want to avoid memory leaks - if you need
+    to dispose of values, you need to do it before you insert an object.
+
+<p><b>m</b> - 
+    The string to map to insert into.
+    
+<p><b>name</b> - 
+    The name to be associated with the value.
+    
+<p><b>obj</b> - 
+    The value you are storing.  The string map stores this value and
+    returns it when requested but does not otherwise interpret it.
+
+<p><i>Returns:</i> 
+    0 on success, non-zero on failure.
+
+</blockquote>
+<p>
+<a name="function_veStrMapDelete"></a><p><em>Function:</em> <b>veStrMapDelete</b>
+<blockquote>
+<pre>
+int veStrMapDelete(VeStrMap m, char *name);</pre>    Removes the value with the given name from the string map if it
+    exists.
+
+<p><b>m</b> - 
+    The string map to remove the value from.
+
+<p><b>name</b> - 
+    The name of the value to remove.
+
+<p><i>Returns:</i> 
+    0 on success, non-zero on failure.  If the value does not exist
+    in the string map, 0 is still returned.
+
+</blockquote>
+<p>
+<a name="function_veStrMapWalkCreate"></a><p><em>Function:</em> <b>veStrMapWalkCreate</b>
+<blockquote>
+<pre>
+VeStrMapWalk veStrMapWalkCreate(VeStrMap m);</pre>    Creates a new walk through a string map.  To visit an arbitrary
+    set of elements in a string map without prior knowledge of their
+    names, you need to use a VeStrMapWalk object.  When initialized
+    the walk will reference the given map but will not point to any
+    particular place in the map.  Several walks can be progress at
+    any point in time.  The order of a walk is arbitrary, but every
+    node will be visited.  An object pointed to by a walk can be
+    safely deleted, but after being deleted a walk may only be advanced
+    or reset, not dereferenced.
+
+<p><b>m</b> - 
+    The string map to associate this walk with.
+
+<p><i>Returns:</i> 
+    A reference to a newly-created walk.
+
+</blockquote>
+<p>
+<a name="function_veStrMapWalkDestroy"></a><p><em>Function:</em> <b>veStrMapWalkDestroy</b>
+<blockquote>
+<pre>
+void veStrMapWalkDestroy(VeStrMapWalk w);</pre>    Destroys a previously created walk, freeing any memory associated
+    with it.  This does not affect the string map.
+
+<p><b>w</b> - 
+    The walk to destroy.
+
+</blockquote>
+<p>
+<a name="function_veStrMapWalkFirst"></a><p><em>Function:</em> <b>veStrMapWalkFirst</b>
+<blockquote>
+<pre>
+int veStrMapWalkFirst(VeStrMapWalk w);</pre>    Sets the position of the walk to the first value in the map.
+
+<p><b>w</b> - 
+    The walk whose position should be set.
+    
+<p><i>Returns:</i> 
+    0 if successful.  If unsuccessful, or if there are no values in
+    the map, a non-zero value is returned.
+
+</blockquote>
+<p>
+<a name="function_veStrMapWalkNext"></a><p><em>Function:</em> <b>veStrMapWalkNext</b>
+<blockquote>
+<pre>
+int veStrMapWalkNext(VeStrMapWalk w);</pre>    Advances the position of the walk to the subsequent value in the map.
+    
+<p><b>w</b> - 
+    The walk whose position should be set.
+
+<p><i>Returns:</i> 
+    0 if successful.  If unsuccessful, or if there is no subsequent value
+    (i.e. the walk has been exhausted), a non-zero value is returned.
+
+</blockquote>
+<p>
+<a name="function_veStrMapWalkObj"></a><p><em>Function:</em> <b>veStrMapWalkObj</b>
+<blockquote>
+<pre>
+void *veStrMapWalkObj(VeStrMapWalk w);</pre>    Dereferences a walk to retrieve the value stored at the current position
+    of the walk.
+    
+<p><b>w</b> - 
+    The walk which should be dereferenced.
+    
+<p><i>Returns:</i> 
+    The value at the current position of the walk or <code>NULL</code>
+    if the walk is not at a valid position.
+
+</blockquote>
+<p>
+<a name="function_veStrMapWalkObj"></a><p><em>Function:</em> <b>veStrMapWalkObj</b>
+<blockquote>
+<pre>
+char *veStrMapWalkStr(VeStrMapWalk w);</pre>    Dereferences a walk to retrieve the name of the value stored at the 
+    current position of the walk.
+        
+<p><b>w</b> - 
+    The walk which should be dereferenced.
+    
+<p><i>Returns:</i> 
+    The name of the value at the current position of the walk or 
+    <code>NULL</code> if the walk is not at a valid position.
+
+</blockquote>
+<p>
+<a name="function_veStrMapStats"></a><p><em>Function:</em> <b>veStrMapStats</b>
+<blockquote>
+<pre>
+void veStrMapStats(VeStrMap m);</pre>    Prints out some statistics on stderr of the current properties of
+    the hash table.  Strictly for debugging and tuning purposes.
+    
+<p><b>m</b> - 
+    The map to print out statistics for.
+ 
+</blockquote>
+
+<h2>Index</h2>
+<ul>
+<li><a href="#function_veDupString">veDupString (function)</a></li>
+<li><a href="#function_veIsPathAbsolute">veIsPathAbsolute (function)</a></li>
+<li><a href="#function_veMicroSleep">veMicroSleep (function)</a></li>
+<li><a href="#function_vePeekFd">vePeekFd (function)</a></li>
+<li><a href="#function_veSnprintf">veSnprintf (function)</a></li>
+<li><a href="#function_veStrMapCreate">veStrMapCreate (function)</a></li>
+<li><a href="#function_veStrMapDelete">veStrMapDelete (function)</a></li>
+<li><a href="#function_veStrMapDestroy">veStrMapDestroy (function)</a></li>
+<li><a href="#function_veStrMapInsert">veStrMapInsert (function)</a></li>
+<li><a href="#function_veStrMapLookup">veStrMapLookup (function)</a></li>
+<li><a href="#function_veStrMapStats">veStrMapStats (function)</a></li>
+<li><a href="#function_veStrMapWalkCreate">veStrMapWalkCreate (function)</a></li>
+<li><a href="#function_veStrMapWalkDestroy">veStrMapWalkDestroy (function)</a></li>
+<li><a href="#function_veStrMapWalkFirst">veStrMapWalkFirst (function)</a></li>
+<li><a href="#function_veStrMapWalkNext">veStrMapWalkNext (function)</a></li>
+<li><a href="#function_veStrMapWalkObj">veStrMapWalkObj (function)</a></li>
+<li><a href="#function_veStrMapWalkObj">veStrMapWalkObj (function)</a></li>
+<li><a href="#function_veVsnprintf">veVsnprintf (function)</a></li>
+<li><a href="#function_veWaitForData">veWaitForData (function)</a></li>
+<li><a href="#type_VeStrMapFreeProc">VeStrMapFreeProc (type)</a></li>
+</ul>
+</body>
+</html>

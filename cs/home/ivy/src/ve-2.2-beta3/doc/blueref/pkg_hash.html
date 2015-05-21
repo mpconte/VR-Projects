@@ -1,0 +1,312 @@
+<html>
+<head>
+<title>BlueScript: Hash Procedures</title>
+<link rel="stylesheet" href="bluescript.css" type="text/css" />
+</head>
+<body>
+<h1>BlueScript: Hash Procedures</h1>
+<h2>Contents</h2>
+<ul>
+<li><a href="#objs">Objects</a>
+<ul>
+<li><a href="#obj_hash">hash</a>
+<ul>
+<li><a href="#oproc_hash__clear"><i>hash</i> clear</a></li>
+<li><a href="#oproc_hash__copy"><i>hash</i> copy</a></li>
+<li><a href="#oproc_hash__export"><i>hash</i> export</a></li>
+<li><a href="#oproc_hash__get"><i>hash</i> get</a></li>
+<li><a href="#oproc_hash__has"><i>hash</i> has</a></li>
+<li><a href="#oproc_hash__import"><i>hash</i> import</a></li>
+<li><a href="#oproc_hash__keys"><i>hash</i> keys</a></li>
+<li><a href="#oproc_hash__set"><i>hash</i> set</a></li>
+<li><a href="#oproc_hash__unset"><i>hash</i> unset</a></li>
+<li><a href="#oproc_hash__values"><i>hash</i> values</a></li>
+</ul>
+</li>
+</ul>
+<li><a href="#procs">Procedures</a>
+<ul>
+<li><a href="#proc_hash">hash</a></li>
+</ul>
+</ul>
+<h2>Description</h2>
+Allows for the creation and manipulation of hash tables that
+	map strings to arbitrary values or objects.
+<h2>Documentation</h2>
+Note that hash objects need not be explicitly destroyed.
+	They are automatically destroyed when the last reference to
+	them is destroyed.
+    
+<a name="objs"></a>
+<h2>Objects</h2>
+<ul>
+<li><a href="#obj_hash">hash</a></li>
+</ul>
+<a name="obj_hash"></a>
+<h3>hash</h3>
+Hash tables are represented as opaque objects.  This
+	means that they are passed by reference and not by value.
+<a name="oproc_hash__clear"></a>
+<div class="proctitle"><i>hash</i> clear</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b></b><i>hash</i><b> clear</b><br />
+</div>
+<div class="label">Description</div>
+<div class="text">Empties the contents of the hash table.  After calling
+	    this procedure, the hash table will be empty.</div>
+<div class="label">Examples</div>
+<div class="example">1. Emptying a hash table
+<div class="eg">
+	    set h [hash]<br />
+	    $h set foo 0<br />
+	    $h set bar 1<br />
+	    $h set joe 2<br />
+	    $h clear<br />
+	    $h export
+	</div>
+<div class="result">Result: <i>none</i></div>
+</div>
+<a name="oproc_hash__copy"></a>
+<div class="proctitle"><i>hash</i> copy</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b></b><i>hash</i><b> copy</b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">A new hash object which contains the same key/value
+	    mappings as the original.</div>
+<div class="label"></div>
+Note that there is an important difference between this
+	    operation and simple assignment.  For example:
+	    <div class="eg">set h2 $h</div>
+	    will create a duplicate <em>reference</em> to the original
+	    hash table.  That is, modifying the hash table referred
+	    to by <i>$h2</i> will also modify the table referred to by
+	    <i>$h</i>.  However, if a copy of the table is mad:
+	    <div class="eg">set h2 [$h copy]</div>
+	    then modifying the table referred to by <i>$h2</i> will
+	    <em>not</em> modify the table referred to by <i>$h</i>.
+	
+<div class="label">Examples</div>
+<div class="example">1. Making a copy of a hash table
+<div class="eg">
+	    set h [hash]<br />
+	    $h set foo 0<br />
+	    $h set bar 1<br />
+	    $h set joe 2<br />
+	    set h2 [$h copy]<br />
+	    $h2 export
+	</div>
+<div class="result">Result: <span class="egspan">{bar 1} {joe 2} {foo 0}</span></div></div>
+</div>
+<a name="oproc_hash__export"></a>
+<div class="proctitle"><i>hash</i> export</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b></b><i>hash</i><b> export</b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">The contents of the hash table as a list.</div>
+<div class="label">Description</div>
+<div class="text">Provides a method for extracting the entire contents of
+	    the hash table.  The contents are represented as a list. Each
+	    element of the list is itself a list of two elements - a
+	    <i>key</i> and a <i>value</i>.  This format can be used to
+	    reconstruct the hash table at a later time using the
+	    <code>import</code> procedure.</div>
+<div class="label">Examples</div>
+<div class="example">1. Retrieving the values of a hash table
+<div class="eg">
+	    set h [hash]<br />
+	    $h set foo 0<br />
+	    $h set bar 1<br />
+	    $h set joe 2<br />
+	    $h export
+	</div>
+<div class="result">Result: <span class="egspan">{bar 1} {joe 2} {foo 0}</span></div></div>
+</div>
+<a name="oproc_hash__get"></a>
+<div class="proctitle"><i>hash</i> get</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b></b><i>hash</i><b> get </b><i>key</i><b></b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">The value of a key in the table, if it exists, or a
+	    blank string otherwise.</div>
+<div class="label">Examples</div>
+<div class="example">1. Retrieve a value from the hash table
+<div class="eg">
+	    set h [hash]<br />
+	    $h set foo 0<br />
+	    $h get foo
+	</div>
+<div class="result">Result: <span class="egspan">0</span></div></div>
+</div>
+<div class="example">2. Retrieve a non-existent value from the same hash
+	    table
+<div class="eg">
+		$h get bar
+	    </div>
+<div class="result">Result: <i>none</i></div>
+</div>
+<a name="oproc_hash__has"></a>
+<div class="proctitle"><i>hash</i> has</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b></b><i>hash</i><b> has </b><i>key</i><b></b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">True (1) if the hash table contains an entry for the
+	    given key, or false (0) if the hash table does not contain
+	    an entry for the given key.</div>
+<div class="label">Examples</div>
+<div class="example">1. Checking for the existence of keys
+<div class="eg">
+	    set h [hash]<br />
+	    $h set foo 0<br />
+	    $h has foo
+	</div>
+<div class="result">Result: <span class="egspan">1</span></div></div>
+</div>
+<div class="example">2. Checking for non-existent keys
+<div class="eg">
+	    set h [hash]<br />
+	    $h set foo 0<br />
+	    $h has bar
+	</div>
+<div class="result">Result: <span class="egspan">0</span></div></div>
+</div>
+<a name="oproc_hash__import"></a>
+<div class="proctitle"><i>hash</i> import</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b></b><i>hash</i><b> import </b><i>list</i><b></b><br />
+</div>
+<div class="label">Description</div>
+<div class="text">Adds the given elements in the list to the hash table.
+	    Each element of the list must itself be a list of two
+	    elements - a <i>key</i> and a <i>value</i>.  That is, the
+	    format of <i>list</i> must be the same as the output of
+	    the <i>export</i> procedure.  These key-value pairs are
+	    merged into the existing contents of the hash table,
+	    overriding any existing cases which share the same key.
+	    Note that the hash table is not cleared before importing.
+	</div>
+<div class="label">Examples</div>
+<div class="example">1. Importing a list of key-value pairs
+<div class="eg">
+	    set h [hash]<br />
+	    $h import {{foo 0} {bar 1} {joe 2}}<br />
+	    $h export
+	</div>
+<div class="result">Result: <span class="egspan">{bar 1} {joe 2} {foo 0}</span></div></div>
+</div>
+<a name="oproc_hash__keys"></a>
+<div class="proctitle"><i>hash</i> keys</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b></b><i>hash</i><b> keys</b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">A list of the keys in the hash table.</div>
+<div class="label">Description</div>
+<div class="text">Retrieves a list of the keys in the hash table.  The
+	    order in which the keys are returned is arbitrary.</div>
+<div class="label">Examples</div>
+<div class="example">1. Retrieving the keys of a hash table
+<div class="eg">
+	    set h [hash]<br />
+	    $h set foo 0<br />
+	    $h set bar 1<br />
+	    $h set joe 2<br />
+	    $h keys
+	</div>
+<div class="result">Result: <span class="egspan">bar joe foo</span></div></div>
+</div>
+<a name="oproc_hash__set"></a>
+<div class="proctitle"><i>hash</i> set</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b></b><i>hash</i><b> set </b><i>key</i><b> </b>[<b></b><i>value</i><b></b>]<b></b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">The value corresponding to <i>key</i> in the hash
+	    table.  If <i>key</i> is not in the hash table, then an
+	    error is generated.</div>
+<div class="label">Description</div>
+<div class="text">Creates entries in the hash table if <i>value</i> is
+	    specified.  Returns values for keys that exist in the
+	    table.</div>
+<div class="label">Examples</div>
+<div class="example">1. Create an entry in the hash table
+<div class="eg">
+	    set h [hash]<br />
+	    $h set foo 0
+	</div>
+<div class="result">Result: <span class="egspan">0</span></div></div>
+</div>
+<div class="example">2. Retrieve a value from the same hash table
+<div class="eg">
+	    $h set foo
+	</div>
+<div class="result">Result: <span class="egspan">0</span></div></div>
+</div>
+<a name="oproc_hash__unset"></a>
+<div class="proctitle"><i>hash</i> unset</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b></b><i>hash</i><b> unset </b><i>key</i><b></b><br />
+</div>
+<div class="label">Description</div>
+<div class="text">Removes an entry from the table.  If the given key does
+	    not exist in the table, then this procedure has no
+	    effect.</div>
+<div class="label">Examples</div>
+<div class="example">1. Remove an entry from the hash table
+<div class="eg">
+	    set h [hash]<br />
+	    $h set foo 0<br />
+	    $h set bar 1<br />
+	    $h set joe 2<br />
+	    $h unset foo<br />
+	    $h export
+	</div>
+<div class="result">Result: <span class="egspan">{bar 1} {joe 2}</span></div></div>
+</div>
+<a name="oproc_hash__values"></a>
+<div class="proctitle"><i>hash</i> values</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b></b><i>hash</i><b> values</b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">A list of the values in the hash table.</div>
+<div class="label">Description</div>
+<div class="text">Retrieves a list of the values in the hash table.  The
+	    order in which the values are returned is arbitrary.</div>
+<div class="label">Examples</div>
+<div class="example">1. Retrieving the values of a hash table
+<div class="eg">
+	    set h [hash]<br />
+	    $h set foo 0<br />
+	    $h set bar 1<br />
+	    $h set joe 2<br />
+	    $h values
+	</div>
+<div class="result">Result: <span class="egspan">1 2 0</span></div></div>
+</div>
+<a name="procs"></a>
+<h2>Procedures</h2>
+<ul>
+<li><a href="#proc_hash">hash</a></li>
+</ul>
+<a name="proc_hash"></a>
+<div class="proctitle">hash</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>hash</b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">A new hash object.</div>

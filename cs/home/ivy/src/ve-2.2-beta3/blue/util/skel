@@ -1,0 +1,181 @@
+#include <bluescript.h>
+
+/* parser */
+
+struct _bpc_arg {
+	char *name;
+	char *defvalue;
+	int catchall;
+};
+
+static int _bpc_load_args(BSInterp *i, 
+			  int objc, BSObject *objv[],
+			  int na, struct _bpc_arg *a) {
+	int k;
+	BSList *l;
+	for (k = 0; k < na; k++) {
+		if (a[k].catchall) {
+			BSObject *o;
+			o = bsObjList(objc-k,objv+k);
+			bsSet(i,NULL,a[k].namep,o);
+			bsObjDelete(o);
+			return BS_OK;
+		} else if (k < objc) {
+			bsSet(i,NULL,a[k].name,objv[k]);
+		} else if (a[k].defvalue) {
+			o = bsObjString(a[k].defvalue);
+			bsSet(i,NULL,a[k].name,o);
+			bsObjDelete(o);
+		} else {
+			bsSetStringResult(i,"too few arguments");
+			return BS_ERROR;
+		}
+	}	
+	if (k < objc) {
+		bsSetStringResult(i,"too many arguments");
+		return BS_ERROR;
+	}	
+	return BS_OK;
+}
+
+#define FAIL(x) { bsSetStringResult(i,(x),BS_S_VOLATILE); goto _fail; }
+
+struct _bpc_/* insert name */_context {
+	int _bpc_dummy;  /* place-holder */
+	/* insert native context */
+};
+
+/* elem */
+static int _bpc_<pname>_e<id>_<name>(BSInterp *_bpc_i, int _bpc_objc,
+				BSObject *_bpc_objv[], void *_bpc_cdata) {
+	static _bpc_arg _bpc_arglist[] = {
+		/* arg list */
+	};
+	static int _bpc_arglistsz = /* arg list size */;
+	struct _bpc_context *context =
+		(struct _bpc_context *)_bpc_cdata;
+	
+	bsInterpPush(_bpc_i);
+	/* process args and set */
+	if (_bpc_load_args(_bpc_i,_bpc_objc-1,_bpc_objv+1,
+			   _bpc_arglist,_bpc_arglistsz)
+		!= BS_OK) {
+		bsAppendResult(_bpc_i,"\nin elem " /* name */,NULL);
+		return BS_ERROR;
+	}
+	{
+		/* insert body code */
+	}
+	bsInterpPop(_bpc_i);
+	return BS_OK;
+
+_fail:
+	return BS_ERROR;
+}
+
+/* block */
+static int _bpc_<pname>_b<id>_<name>(BSInterp *_bpc_i, int _bpc_objc,
+				BSObject *_bpc_objv[], void *_bpc_cdata) {
+	static _bpc_arg _bpc_arglist[] = {
+		/* arg list */
+	};
+	static int _bpc_arglistsz = /* arg list size */;
+	struct _bpc_context *context = 
+		(struct _bpc_context *)_bpc_cdata;
+	BSObject *_bpc_body;
+	
+	if (_bpc_objc > 1) {
+		_bpc_objc--;
+		_bpc_body = _bpc_objv[_bpc_objc];
+	} else {
+		_bpc_body = NULL;
+	}
+
+	bsInterpPush(_bpc_i);
+	/* process args and set */
+	if (_bpc_load_args(_bpc_i,_bpc_objc-1,_bpc_objv+1,
+			   _bpc_arglist,_bpc_arglistsz)
+		!= BS_OK) {
+		bsAppendResult(_bpc_i,"\nin elem " /* name */,NULL);
+		return BS_ERROR;
+	}
+	/* load elems and blocks for context (as described below) */
+	{
+		/* insert _enter code */
+	}
+	if (_bpc_body && (bsEval(_bpc_i,_bpc_body) != BS_OK))
+		goto _fail;
+	{
+		/* insert _exit code */
+	}
+	bsInterpPop(_bpc_i);
+	return BS_OK;
+
+_fail:
+	{
+		/* insert _error code */
+	}
+	bsInterpPop(_bpc_i);
+	return BS_ERROR;
+}
+
+
+/* insert returntype */ bpc_parse_/* insert name */
+(BSInterp *_bpc_i, BSParseSource *_bpc_src) 
+{
+	int _bpc_code;
+	struct _bpc_context context_r, *context;
+	context = &context_r;
+
+	bsClearResult(_bpc_i);
+
+	{
+		/* insert _enter code */
+	}	
+
+	bsInterpPush(_bpc_i);
+
+	/* insert elems as cprocs */
+	bsSetExtCProc(_bpc_i,NULL,/* e->name */,_bpc_/* name */_e/*e->id*/_/*e->name*/,
+			(void *)(context));	
+	/* insert blocks as cprocs */
+	bsSetExtCProc(_bpc_i,NULL,/* b->name */,_bpc_/* name */_e/*b->id*/_/*b->name*/,
+			(void *)(context));	
+
+	_bpc_result = bsEvalSource(_bpc_i,_bpc_src);
+	
+	bsInterpPop(_bpc_i);	
+
+	if (_bpc_result != BS_OK) {
+		if (bsIsResultClear(_bpc_i)) {
+			if (_bpc_code != BS_ERROR)
+				bsAppendResult(_bpc_i,
+						"invalid code returned from "
+						/* insert name as string */
+						" parser: ",
+						bsCodeToString(_bpc_code),
+						NULL);
+			else
+				bsAppendResult(_bpc_i,
+						"error in " 
+						/* insert name as string */
+						" data",NULL);
+		} else {
+			bsAppendResult(i,"\nin "
+					/* insert name as string */
+					" data",NULL);
+		}
+		{
+			/* insert _error code */	
+		}
+	} else {
+		{
+			/* insert _exit code */
+		}
+	}
+
+	fprintf(stderr,"faulty parser code - either _error or _exit"
+			" does not exit properly\n");
+	abort();
+}
+

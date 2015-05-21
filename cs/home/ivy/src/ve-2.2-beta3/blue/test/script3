@@ -1,0 +1,5 @@
+#
+# Third script - test variable use
+#
+set x "Hello World!"
+[stdout] writeln $x

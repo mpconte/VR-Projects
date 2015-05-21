@@ -1,0 +1,12 @@
+#
+# Testing weird problem with while conditions...
+#
+set l {a b c d e f g h i j k l m n o p q r s t u v w x y z}
+set z [llength $l]
+set i 0
+while { $i < $z } {
+    [stdout] writeln "i = $i, z = $z"
+    [stdout] writeln "l{$i} = [lindex $l $i]"
+    set i [expr {$i + 2}]
+    [stdout] writeln [expr {$i < $z}]
+}

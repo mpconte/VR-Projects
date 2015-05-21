@@ -1,0 +1,11 @@
+include autocfg.mk
+include ../../Make.config
+
+TARGET = x11input$(ACFG_SOEXT)
+OBJS = x11input.o
+LIBS = $(ACFG_X11)
+
+ifeq ($(HAS_X11),1)
+BUILD = $(TARGET)
+endif
+include ../Make.driver

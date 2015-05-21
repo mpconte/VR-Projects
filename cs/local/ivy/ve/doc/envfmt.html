@@ -1,0 +1,171 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <title>Environment File Format</title>
+  <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+</head>
+<body>
+<h1>Environment File Format</h1>
+<p>Environments describe the geometry of the walls of the virtual environment 
+and where they are located (in terms of graphics displays, hosts, etc.).
+The structures are defined in detail in the
+<a href="../ref/ve_env.h.html">ve_env.h</a>
+module of the <a href="../ref/index.html">VE API Reference Documentation</a>.
+The basic syntax of the file is based around a list syntax described
+in the <a href="../ref/ve_tlist.h.html">ve_tlist.h</a> module.
+<p>An environment file is comprised of a number of statements.
+The following statements are valid:
+<dl>
+<dt><b>name</b> <i>string</i></dt>
+<dd>Names the environment.  This is purely for informational purposes.</dd>
+<dt><b>desc</b> <i>string</i></dt>
+<dd>A description of the environment.  This is purely for informational
+purposes.</dd>
+<dt><b>option</b> <i>name</i> <i>value</i></dt>
+<dd>Sets environment options.  Meaningful options will vary between
+implementations.  Options set at this level are defaults for everything
+else set in this environment file.</dd>
+<dt><b>wall</b> <i>name</i> <b>{</b><i>walldata</i> ... <b>}</b></dt>
+<dd>A wall declaration.  A wall must have a name followed by a set of
+lines describing the information for the wall.</dd>
+</dl>
+
+<h2>Wall Statements</h2>
+The following statements can be used in describing a wall:
+<dl>
+<dt><b>option</b> <i>name</i> <i>value</i></dt>
+<dd>The same as the option statement at the environment level, but an
+option here will be the default for any window that belongs to this wall,
+overriding any option of the same name at the environment level.</dd>
+<dt><b>loc</b> <i>x</i> <i>y</i> <i>z</i></dt>
+<dt><b>dir</b> <i>x</i> <i>y</i> <i>z</i></dt>
+<dt><b>up</b> <i>x</i> <i>y</i> <i>z</i></dt>
+<dd>A frame indicating the orientation of the wall relative to the origin
+of the environment.  This information indicates what will be shown on this
+wall.  See the <a href="../ref/ve_env.h.html">ve_env.h</a> module for more
+information on the VeFrame structure.  All values are real numbers.  The
+<i>loc</i> value determines the centre of the screen in space.  The
+<i>dir</i> value indicates the normal of the screen pointing towards
+the viewer.  The <i>up</i> value indicates the vertical axis of the
+screen.  Common practice is to use metres for units.
+</dd>
+<dt><b>size</b> <i>width</i> <i>height</i></dt>
+<dd>The size of the screen.  Common practice is to use metres for units.</dd>
+<dt><b>base</b> (<b>origin</b>|<b>eye</b>)</dt>
+<dd>Indicates whether this wall is fixed (i.e. located
+relative to the origin of the environment) or attached to the user
+(i.e. located relative to the user's default eye).  In physical
+terms, the "default eye" is located between the user's two eyes
+(or in the user's eye if your user is a cyclops).  Caves have walls
+that use the origin as their base and head-mounted displays have
+walls that use the default eye as their base.  If omitted, then
+the default is <b>origin</b>.</dd>
+<dt><b>window</b> <i>name</i> <b>{</b><i>windowdata</i> ... <b>}</b></dt>
+<dd>A window declaration.  A wall may have any number of windows.  A window
+must be named.
+</dl>
+
+<h2>Window Statements</h2>
+The following statements can be used in describing a window:
+<dl>
+<dt><b>option</b> <i>name</i> <i>value</i></dt>
+<dd>The same as the option statement at the environment and wall levels, but an
+option here will be the default for this window,
+overriding any option of the same name at the environment or wall level.</dd>
+<dt><b>display</b> <i>name</i></dt>
+<dd>A name for the display on which the output of the wall.  Names are
+platform-dependent, but the name "default" is always supported and should
+be a sane choice on all platforms.  On X-based platforms (e.g. GLX
+implementation) this string is the X display on which to open this window.
+Setting a display of "default" should be equivalent to omitting the display
+statement entirely.
+</dd>
+<dt><b>geometry</b> <i>w</i>x<i>h</i>(+|-)<i>x</i>(+|-)<i>y</i></dt>
+<dd>Specifies the location of this window on the display.  All values are
+in pixels.  <i>w</i> and <i>h</i> give the on-screen height and width of the
+window in pixels.  <i>x</i> and <i>y</i> give the distance to the nearest 
+corner of the window from the upper-left corner of the screen, 
+if the character in front
+of the distances is '+'.  If the character in front of either distance is '-' 
+then
+the distance is measured from the opposite side (e.g. if the character in
+front of <i>x</i> is '-', then the distance is measured from the right
+side of the screen to the nearest corner of the window).
+</dd>
+<dt><b>err</b> <i>w_err</i> <i>h_err</i></dt>
+<dd>An error value for the dimensions of the screen in real space.  These
+values are effectively added to the stated width and height of the window
+for all calculations.  These values are provided separately so that the
+measured size of the window can be entered in the <b>size</b> statement
+and then this statement can be used as a fine adjustment.
+If omitted, these values both default to 0.0.
+</dd>
+<dt><b>offset</b> <i>x_err</i> <i>y_err</i></dt>
+<dd>Similar to the <b>err</b> statement, except that this statement is
+a fine adjustment for centre of the window in the plane of the wall.
+It is also used for calibration.  If omitted, these values both default to
+0.0.
+</dd>
+<dt><b>eye</b> <i>eyedisp</i></dt>
+<dd>Determines what eye displacement should be used when rendering
+this window.  The following values are known:
+      <dl>
+      <dt><b>mono</b></dt>
+      <dd>Render the window with no eye displacement.  This is the
+      default if no eye statement is specified.</dd>
+      <dt><b>left</b></dt>
+      <dd>Render the window with displacement for the left eye.</dd>
+      <dt><b>right</b></dt>
+      <dd>Render the window with displacement for the right eye.</dd>
+      <dt><b>stereo</b></dt>
+      <dd>Where supported, render a stereoscopic image.  Platforms
+      that do not support this option will emit a warning when the
+      problem is first encountered and then treat this window as
+      though it were labelled <b>VE_WIN_MONO</b></dd>
+      </dl>
+</dd>
+</dl>
+
+<h2>Example</h2>
+<p>The following is a simple example:
+<pre>
+        name cave-2
+        desc "A two-screen stereoscopic cave for testing.
+              One wall has a second monoscopic window for monitoring 
+              what is going on in the cave."
+        option noborder 1
+        wall front {
+                loc 0.0 0.0 -1.0
+                up 0.0 1.0 0.0
+                dir 0.0 0.0 -1.0
+                size 1.0 1.0
+                window front1 {
+                        display default
+                        geometry 600x600+0+0
+                        err -0.014 0.005
+                        eye stereo
+                }
+                window monitor {
+                        # this window is for watching 
+                        # what's going on
+                        display monitor:0
+                        geometry 1024x768+0+0
+                        # this option overrides the default at
+                        # the top level
+                        eye mono
+                }
+        }
+        wall right {
+                loc 0.5 0.0 -0.5
+                up 0.0 1.0 0.0
+                dir 1.0 0.0 0.0
+                size 1.0 1.0
+                window right1 {
+                        display default
+                        geometry 600x600+600+0
+                        eye stereo
+                }
+        }
+</pre>
+</body>
+</html>

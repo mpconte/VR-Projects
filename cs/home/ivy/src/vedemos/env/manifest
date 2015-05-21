@@ -1,0 +1,40 @@
+#
+# This is the device and filter manifest
+# - entries can be in any order
+#
+# - tell the system where to find drivers for devices and filters
+driver device x11keyboard x11drv.so
+driver device x11mouse x11drv.so
+driver device nid niddrv.so
+driver device fob fobdrv.so
+# - declare real devices that we may use
+# - note that these only declare that the devices exist - we still need
+#   to specify somewhere that we want to use the devices
+device keyboard x11keyboard
+device mouse x11mouse
+device thereminnid nid {
+	server theremin.cs.yorku.ca
+}
+device gamepad nid {
+	server toybox.cs.yorku.ca
+	devtype *DA Leader
+}
+device sidewinder nid {
+	server theremin.cs.yorku.ca
+	devtype *SideWinder Precision Pro*
+}
+device whoozit nid {
+	server theremin.cs.yorku.ca
+	devname whoozit
+}
+device fobtrack fob {
+	line /dev/ttyd3
+	speed 38400
+	flow none
+	hemisphere upper
+	stream 1
+	sudden_change_lock 1
+}
+# a default joystick - uses the first
+# available joystick
+device joystick linuxjs

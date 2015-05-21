@@ -1,0 +1,68 @@
+<html>
+<head>
+<title>BlueScript: VE Miscellaneous</title>
+<link rel="stylesheet" href="bluescript.css" type="text/css" />
+</head>
+<body>
+<h1>BlueScript: VE Miscellaneous</h1>
+<h2>Contents</h2>
+<ul>
+<li><a href="#procs">Procedures</a>
+<ul>
+<li><a href="#proc_echo">echo</a></li>
+<li><a href="#proc_exit">exit</a></li>
+<li><a href="#proc_frame_eye">frame_eye</a></li>
+<li><a href="#proc_frame_origin">frame_origin</a></li>
+<li><a href="#proc_include">include</a></li>
+</ul>
+</ul>
+<h2>Description</h2>
+Various VE support procedures.
+<a name="procs"></a>
+<h2>Procedures</h2>
+<ul>
+<li><a href="#proc_echo">echo</a></li>
+<li><a href="#proc_exit">exit</a></li>
+<li><a href="#proc_frame_eye">frame_eye</a></li>
+<li><a href="#proc_frame_origin">frame_origin</a></li>
+<li><a href="#proc_include">include</a></li>
+</ul>
+<a name="proc_echo"></a>
+<div class="proctitle">echo</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>echo </b><i>msg</i><b> </b>...<b></b><br />
+</div>
+<div class="label">Description</div>
+<div class="text">Writes the given message (made by concatenating command-line
+				    arguments with spaces) to stderr.</div>
+<a name="proc_exit"></a>
+<div class="proctitle">exit</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>exit </b>[<b></b><i>msg</i><b></b>]<b></b><br />
+</div>
+<div class="label">Description</div>
+<div class="text">Exits the VE program.</div>
+<a name="proc_frame_eye"></a>
+<div class="proctitle">frame_eye</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>frame_eye </b>(<b>loc</b>|<b>dir</b>|<b>up</b>)<b> </b>[<b></b><i>v</i><b></b>]<b></b><br />
+</div>
+<div class="label">Description</div>
+<div class="text">Sets and/or queries a component of the default eye.</div>
+<a name="proc_frame_origin"></a>
+<div class="proctitle">frame_origin</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>frame_origin </b>(<b>loc</b>|<b>dir</b>|<b>up</b>)<b> </b>[<b></b><i>v</i><b></b>]<b></b><br />
+</div>
+<div class="label">Description</div>
+<div class="text">Sets and/or queries a component of the origin.</div>
+<a name="proc_include"></a>
+<div class="proctitle">include</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>include </b><i>filename</i><b></b><br />
+</div>

@@ -1,0 +1,34 @@
+#
+# This is the device and filter manifest
+# - entries can be in any order
+#
+# - tell the system where to find drivers for devices and filters
+driver device x11keyboard x11drv.so
+driver device x11mouse x11drv.so
+driver device nid niddrv.so
+driver device fob fobdrv.so
+driver device linuxmouse linuxmouse.so
+driver device linuxjs linuxjs.so
+# - declare real devices that we may use
+# - note that these only declare that the devices exist - we still need
+#   to specify somewhere that we want to use the devices
+device keyboard x11keyboard
+device mouse x11mouse
+device gamepad nid {
+	server theremin.cs.yorku.ca
+	devtype linuxjs
+	transport udp
+}
+device fobtrack nid {
+	server shaft.cs.yorku.ca
+	port 1140
+	devtype fob
+	transport udp
+}
+# default head-tracking filters for fobtrack
+filter fobtrack.pos {
+        headtrack format=pos {loccorr={0.0 1.0 0.0 0.0} {0.0 0.0 -1.0 0.30} {-1.0 0.0 0.0 -0.30} {0.0 0.0 0.0 1.0}}
+}
+filter fobtrack.quat {
+	headtrack format=quat {loccorr={0.0 1.0 0.0 0.0} {0.0 0.0 -1.0 0.30} {-1.0 0.0 0.0 -0.30} {0.0 0.0 0.0 1.0}}
+}

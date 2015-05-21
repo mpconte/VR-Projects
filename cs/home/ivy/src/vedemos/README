@@ -1,0 +1,10 @@
+These demos are a mix of demos ported from GLUT and other sources and
+some that were written especially for the virtual environment.  In
+general these programs should not be distributed outside the lab - most
+of the code is freely distributable, but unless somebody wants to audit
+the code, textures and sounds for such a purpose, its best to keep them
+local.
+
+These programs have all been updated for v2.0 of the VE library.
+
+Matt Robinson

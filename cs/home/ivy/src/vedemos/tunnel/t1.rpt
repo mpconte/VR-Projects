@@ -1,0 +1,352 @@
+-------------------------------------------------------------------------
+SpeedShop profile listing generated Thu Feb 20 16:17:23 2003
+   prof -b tunnel tunnel.gi_hwctime.m44529
+                  tunnel (n32): Target program
+                    gi_hwctime: Experiment name
+  hwct,15,1000003,0,SIGPROF:cu: Marching orders
+               R12000 / R12010: CPU / FPU
+                            16: Number of CPUs
+                            44: Clock frequency (MHz.)
+  Experiment notes--
+	  From file tunnel.gi_hwctime.m44529:
+	Caliper point 0 at target begin, PID 44529
+			./tunnel -ve_env ivy.par.env
+	Caliper point 1 at exit(0)
+-------------------------------------------------------------------------
+Summary of perf. counter overflow callstack sampling data (gi_hwctime)--
+                            36: Total Samples
+                             0: Samples with incomplete traceback
+   Graduated instructions (15): Counter name (number)
+                       1000003: Counter overflow value
+                      36000108: Total counts
+
+                    Cycles (0): Aggregate counter name (number)
+                    1678471418: Total aggregate counts
+
+-------------------------------------------------------------------------
+Function list, in descending order by exclusive counts
+-------------------------------------------------------------------------
+ [index]  excl.ovfls excl.%   cum.%  incl.ovfls incl.%  function  (dso: file, line)
+
+    [10]           7  19.4%   19.4%           7  19.4%  txmLoadPNM (tunnel: txmpnm.c, 13)
+    [11]           7  19.4%   38.9%           7  19.4%  _BSD_getime (libc.so.1: BSD_getime.s, 12)
+    [16]           4  11.1%   50.0%           4  11.1%  strncpy (libc.so.1: strncpy.c, 26)
+    [20]           3   8.3%   58.3%           3   8.3%  mult_point (tunnel: matrix.c, 191)
+    [27]           2   5.6%   63.9%           2   5.6%  cksumtex (tunnel: txm.c, 281)
+    [28]           2   5.6%   69.4%           2   5.6%  pthread_mutex_unlock (libpthread.so: mtx.c, 657)
+    [29]           2   5.6%   75.0%           2   5.6%  sum (tunnel: tunnel.c, 50)
+    [30]           2   5.6%   80.6%           2   5.6%  __writev (libc.so.1: writev.s, 20)
+    [35]           1   2.8%   83.3%           1   2.8%  strcmp (libssrt.so: strcmp.s, 34)
+    [36]           1   2.8%   86.1%           1   2.8%  __cos (libm.so: cos.c, 194)
+    [21]           1   2.8%   88.9%           3   8.3%  veTimerWaitForEvents (libve.so: ve_timer.c, 168)
+    [37]           1   2.8%   91.7%           1   2.8%  veMatrixRotateArb (libve.so: ve_math.c, 47)
+    [22]           1   2.8%   94.4%           3   8.3%  veThrMutexUnlock (libve.so: ve_thread_posix.c, 188)
+    [38]           1   2.8%   97.2%           1   2.8%  veGetDebugLevel (libve.so: ve_debug.c, 27)
+    [39]           1   2.8%  100.0%           1   2.8%  insertHeap (libve.so: ve_timer.c, 115)
+     [1]           0   0.0%  100.0%          25  69.4%  __start (tunnel: crt1text.s, 103)
+     [2]           0   0.0%  100.0%          25  69.4%  main (tunnel: tunnel.c, 653)
+    [40]           0   0.0%  100.0%           1   2.8%  veInit (libve.so: ve_main.c, 304)
+    [41]           0   0.0%  100.0%           1   2.8%  process_options (libve.so: ve_main.c, 155)
+    [42]           0   0.0%  100.0%           1   2.8%  veReadDeviceManifest (libve.so: ve_dev_mf.c, 119)
+    [43]           0   0.0%  100.0%           1   2.8%  veDeviceUse (libve.so: ve_device.c, 78)
+    [44]           0   0.0%  100.0%           1   2.8%  veDeviceUseByDesc (libve.so: ve_device.c, 43)
+    [45]           0   0.0%  100.0%           1   2.8%  veDeviceFindDriver (libve.so: ve_dev_driver.c, 24)
+    [46]           0   0.0%  100.0%           1   2.8%  veRegDynamicDriver (libve.so: ve_driver.c, 128)
+    [47]           0   0.0%  100.0%           1   2.8%  _dlopen (libc.so.1: libdl.c, 43)
+    [48]           0   0.0%  100.0%           1   2.8%  __tp_dlinsert_post (libss.so: sswrap.c, 123)
+    [49]           0   0.0%  100.0%           1   2.8%  libss_dlinsert_post (libssrt.so: sslibc.c, 1224)
+    [50]           0   0.0%  100.0%           1   2.8%  libss_update_objlist (libssrt.so: ssbase.c, 932)
+    [51]           0   0.0%  100.0%           1   2.8%  libss_scan_addresses_from_rld (libssrt.so: ssbase.c, 243)
+    [52]           0   0.0%  100.0%           1   2.8%  libss_get_dso_by_name (libssrt.so: ssbase.c, 198)
+    [17]           0   0.0%  100.0%           4  11.1%  fillCQueue (tunnel: tunnel.c, 291)
+    [53]           0   0.0%  100.0%           1   2.8%  randomMatrix (tunnel: tunnel.c, 250)
+    [54]           0   0.0%  100.0%           1   2.8%  rotmtrx_y (tunnel: matrix.c, 82)
+    [23]           0   0.0%  100.0%           3   8.3%  xformBases (tunnel: tunnel.c, 207)
+     [8]           0   0.0%  100.0%           9  25.0%  txmAddTexFile (tunnel: txm.c, 310)
+    [31]           0   0.0%  100.0%           2   5.6%  txmAddTexture (tunnel: txm.c, 347)
+     [3]           0   0.0%  100.0%          11  30.6%  _SGIPT_pt_start (libpthread.so: pt.c, 791)
+     [4]           0   0.0%  100.0%          11  30.6%  timer_thread (libve.so: ve_main.c, 394)
+    [18]           0   0.0%  100.0%           4  11.1%  veTimerProcEvent (libve.so: ve_timer.c, 213)
+     [5]           0   0.0%  100.0%          11  30.6%  veRun (libve.so: ve_main.c, 433)
+     [6]           0   0.0%  100.0%          11  30.6%  veEventLoop (libve.so: ve_main.c, 421)
+     [7]           0   0.0%  100.0%          11  30.6%  render_thread (libve.so: ve_main.c, 340)
+    [19]           0   0.0%  100.0%           4  11.1%  veTimerEventsPending (libve.so: ve_timer.c, 160)
+    [12]           0   0.0%  100.0%           7  19.4%  veClock (libveclock.so: ve_clock_unix.c, 117)
+    [13]           0   0.0%  100.0%           7  19.4%  get_the_time (libveclock.so: ve_clock_unix.c, 54)
+    [14]           0   0.0%  100.0%           7  19.4%  _clock_gettime (libc.so.1: clock_gettime.c, 39)
+     [9]           0   0.0%  100.0%           8  22.2%  veRender (libveglx.so: vei_glx.c, 660)
+    [55]           0   0.0%  100.0%           1   2.8%  veiGlPreDisplay (libveglx.so: vei_gl.c, 112)
+    [56]           0   0.0%  100.0%           1   2.8%  predisplay (tunnel: tunnel.c, 563)
+    [57]           0   0.0%  100.0%           1   2.8%  veUnlockFrameExcl (libve.so: ve_core.c, 267)
+    [24]           0   0.0%  100.0%           3   8.3%  timer_proc (tunnel: tunnel.c, 607)
+    [32]           0   0.0%  100.0%           2   5.6%  move (tunnel: tunnel.c, 516)
+    [33]           0   0.0%  100.0%           2   5.6%  catmull_rom (tunnel: tunnel.c, 56)
+    [15]           0   0.0%  100.0%           6  16.7%  veMPSendCtrl (libve.so: ve_mp.c, 489)
+    [58]           0   0.0%  100.0%           1   2.8%  veMPLocationPush (libve.so: ve_mp.c, 416)
+    [25]           0   0.0%  100.0%           3   8.3%  veMPIntPush (libve.so: ve_mp.c, 442)
+    [26]           0   0.0%  100.0%           3   8.3%  veMP_OSSend (libve.so: ve_mp_posix.c, 718)
+    [59]           0   0.0%  100.0%           1   2.8%  veAddTimerProc (libve.so: ve_timer.c, 148)
+    [34]           0   0.0%  100.0%           2   5.6%  _writev (libc.so.1: writevSCI.c, 27)
+
+-------------------------------------------------------------------------
+Butterfly function list, in descending order by inclusive counts
+-------------------------------------------------------------------------
+         attrib.% attrib.ovfs                         incl.ovfs  caller (callsite) [index]
+ [index]   incl.%   incl.ovfs    self%   self-ovfs       function [index]
+                              attrib.% attrib.ovfs    incl.ovfs  callee (callsite) [index]
+-------------------------------------------------------------------------
+     [1]    69.4%          25     0.0%           0         __start [1]
+                                 69.4%          25           25  main (@0x10003e38; tunnel: crt1text.s, 177) [2]
+-------------------------------------------------------------------------
+            69.4%          25                                25  __start (@0x10003e38; tunnel: crt1text.s, 177) [1]
+     [2]    69.4%          25     0.0%           0         main [2]
+                                 30.6%          11           11  veRun (@0x10006e5c; tunnel: tunnel.c, 708) [5]
+                                 25.0%           9            9  txmAddTexFile (@0x10006dcc; tunnel: tunnel.c, 702) [8]
+                                 11.1%           4            4  fillCQueue (@0x10006c8c; tunnel: tunnel.c, 685) [17]
+                                  2.8%           1            1  veInit (@0x10006abc; tunnel: tunnel.c, 656) [40]
+-------------------------------------------------------------------------
+     [3]    30.6%          11     0.0%           0         _SGIPT_pt_start [3]
+                                 30.6%          11           11  timer_thread (@0x0c21bd3c; libpthread.so: pt.c, 797) [4]
+-------------------------------------------------------------------------
+            30.6%          11                                11  _SGIPT_pt_start (@0x0c21bd3c; libpthread.so: pt.c, 797) [3]
+     [4]    30.6%          11     0.0%           0         timer_thread [4]
+                                 11.1%           4            4  veTimerProcEvent (@0x5ffa9668; libve.so: ve_main.c, 401) [18]
+                                  8.3%           3            4  veTimerEventsPending (@0x5ffa9644; libve.so: ve_main.c, 399) [19]
+                                  8.3%           3            3  veTimerWaitForEvents (@0x5ffa9614; libve.so: ve_main.c, 397) [21]
+                                  2.8%           1            4  veTimerEventsPending (@0x5ffa96a4; libve.so: ve_main.c, 399) [19]
+-------------------------------------------------------------------------
+            30.6%          11                                25  main (@0x10006e5c; tunnel: tunnel.c, 708) [2]
+     [5]    30.6%          11     0.0%           0         veRun [5]
+                                 30.6%          11           11  veEventLoop (@0x5ffa9918; libve.so: ve_main.c, 448) [6]
+-------------------------------------------------------------------------
+            30.6%          11                                11  veRun (@0x5ffa9918; libve.so: ve_main.c, 448) [5]
+     [6]    30.6%          11     0.0%           0         veEventLoop [6]
+                                 30.6%          11           11  render_thread (@0x5ffa982c; libve.so: ve_main.c, 429) [7]
+-------------------------------------------------------------------------
+            30.6%          11                                11  veEventLoop (@0x5ffa982c; libve.so: ve_main.c, 429) [6]
+     [7]    30.6%          11     0.0%           0         render_thread [7]
+                                 22.2%           8            8  veRender (@0x5ffa9420; libve.so: ve_main.c, 364) [9]
+                                  2.8%           1            3  veThrMutexUnlock (@0x5ffa9408; libve.so: ve_main.c, 362) [22]
+                                  2.8%           1            1  veUnlockFrameExcl (@0x5ffa942c; libve.so: ve_main.c, 365) [57]
+                                  2.8%           1            7  veClock (@0x5ffa9468; libve.so: ve_main.c, 369) [12]
+-------------------------------------------------------------------------
+            25.0%           9                                25  main (@0x10006dcc; tunnel: tunnel.c, 702) [2]
+     [8]    25.0%           9     0.0%           0         txmAddTexFile [8]
+                                 19.4%           7            7  txmLoadPNM (@0x10009238; tunnel: txm.c, 327) [10]
+                                  5.6%           2            2  txmAddTexture (@0x10009338; tunnel: txm.c, 338) [31]
+-------------------------------------------------------------------------
+            22.2%           8                                11  render_thread (@0x5ffa9420; libve.so: ve_main.c, 364) [7]
+     [9]    22.2%           8     0.0%           0         veRender [9]
+                                 13.9%           5            6  veMPSendCtrl (@0x5ff6aed4; libveglx.so: vei_glx.c, 666) [15]
+                                  2.8%           1            1  veiGlPreDisplay (@0x5ff6ae9c; libveglx.so: vei_glx.c, 661) [55]
+                                  2.8%           1            6  veMPSendCtrl (@0x5ff6aefc; libveglx.so: vei_glx.c, 669) [15]
+                                  2.8%           1            1  veMPLocationPush (@0x5ff6aea8; libveglx.so: vei_glx.c, 663) [58]
+-------------------------------------------------------------------------
+            19.4%           7                                 9  txmAddTexFile (@0x10009238; tunnel: txm.c, 327) [8]
+    [10]    19.4%           7    19.4%           7         txmLoadPNM [10]
+-------------------------------------------------------------------------
+            19.4%           7                                 7  _clock_gettime (@0x0fa524e4; libc.so.1: clock_gettime.c, 45) [14]
+    [11]    19.4%           7    19.4%           7         _BSD_getime [11]
+-------------------------------------------------------------------------
+             2.8%           1                                11  render_thread (@0x5ffa9468; libve.so: ve_main.c, 369) [7]
+             2.8%           1                                 4  veTimerProcEvent (@0x5ffad77c; libve.so: ve_timer.c, 217) [18]
+             5.6%           2                                 3  veTimerWaitForEvents (@0x5ffad548; libve.so: ve_timer.c, 183) [21]
+             8.3%           3                                 4  veTimerEventsPending (@0x5ffad398; libve.so: ve_timer.c, 163) [19]
+    [12]    19.4%           7     0.0%           0         veClock [12]
+                                 19.4%           7            7  get_the_time (@0x5ffe0e08; libveclock.so: ve_clock_unix.c, 120) [13]
+-------------------------------------------------------------------------
+            19.4%           7                                 7  veClock (@0x5ffe0e08; libveclock.so: ve_clock_unix.c, 120) [12]
+    [13]    19.4%           7     0.0%           0         get_the_time [13]
+                                 19.4%           7            7  _clock_gettime (@0x5ffe0a9c; libveclock.so: ve_clock_unix.c, 56) [14]
+-------------------------------------------------------------------------
+            19.4%           7                                 7  get_the_time (@0x5ffe0a9c; libveclock.so: ve_clock_unix.c, 56) [13]
+    [14]    19.4%           7     0.0%           0         _clock_gettime [14]
+                                 19.4%           7            7  _BSD_getime (@0x0fa524e4; libc.so.1: clock_gettime.c, 45) [11]
+-------------------------------------------------------------------------
+             2.8%           1                                 8  veRender (@0x5ff6aefc; libveglx.so: vei_glx.c, 669) [9]
+            13.9%           5                                 8  veRender (@0x5ff6aed4; libveglx.so: vei_glx.c, 666) [9]
+    [15]    16.7%           6     0.0%           0         veMPSendCtrl [15]
+                                 11.1%           4            4  strncpy (@0x5ffb1a08; libve.so: ve_mp.c, 491) [16]
+                                  5.6%           2            3  veMPIntPush (@0x5ffb1a68; libve.so: ve_mp.c, 494) [25]
+-------------------------------------------------------------------------
+            11.1%           4                                 6  veMPSendCtrl (@0x5ffb1a08; libve.so: ve_mp.c, 491) [15]
+    [16]    11.1%           4    11.1%           4         strncpy [16]
+-------------------------------------------------------------------------
+            11.1%           4                                25  main (@0x10006c8c; tunnel: tunnel.c, 685) [2]
+    [17]    11.1%           4     0.0%           0         fillCQueue [17]
+                                  8.3%           3            3  xformBases (@0x10005648; tunnel: tunnel.c, 303) [23]
+                                  2.8%           1            1  randomMatrix (@0x10005624; tunnel: tunnel.c, 302) [53]
+-------------------------------------------------------------------------
+            11.1%           4                                11  timer_thread (@0x5ffa9668; libve.so: ve_main.c, 401) [4]
+    [18]    11.1%           4     0.0%           0         veTimerProcEvent [18]
+                                  8.3%           3            3  timer_proc (@0x5ffad8a8; libve.so: ve_timer.c, 234) [24]
+                                  2.8%           1            7  veClock (@0x5ffad77c; libve.so: ve_timer.c, 217) [12]
+-------------------------------------------------------------------------
+             2.8%           1                                11  timer_thread (@0x5ffa96a4; libve.so: ve_main.c, 399) [4]
+             8.3%           3                                11  timer_thread (@0x5ffa9644; libve.so: ve_main.c, 399) [4]
+    [19]    11.1%           4     0.0%           0         veTimerEventsPending [19]
+                                  8.3%           3            7  veClock (@0x5ffad398; libve.so: ve_timer.c, 163) [12]
+                                  2.8%           1            3  veThrMutexUnlock (@0x5ffad3ec; libve.so: ve_timer.c, 164) [22]
+-------------------------------------------------------------------------
+             2.8%           1                                 3  xformBases (@0x10005270; tunnel: tunnel.c, 215) [23]
+             2.8%           1                                 3  xformBases (@0x10005248; tunnel: tunnel.c, 213) [23]
+             2.8%           1                                 3  xformBases (@0x10005234; tunnel: tunnel.c, 212) [23]
+    [20]     8.3%           3     8.3%           3         mult_point [20]
+-------------------------------------------------------------------------
+             8.3%           3                                11  timer_thread (@0x5ffa9614; libve.so: ve_main.c, 397) [4]
+    [21]     8.3%           3     2.8%           1         veTimerWaitForEvents [21]
+                                  5.6%           2            7  veClock (@0x5ffad548; libve.so: ve_timer.c, 183) [12]
+-------------------------------------------------------------------------
+             2.8%           1                                 4  veTimerEventsPending (@0x5ffad3ec; libve.so: ve_timer.c, 164) [19]
+             2.8%           1                                 1  veUnlockFrameExcl (@0x5ff977ec; libve.so: ve_core.c, 274) [57]
+             2.8%           1                                11  render_thread (@0x5ffa9408; libve.so: ve_main.c, 362) [7]
+    [22]     8.3%           3     2.8%           1         veThrMutexUnlock [22]
+                                  5.6%           2            2  pthread_mutex_unlock (@0x5ffb2d9c; libve.so: ve_thread_posix.c, 191) [28]
+-------------------------------------------------------------------------
+             8.3%           3                                 4  fillCQueue (@0x10005648; tunnel: tunnel.c, 303) [17]
+    [23]     8.3%           3     0.0%           0         xformBases [23]
+                                  2.8%           1            3  mult_point (@0x10005234; tunnel: tunnel.c, 212) [20]
+                                  2.8%           1            3  mult_point (@0x10005248; tunnel: tunnel.c, 213) [20]
+                                  2.8%           1            3  mult_point (@0x10005270; tunnel: tunnel.c, 215) [20]
+-------------------------------------------------------------------------
+             8.3%           3                                 4  veTimerProcEvent (@0x5ffad8a8; libve.so: ve_timer.c, 234) [18]
+    [24]     8.3%           3     0.0%           0         timer_proc [24]
+                                  5.6%           2            2  move (@0x100067e0; tunnel: tunnel.c, 608) [32]
+                                  2.8%           1            1  veAddTimerProc (@0x10006804; tunnel: tunnel.c, 610) [59]
+-------------------------------------------------------------------------
+             2.8%           1                                 1  veMPLocationPush (@0x5ffb143c; libve.so: ve_mp.c, 422) [58]
+             5.6%           2                                 6  veMPSendCtrl (@0x5ffb1a68; libve.so: ve_mp.c, 494) [15]
+    [25]     8.3%           3     0.0%           0         veMPIntPush [25]
+                                  8.3%           3            3  veMP_OSSend (@0x5ffb163c; libve.so: ve_mp.c, 448) [26]
+-------------------------------------------------------------------------
+             8.3%           3                                 3  veMPIntPush (@0x5ffb163c; libve.so: ve_mp.c, 448) [25]
+    [26]     8.3%           3     0.0%           0         veMP_OSSend [26]
+                                  5.6%           2            2  _writev (@0x5ffb631c; libve.so: ve_mp_posix.c, 737) [34]
+                                  2.8%           1            1  veGetDebugLevel (@0x5ffb627c; libve.so: ve_mp_posix.c, 725) [38]
+-------------------------------------------------------------------------
+             5.6%           2                                 2  txmAddTexture (@0x10009470; tunnel: txm.c, 352) [31]
+    [27]     5.6%           2     5.6%           2         cksumtex [27]
+-------------------------------------------------------------------------
+             5.6%           2                                 3  veThrMutexUnlock (@0x5ffb2d9c; libve.so: ve_thread_posix.c, 191) [22]
+    [28]     5.6%           2     5.6%           2         pthread_mutex_unlock [28]
+-------------------------------------------------------------------------
+             2.8%           1                                 2  catmull_rom (@0x10004158; tunnel: tunnel.c, 66) [33]
+             2.8%           1                                 2  catmull_rom (@0x10004090; tunnel: tunnel.c, 60) [33]
+    [29]     5.6%           2     5.6%           2         sum [29]
+-------------------------------------------------------------------------
+             5.6%           2                                 2  _writev (@0x0fa47fc8; libc.so.1: writevSCI.c, 29) [34]
+    [30]     5.6%           2     5.6%           2         __writev [30]
+-------------------------------------------------------------------------
+             5.6%           2                                 9  txmAddTexFile (@0x10009338; tunnel: txm.c, 338) [8]
+    [31]     5.6%           2     0.0%           0         txmAddTexture [31]
+                                  5.6%           2            2  cksumtex (@0x10009470; tunnel: txm.c, 352) [27]
+-------------------------------------------------------------------------
+             5.6%           2                                 3  timer_proc (@0x100067e0; tunnel: tunnel.c, 608) [24]
+    [32]     5.6%           2     0.0%           0         move [32]
+                                  5.6%           2            2  catmull_rom (@0x10006464; tunnel: tunnel.c, 537) [33]
+-------------------------------------------------------------------------
+             5.6%           2                                 2  move (@0x10006464; tunnel: tunnel.c, 537) [32]
+    [33]     5.6%           2     0.0%           0         catmull_rom [33]
+                                  2.8%           1            2  sum (@0x10004090; tunnel: tunnel.c, 60) [29]
+                                  2.8%           1            2  sum (@0x10004158; tunnel: tunnel.c, 66) [29]
+-------------------------------------------------------------------------
+             5.6%           2                                 3  veMP_OSSend (@0x5ffb631c; libve.so: ve_mp_posix.c, 737) [26]
+    [34]     5.6%           2     0.0%           0         _writev [34]
+                                  5.6%           2            2  __writev (@0x0fa47fc8; libc.so.1: writevSCI.c, 29) [30]
+-------------------------------------------------------------------------
+             2.8%           1                                 1  libss_get_dso_by_name (@0x09ed4dc4; libssrt.so: ssbase.c, 209) [52]
+    [35]     2.8%           1     2.8%           1         strcmp [35]
+-------------------------------------------------------------------------
+             2.8%           1                                 1  rotmtrx_y (@0x1000714c; tunnel: matrix.c, 84) [54]
+    [36]     2.8%           1     2.8%           1         __cos [36]
+-------------------------------------------------------------------------
+             2.8%           1                                 1  predisplay (@0x10006724; tunnel: tunnel.c, 573) [56]
+    [37]     2.8%           1     2.8%           1         veMatrixRotateArb [37]
+-------------------------------------------------------------------------
+             2.8%           1                                 3  veMP_OSSend (@0x5ffb627c; libve.so: ve_mp_posix.c, 725) [26]
+    [38]     2.8%           1     2.8%           1         veGetDebugLevel [38]
+-------------------------------------------------------------------------
+             2.8%           1                                 1  veAddTimerProc (@0x5ffad2e0; libve.so: ve_timer.c, 153) [59]
+    [39]     2.8%           1     2.8%           1         insertHeap [39]
+-------------------------------------------------------------------------
+             2.8%           1                                25  main (@0x10006abc; tunnel: tunnel.c, 656) [2]
+    [40]     2.8%           1     0.0%           0         veInit [40]
+                                  2.8%           1            1  process_options (@0x5ffa9244; libve.so: ve_main.c, 327) [41]
+-------------------------------------------------------------------------
+             2.8%           1                                 1  veInit (@0x5ffa9244; libve.so: ve_main.c, 327) [40]
+    [41]     2.8%           1     0.0%           0         process_options [41]
+                                  2.8%           1            1  veReadDeviceManifest (@0x5ffa9130; libve.so: ve_main.c, 248) [42]
+-------------------------------------------------------------------------
+             2.8%           1                                 1  process_options (@0x5ffa9130; libve.so: ve_main.c, 248) [41]
+    [42]     2.8%           1     0.0%           0         veReadDeviceManifest [42]
+                                  2.8%           1            1  veDeviceUse (@0x5ff9c204; libve.so: ve_dev_mf.c, 230) [43]
+-------------------------------------------------------------------------
+             2.8%           1                                 1  veReadDeviceManifest (@0x5ff9c204; libve.so: ve_dev_mf.c, 230) [42]
+    [43]     2.8%           1     0.0%           0         veDeviceUse [43]
+                                  2.8%           1            1  veDeviceUseByDesc (@0x5ffa10d0; libve.so: ve_device.c, 89) [44]
+-------------------------------------------------------------------------
+             2.8%           1                                 1  veDeviceUse (@0x5ffa10d0; libve.so: ve_device.c, 89) [43]
+    [44]     2.8%           1     0.0%           0         veDeviceUseByDesc [44]
+                                  2.8%           1            1  veDeviceFindDriver (@0x5ffa0eb8; libve.so: ve_device.c, 67) [45]
+-------------------------------------------------------------------------
+             2.8%           1                                 1  veDeviceUseByDesc (@0x5ffa0eb8; libve.so: ve_device.c, 67) [44]
+    [45]     2.8%           1     0.0%           0         veDeviceFindDriver [45]
+                                  2.8%           1            1  veRegDynamicDriver (@0x5ff97bd0; libve.so: ve_dev_driver.c, 32) [46]
+-------------------------------------------------------------------------
+             2.8%           1                                 1  veDeviceFindDriver (@0x5ff97bd0; libve.so: ve_dev_driver.c, 32) [45]
+    [46]     2.8%           1     0.0%           0         veRegDynamicDriver [46]
+                                  2.8%           1            1  _dlopen (@0x5ffa2c78; libve.so: ve_driver.c, 156) [47]
+-------------------------------------------------------------------------
+             2.8%           1                                 1  veRegDynamicDriver (@0x5ffa2c78; libve.so: ve_driver.c, 156) [46]
+    [47]     2.8%           1     0.0%           0         _dlopen [47]
+                                  2.8%           1            1  __tp_dlinsert_post (@0x0faa7734; libc.so.1: libdl.c, 50) [48]
+-------------------------------------------------------------------------
+             2.8%           1                                 1  _dlopen (@0x0faa7734; libc.so.1: libdl.c, 50) [47]
+    [48]     2.8%           1     0.0%           0         __tp_dlinsert_post [48]
+                                  2.8%           1            1  libss_dlinsert_post (@0x09fe188c; libss.so: sswrap.c, 124) [49]
+-------------------------------------------------------------------------
+             2.8%           1                                 1  __tp_dlinsert_post (@0x09fe188c; libss.so: sswrap.c, 124) [48]
+    [49]     2.8%           1     0.0%           0         libss_dlinsert_post [49]
+                                  2.8%           1            1  libss_update_objlist (@0x09ee5080; libssrt.so: sslibc.c, 1244) [50]
+-------------------------------------------------------------------------
+             2.8%           1                                 1  libss_dlinsert_post (@0x09ee5080; libssrt.so: sslibc.c, 1244) [49]
+    [50]     2.8%           1     0.0%           0         libss_update_objlist [50]
+                                  2.8%           1            1  libss_scan_addresses_from_rld (@0x09ed6928; libssrt.so: ssbase.c, 987) [51]
+-------------------------------------------------------------------------
+             2.8%           1                                 1  libss_update_objlist (@0x09ed6928; libssrt.so: ssbase.c, 987) [50]
+    [51]     2.8%           1     0.0%           0         libss_scan_addresses_from_rld [51]
+                                  2.8%           1            1  libss_get_dso_by_name (@0x09ed524c; libssrt.so: ssbase.c, 327) [52]
+-------------------------------------------------------------------------
+             2.8%           1                                 1  libss_scan_addresses_from_rld (@0x09ed524c; libssrt.so: ssbase.c, 327) [51]
+    [52]     2.8%           1     0.0%           0         libss_get_dso_by_name [52]
+                                  2.8%           1            1  strcmp (@0x09ed4dc4; libssrt.so: ssbase.c, 209) [35]
+-------------------------------------------------------------------------
+             2.8%           1                                 4  fillCQueue (@0x10005624; tunnel: tunnel.c, 302) [17]
+    [53]     2.8%           1     0.0%           0         randomMatrix [53]
+                                  2.8%           1            1  rotmtrx_y (@0x10005508; tunnel: tunnel.c, 262) [54]
+-------------------------------------------------------------------------
+             2.8%           1                                 1  randomMatrix (@0x10005508; tunnel: tunnel.c, 262) [53]
+    [54]     2.8%           1     0.0%           0         rotmtrx_y [54]
+                                  2.8%           1            1  __cos (@0x1000714c; tunnel: matrix.c, 84) [36]
+-------------------------------------------------------------------------
+             2.8%           1                                 8  veRender (@0x5ff6ae9c; libveglx.so: vei_glx.c, 661) [9]
+    [55]     2.8%           1     0.0%           0         veiGlPreDisplay [55]
+                                  2.8%           1            1  predisplay (@0x5ff66df8; libveglx.so: vei_gl.c, 114) [56]
+-------------------------------------------------------------------------
+             2.8%           1                                 1  veiGlPreDisplay (@0x5ff66df8; libveglx.so: vei_gl.c, 114) [55]
+    [56]     2.8%           1     0.0%           0         predisplay [56]
+                                  2.8%           1            1  veMatrixRotateArb (@0x10006724; tunnel: tunnel.c, 573) [37]
+-------------------------------------------------------------------------
+             2.8%           1                                11  render_thread (@0x5ffa942c; libve.so: ve_main.c, 365) [7]
+    [57]     2.8%           1     0.0%           0         veUnlockFrameExcl [57]
+                                  2.8%           1            3  veThrMutexUnlock (@0x5ff977ec; libve.so: ve_core.c, 274) [22]
+-------------------------------------------------------------------------
+             2.8%           1                                 8  veRender (@0x5ff6aea8; libveglx.so: vei_glx.c, 663) [9]
+    [58]     2.8%           1     0.0%           0         veMPLocationPush [58]
+                                  2.8%           1            3  veMPIntPush (@0x5ffb143c; libve.so: ve_mp.c, 422) [25]
+-------------------------------------------------------------------------
+             2.8%           1                                 3  timer_proc (@0x10006804; tunnel: tunnel.c, 610) [24]
+    [59]     2.8%           1     0.0%           0         veAddTimerProc [59]
+                                  2.8%           1            1  insertHeap (@0x5ffad2e0; libve.so: ve_timer.c, 153) [39]
+-------------------------------------------------------------------------
+

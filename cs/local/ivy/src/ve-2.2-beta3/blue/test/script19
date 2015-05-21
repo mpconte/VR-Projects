@@ -1,0 +1,40 @@
+#
+# Test strtrim and its ilk...
+#
+set test1 " \t \n leading \v \r and \n \r \t   trailing   \r \t"
+
+set test_ltrim "leading \v \r and \n \r \t   trailing   \r \t"
+set test_rtrim " \t \n leading \v \r and \n \r \t   trailing"
+set test_trim "leading \v \r and \n \r \t   trailing"
+
+set c [strltrim $test1]
+if { $c != $test_ltrim } {
+    error "ltrim test failed"
+} else {
+    [stdout] writeln "ltrim test passed"
+}
+set c [strrtrim $test1]
+if { $c != $test_rtrim } {
+    error "rtrim test failed"
+} else {
+    [stdout] writeln "rtrim test passed"
+}
+set c [strtrim $test1]
+if { $c != $test_trim } {
+    error "trim test failed"
+} else {
+    [stdout] writeln "trim test passed"
+}
+
+if { [strtrim ""] != "" } {
+    error "trim of empty string failed"
+} else {
+    [stdout] writeln "empty string trim test passed"
+}
+
+# trim alternate characters
+if { [strtrim "abccbafoobarabcbca" "abc"] != "foobar" } {
+    error "trim of arbitrary chars failed"
+} else {
+    [stdout] writeln "arbitrary trim test passed"
+}

@@ -1,0 +1,352 @@
+<html>
+<head>
+<title>File: ve_stats.h</title>
+</head>
+<body>
+<h1>File: ve_stats.h</h1>
+
+
+<p>
+  <p>The ve_stats module provides a general method for reporting and
+  managing statistics.  While the program is running there are numerous
+  statistics (e.g. frame rate) which are interesting to devlopers and
+  users.  It would be useful if these statistics could be viewed live
+  (while the application is running) or logged for perusal after
+  the program finishes.
+  <p>This module provides the support for storing the data, managing
+  access to the data, and a callback mechanism for informing other
+  parts of the program of changes to interesting data.
+
+ 
+<p>
+<a name="enum_VeStatisticType"></a><p><em>Enumeration:</em> <b>VeStatisticType</b>
+<blockquote>
+  This describes the format of a statistic.  The set of possible
+  formats is deliberately limited so that it is relatively simple
+  to interpret a statistic.  The meaning of the data member of the 
+  VeStatistic structure is described for each value:
+
+<p><b>VE_STAT_INT</b> - 
+  An integer.  "data" points to an "int".  (i.e. cast "data" to a "int *")
+<p><b>VE_STAT_FLOAT</b> - 
+  A floating-point number.  "data" points to a "float".
+  (i.e. cast "data" to a "float *")
+<p><b>VE_STAT_STRING</b> - 
+  A string - an arbitrary value type.  Note that this is really
+  a "catch-all".  If a statistic can be represented well by another
+  type, then it is better to use that type rather than a string.
+  "data" points to a "char *". (i.e. cast "data" to a "char **")
+ 
+<pre>
+typedef enum {
+  VE_STAT_INT,
+  VE_STAT_FLOAT,
+  VE_STAT_STRING
+} VeStatisticType;</pre></blockquote>
+<p>
+<a name="type_VeStatCallback"></a><p><em>Type:</em> <b>VeStatCallback</b>
+<blockquote>
+  The function prototype for any statistic callback.  A callback will
+  get one argument - a pointer to the statistic that has changed, or
+  a NULL pointer, indicating that some number of statistics (>1) have
+  been updated and that the callback should decide for itself which
+  statistics to look at.
+ 
+<pre>
+typedef void (*VeStatCallback)(struct ve_statistic *);</pre></blockquote>
+<p>
+<a name="struct_VeStatCallbackList"></a><p><em>Structure:</em> <b>VeStatCallbackList</b>
+<blockquote>
+  A linked-list of statistic callbacks and their associated properties.
+  
+<pre>
+typedef struct ve_stat_cback_list {</pre><p>
+<p><b>cback</b> - 
+    The callback to be called.
+    
+<pre>
+  VeStatCallback cback;</pre><pre></pre><p>
+<p><b>last_call</b> - 
+    The time of the last callback in milliseconds
+    (relative to veCurrentTime()).
+    
+<pre>
+  long last_call;</pre><pre></pre><p>
+<p><b>min_interval</b> - 
+    The minimum time in milliseconds between calls to this callback.
+    If zero, then there is the callback will be called as often as necessary.
+    If greater than zero, then updates that occur before min_interval
+    milliseconds have passed are discarded for this callback.
+    
+<pre>
+  long min_interval;</pre><pre>
+  
+  
+  
+  struct ve_stat_cback_list *next;
+} VeStatCallbackList;</pre></blockquote>
+<p>
+<a name="struct_VeStatistic"></a><p><em>Structure:</em> <b>VeStatistic</b>
+<blockquote>
+  The VeStatistic structure represents a single statistic that may be
+  gathered while the program is running.
+  
+<pre>
+typedef struct ve_statistic {</pre><p>
+<p><b>module</b> - 
+    The name of the module from which this statistic originates.
+    
+<pre>
+  char *module;</pre><pre></pre><p>
+<p><b>name</b> - 
+    The name of the statistic.  This name is only guaranteed to be
+    unique within a module, so the combination of "module" and "name"
+    is unique, but the name alone might not be.
+    
+<pre>
+  char *name;</pre><pre></pre><p>
+<p><b>type</b> - 
+    The type of the statistic (from the enum VeStatisticType).  This
+    defines the format of the data stored here.
+    
+<pre>
+  VeStatisticType type;</pre><pre></pre><p>
+<p><b>units</b> - 
+    A string describing the units of the statistic.  This is for 
+    display purposes only - this value will not be interpreted directly.
+    
+<pre>
+  char *units;</pre><pre></pre><p>
+<p><b>data</b> - 
+    The actual statistic data.  The meaning of this value is dependent
+    upon the "type" member.  (See the info on the VeStatisticType enum
+    for more information.)
+    
+<pre>
+  void *data;</pre><pre></pre><p>
+<p><b>last_change</b> - 
+    The time when this statistic was last changed, in milliseconds, relative
+    to veCurrentTime().
+    
+<pre>
+  long last_change;</pre><pre></pre><p>
+<p><b>listeners</b> - 
+    A linked-list of callbacks that should be called when this specific
+    statistic is changed, as opposed to the general statistic callback which
+    is triggered when any statistic changes.
+    
+<pre>
+  VeStatCallbackList *listeners;</pre><pre></pre><p>
+<p><b>listen_mutex</b> - 
+    A mutex used for managing changes to the callback list
+    
+<pre>
+  VeThrMutex *listen_mutex;</pre><pre></pre><p>
+<p><b>udata</b> - 
+    Often when maintaining a statistic, many other values are needed as
+    well.  This holder is provided so that the modules which provide
+    the statistic can also store the extra data necessary to maintain the
+    statistic with the statistic structure.  Applications and callbacks
+    should ignore this field and not modify it.
+   
+<pre>
+  void *udata;</pre><pre>
+} VeStatistic;</pre></blockquote>
+<p>
+<a name="struct_VeStatisticList"></a><p><em>Structure:</em> <b>VeStatisticList</b>
+<blockquote>
+  A linked-list of statistics, both used internally for tracking and
+  as a means of walking through the set of available statistics.
+  
+<pre>
+typedef struct ve_stat_list {
+  VeStatistic *stat;
+  struct ve_stat_list *next;
+} VeStatisticList;</pre></blockquote>
+<p>
+<a name="function_veStatInit"></a><p><em>Function:</em> <b>veStatInit</b>
+<blockquote>
+<pre>
+void veStatInit(void);</pre>    <p>Initializes the statistics sub-system.  Must be called from a
+    thread-safe point before the statistics are used. 
+
+</blockquote>
+<p>
+<a name="function_veAddStatistic"></a><p><em>Function:</em> <b>veAddStatistic</b>
+<blockquote>
+<pre>
+int veAddStatistic(VeStatistic *stat);</pre>  Called by a module to make a statistic available.
+  Until this is done, no callbacks can be setup to listen to changes on
+  this statistic.  Callbacks which are setup to listen to any changes
+  will be notified immediately of this statistic.  Modules should ensure
+  that there is valid data in the statistic as it may be processed
+  immediately.
+
+<p><b>stat</b> - 
+  A pointer to the statistic structure.  The memory for the structure
+  is handled by the module and should not be freed without calling
+  veRemoveStatistic.
+
+<p><i>Returns:</i> 
+  0 on success, non-zero on failure.  Errors are logged using the
+  standard VE error mechanism.  An error will be generated if the
+  statistic has already been added.
+
+  
+</blockquote>
+<p>
+<a name="function_veRemoveStatistic"></a><p><em>Function:</em> <b>veRemoveStatistic</b>
+<blockquote>
+<pre>
+int veRemoveStatistic(VeStatistic *stat);</pre>  Called by a module to indicate that a statistic should no longer
+  be made available.  After returning from this call, it is safe to
+  free the statistic structure.  No further references to the statistic
+  will be kept outside of the module.
+
+<p><b>stat</b> - 
+  A pointer to the statistic structure to be removed.  This must be
+  the same pointer that was passed to the corresponding veAddStatistic()
+  call.
+
+<p><i>Returns:</i> 
+  0 on success, non-zero on failure.  Errors are logged using the
+  standard VE error mechanism.  An error will be generated if the
+  statistic is not currently in use.
+  
+</blockquote>
+<p>
+<a name="function_veGetStatistics"></a><p><em>Function:</em> <b>veGetStatistics</b>
+<blockquote>
+<pre>
+VeStatisticList *veGetStatistics();</pre>  Returns a pointer to the head of the list of statistics.
+  Applications and callbacks can use this function to determine
+  the currently available statistics.
+
+<p><i>Returns:</i> 
+  A pointer to the head of list if successful, and NULL if there
+  is a failure or if the list is empty.
+  
+</blockquote>
+<p>
+<a name="function_veAddStatCallback"></a><p><em>Function:</em> <b>veAddStatCallback</b>
+<blockquote>
+<pre>
+int veAddStatCallback(VeStatistic *stat, VeStatCallback cback, 
+		      long min_interval);</pre>  Adds a callback to the given statistic.
+
+<p><b>stat</b> - 
+  The statistic to add the callback to.  If this value is NULL
+  then a general statistic callback will be setup - this callback
+  will be called for any change to any statistic and whenever a new
+  statistic is added.
+
+<p><b>cback</b> - 
+  The callback that will be added.
+
+<p><b>min_interval</b> - 
+  The minimum time in milliseconds that must pass between calls to this
+  callback.  This helps throttle the update rate when slower frequencies
+  are sufficient.  If set to zero, then the callback will be called every
+  time the data changes.
+
+<p><i>Returns:</i> 
+  0 on success, non-zero on failure.  Errors are logged using the
+  standard VE error mechanism.  An error will be generated if the
+  given callback is already listening on the given statistic, or
+  if the given callback is already a general statistic callback.
+ 
+</blockquote>
+<p>
+<a name="function_veRemoveStatCallback"></a><p><em>Function:</em> <b>veRemoveStatCallback</b>
+<blockquote>
+<pre>
+int veRemoveStatCallback(VeStatistic *stat, VeStatCallback cback);</pre>  Removes a callback from the given statistic.
+
+<p><b>stat</b> - 
+  The statistic to remove the callback from.  If this value is NULL
+  then the corresponding general statistic callback (if it exists)
+  will be removed.
+
+<p><b>cback</b> - 
+  The callback that will be added.
+
+<p><i>Returns:</i> 
+  0 on success, non-zero on failure.  Errors are logged using the
+  standard VE error mechanism.
+ 
+</blockquote>
+<p>
+<a name="function_veUpdateStatistic"></a><p><em>Function:</em> <b>veUpdateStatistic</b>
+<blockquote>
+<pre>
+int veUpdateStatistic(VeStatistic *stat);</pre>  Called by a module to let the system know that this statistic has
+  been updated.  The system will then arrange for the appropriate
+  callbacks to be called.
+
+<p><b>stat</b> - 
+  The statistic that has changed.
+
+<p><i>Returns:</i> 
+  0 on success, non-zero on failure.  Errors are logged using the
+  standard VE error mechanism.
+  
+</blockquote>
+<p>
+<a name="function_veNewStatistic"></a><p><em>Function:</em> <b>veNewStatistic</b>
+<blockquote>
+<pre>
+VeStatistic *veNewStatistic(char *module, char *name, char *units);</pre>  Creates an empty VeStatistic structure which the extra structures
+  (i.e. synchronization units) initialized.
+
+<p><b>module</b> - 
+  Value that will be placed in the module slot in the structure.
+<p><b>name</b> - 
+  Value that will be placed in the name slot in the structure.
+<p><b>units</b> - 
+  Value that will be placed in the units slot in the structure.
+
+  Note that for "module", "name" and "units" these strings will
+  not be copied - the given pointers will just be stuffed into the
+  structure.
+  
+</blockquote>
+<p>
+<a name="function_veStatToString"></a><p><em>Function:</em> <b>veStatToString</b>
+<blockquote>
+<pre>
+int veStatToString(VeStatistic *stat, char *str_ret, int len);</pre>  Converts a statistic to a printable string describing the statistic
+  and its current value.
+
+<p><b>stat</b> - 
+  The statistic to convert to a string.
+
+<p><b>str_ret</b> - 
+  The string in which the result will be printed.
+
+<p><b>len</b> - 
+  The length of the space pointed to by str_ret.
+  
+</blockquote>
+
+<h2>Index</h2>
+<ul>
+<li><a href="#enum_VeStatisticType">VeStatisticType (enum)</a></li>
+<li><a href="#function_veAddStatCallback">veAddStatCallback (function)</a></li>
+<li><a href="#function_veAddStatistic">veAddStatistic (function)</a></li>
+<li><a href="#function_veGetStatistics">veGetStatistics (function)</a></li>
+<li><a href="#function_veNewStatistic">veNewStatistic (function)</a></li>
+<li><a href="#function_veRemoveStatCallback">veRemoveStatCallback (function)</a></li>
+<li><a href="#function_veRemoveStatistic">veRemoveStatistic (function)</a></li>
+<li><a href="#function_veStatInit">veStatInit (function)</a></li>
+<li><a href="#function_veStatToString">veStatToString (function)</a></li>
+<li><a href="#function_veUpdateStatistic">veUpdateStatistic (function)</a></li>
+<li><a href="#struct_VeStatCallbackList">VeStatCallbackList (struct)</a></li>
+<li><a href="#struct_VeStatistic">VeStatistic (struct)</a></li>
+<li><a href="#struct_VeStatisticList">VeStatisticList (struct)</a></li>
+<li><a href="#type_VeStatCallback">VeStatCallback (type)</a></li>
+<li><a href="#value_VE_STAT_FLOAT">VE_STAT_FLOAT (value)</a></li>
+<li><a href="#value_VE_STAT_INT">VE_STAT_INT (value)</a></li>
+<li><a href="#value_VE_STAT_STRING">VE_STAT_STRING (value)</a></li>
+</ul>
+</body>
+</html>

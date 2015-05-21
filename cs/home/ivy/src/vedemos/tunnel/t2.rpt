@@ -1,0 +1,675 @@
+-------------------------------------------------------------------------
+SpeedShop profile listing generated Thu Feb 20 16:17:36 2003
+   prof -b tunnel tunnel.gi_hwctime.fe44528
+                  tunnel (n32): Target program
+                    gi_hwctime: Experiment name
+  hwct,15,1000003,0,SIGPROF:cu: Marching orders
+               R12000 / R12010: CPU / FPU
+                            16: Number of CPUs
+                            44: Clock frequency (MHz.)
+  Experiment notes--
+	  From file tunnel.gi_hwctime.fe44528:
+	Caliper point 0 at target begin, PID 44528
+			./tunnel -vemp_slave 0 -ve_env ivy.par.env
+	Caliper point 1 at exit/fatal signal 15
+-------------------------------------------------------------------------
+Summary of perf. counter overflow callstack sampling data (gi_hwctime)--
+                         18245: Total Samples
+                             0: Samples with incomplete traceback
+   Graduated instructions (15): Counter name (number)
+                       1000003: Counter overflow value
+                   18245054735: Total counts
+
+                    Cycles (0): Aggregate counter name (number)
+               253074481851000: Total aggregate counts
+
+-------------------------------------------------------------------------
+Function list, in descending order by exclusive counts
+-------------------------------------------------------------------------
+ [index]  excl.ovfls excl.%   cum.%  incl.ovfls incl.%  function  (dso: file, line)
+
+     [8]        5043  27.6%   27.6%       17888  98.0%  drawElement (tunnel: tunnel.c, 330)
+    [11]        2705  14.8%   42.5%        2705  14.8%  glVertex3fv (libGLcore.so: g_api.s, 1341)
+    [15]        1844  10.1%   52.6%        1844  10.1%  __glkonim_TexCoord2f (libGLcore.so: kon_cfuncs.c, 249)
+    [16]        1118   6.1%   58.7%        1599   8.8%  bind2DMipmapTexture (libGLcore.so: kon_texture_api.c, 2363)
+    [17]         918   5.0%   63.7%         918   5.0%  __glkonim_Vertex3fv (libGLcore.so: kon_sfuncs.s, 392)
+     [9]         873   4.8%   68.5%        6628  36.3%  txmBindTexture (tunnel: txm.c, 218)
+    [12]         721   4.0%   72.5%        2590  14.2%  __glkonim_BindTextureEXT (libGLcore.so: kon_texture_api.c, 4731)
+    [14]         568   3.1%   75.6%        1905  10.4%  ogl_ctxid (tunnel: txmogl.c, 110)
+    [13]         555   3.0%   78.6%        2460  13.5%  getctx (tunnel: txm.c, 42)
+    [19]         483   2.6%   81.3%         483   2.6%  glXGetCurrentDisplay (libGL.so: glx_cmds.c, 1996)
+    [22]         374   2.0%   83.3%         374   2.0%  glTexCoord2f (libGLcore.so: g_api.s, 1013)
+    [23]         363   2.0%   85.3%         363   2.0%  getmgr (tunnel: txm.c, 34)
+    [24]         256   1.4%   86.7%         256   1.4%  pthread_self (libpthread.so: pt.c, 452)
+    [25]         252   1.4%   88.1%         252   1.4%  glXQueryContextInfoEXT (libGL.so: glx_cmds.c, 2096)
+    [10]         247   1.4%   89.4%        2930  16.1%  ogl_bind (tunnel: txmogl.c, 194)
+    [26]         215   1.2%   90.6%         215   1.2%  updateTexUsage (libGLcore.so: kon_texture_api.c, 798)
+     [5]         166   0.9%   91.5%       18054  99.0%  RenderTunnel (tunnel: tunnel.c, 461)
+    [27]         148   0.8%   92.3%         148   0.8%  updateTexBindID (libGLcore.so: kon_texture_api.c, 324)
+    [28]         137   0.8%   93.1%         137   0.8%  __glNop (libGLcore.so: so_prim.c, 67)
+    [29]         129   0.7%   93.8%         129   0.7%  loadPostTextureScaleBias (libGLcore.so: kon_texture_api.c, 1414)
+    [21]         123   0.7%   94.5%         379   2.1%  _mplib_get_thread_id (libc.so.1: mplib.c, 232)
+    [30]         122   0.7%   95.1%         122   0.7%  __glKonHashFindTexFast (libGLcore.so: kon_texture_util.c, 87)
+    [31]          99   0.5%   95.7%          99   0.5%  glEnd (libGLcore.so: g_api.s, 438)
+    [18]          97   0.5%   96.2%         572   3.1%  glXGetCurrentContext (libGL.so: glx_ext.c, 149)
+    [20]          97   0.5%   96.8%         476   2.6%  __glXInitThread (libGL.so: glx_ext.c, 1306)
+    [32]          93   0.5%   97.3%          93   0.5%  glBindTextureEXT (libGLcore.so: g_api.s, 2882)
+    [34]          77   0.4%   97.7%          77   0.4%  glBegin (libGLcore.so: g_api.s, 85)
+    [37]          59   0.3%   98.0%          59   0.3%  veMatrixMult (libve.so: ve_math.c, 75)
+    [38]          58   0.3%   98.3%          58   0.3%  __glkonim_End (libGLcore.so: kon_modes.c, 35)
+    [40]          52   0.3%   98.6%          52   0.3%  glColor3fv (libGLcore.so: g_api.s, 147)
+    [41]          52   0.3%   98.9%          52   0.3%  __glkonim_Color3fv (libGLcore.so: kon_sfuncs.s, 41)
+    [39]          43   0.2%   99.1%          53   0.3%  MakeCurrentRead (libGLcore.so: kon_context.c, 459)
+    [45]          40   0.2%   99.4%          40   0.2%  __glkonim_Begin (libGLcore.so: kon_modes.c, 23)
+    [46]          30   0.2%   99.5%          30   0.2%  glXGetContextIDEXT (libGL.so: glx_cmds.c, 2123)
+    [49]          18   0.1%   99.6%          18   0.1%  veMatrixIdentity (libve.so: ve_math.c, 10)
+    [35]          13   0.1%   99.7%          74   0.4%  __glXMakeContextCurrent (libGL.so: glx_ext.c, 1839)
+    [57]           7   0.0%   99.7%           7   0.0%  txmLoadPNM (tunnel: txmpnm.c, 13)
+    [58]           6   0.0%   99.8%           7   0.0%  XGetVisualInfo (libX11.so.1: VisUtil.c, 60)
+    [59]           4   0.0%   99.8%           7   0.0%  ptctl (libpthread.so: libcthread.c, 208)
+    [66]           4   0.0%   99.8%           4   0.0%  veVectorNorm (libve.so: ve_math.c, 117)
+    [67]           3   0.0%   99.8%           3   0.0%  cksumtex (tunnel: txm.c, 281)
+    [68]           3   0.0%   99.8%           3   0.0%  _SGIPT_libc_blocking (libpthread.so: intr.c, 260)
+    [76]           2   0.0%   99.8%           2   0.0%  mult_point (tunnel: matrix.c, 191)
+    [77]           2   0.0%   99.9%           2   0.0%  halveImage_ubyte (libGLU.so: mipmap.c, 361)
+    [78]           2   0.0%   99.9%           2   0.0%  __glkona_wait_rdata (libGLcore.so: kon_get.c, 181)
+    [33]           2   0.0%   99.9%          86   0.5%  veGetWindowView (libve.so: ve_core.c, 108)
+    [69]           1   0.0%   99.9%           3   0.0%  xformBases (tunnel: tunnel.c, 207)
+    [63]           1   0.0%   99.9%           6   0.0%  __glXSetupForCommand (libGL.so: glx_ext.c, 1494)
+    [64]           1   0.0%   99.9%           6   0.0%  GetFBConfigs (libGL.so: glx_ext.c, 935)
+     [4]           1   0.0%   99.9%       18142  99.4%  veiGlRenderMonoWindow (libveglx.so: vei_gl.c, 138)
+    [79]           1   0.0%   99.9%           2   0.0%  __glXUnbindHWContextFromThread (libGL.so: glx_direct.c, 610)
+    [60]           1   0.0%   99.9%           7   0.0%  __glXBindHWContextToWindow (libGL.so: glx_direct.c, 630)
+    [70]           1   0.0%   99.9%           3   0.0%  veMP_OSRecv (libve.so: ve_mp_posix.c, 743)
+    [80]           1   0.0%   99.9%           2   0.0%  forceread (libve.so: ve_mp_posix.c, 131)
+    [96]           1   0.0%   99.9%           1   0.0%  __glPixelSetColorScales (libGLcore.so: px_api.c, 68)
+    [61]           1   0.0%   99.9%           7   0.0%  veMatrixTranslate (libve.so: ve_math.c, 68)
+    [97]           1   0.0%   99.9%           1   0.0%  get_the_time (libveclock.so: ve_clock_unix.c, 54)
+    [98]           1   0.0%   99.9%           1   0.0%  __ioctl (libc.so.1: ioctl.s, 20)
+    [99]           1   0.0%  100.0%           1   0.0%  veMatrixMultPoint (libve.so: ve_math.c, 86)
+   [100]           1   0.0%  100.0%           1   0.0%  XEHeadOfExtensionList (libX11.so.1: InsCmap.c, 111)
+    [71]           1   0.0%  100.0%           3   0.0%  XextFindDisplay (libXext.so: extutil.c, 212)
+   [101]           1   0.0%  100.0%           1   0.0%  _SGIPT_sched_resume (libpthread.so: vp.c, 816)
+    [81]           1   0.0%  100.0%           2   0.0%  pthread_mutex_unlock (libpthread.so: mtx.c, 657)
+   [102]           1   0.0%  100.0%           1   0.0%  _SGIPT_cmp_and_swap (libpthread.so: asm.s, 290)
+   [103]           1   0.0%  100.0%           1   0.0%  __glXHWAttach (libGL.so: glx_direct.c, 521)
+   [104]           1   0.0%  100.0%           1   0.0%  __glkonim_LoadMatrixf (libGLcore.so: kon_cfuncs.c, 824)
+   [105]           1   0.0%  100.0%           1   0.0%  pthread_mutex_lock (libpthread.so: mtx.c, 298)
+   [106]           1   0.0%  100.0%           1   0.0%  veVectorCross (libve.so: ve_math.c, 102)
+     [1]           0   0.0%  100.0%       18235  99.9%  _SGIPT_pt_start (libpthread.so: pt.c, 791)
+    [42]           0   0.0%  100.0%          50   0.3%  msg_thread (libve.so: ve_mp.c, 80)
+    [72]           0   0.0%  100.0%           3   0.0%  recv_data (tunnel: tunnel.c, 622)
+    [73]           0   0.0%  100.0%           3   0.0%  fillCQueue (tunnel: tunnel.c, 291)
+    [52]           0   0.0%  100.0%          10   0.1%  __start (tunnel: crt1text.s, 103)
+    [53]           0   0.0%  100.0%          10   0.1%  main (tunnel: tunnel.c, 653)
+    [54]           0   0.0%  100.0%          10   0.1%  txmAddTexFile (tunnel: txm.c, 310)
+    [74]           0   0.0%  100.0%           3   0.0%  txmAddTexture (tunnel: txm.c, 347)
+    [43]           0   0.0%  100.0%          44   0.2%  render_ctrl_handler (libveglx.so: vei_glx.c, 483)
+     [2]           0   0.0%  100.0%       18185  99.7%  render_thread (libveglx.so: vei_glx.c, 416)
+    [50]           0   0.0%  100.0%          13   0.1%  open_window (libveglx.so: vei_glx.c, 185)
+    [36]           0   0.0%  100.0%          74   0.4%  glXMakeCurrent (libGL.so: glx_ext.c, 2334)
+    [55]           0   0.0%  100.0%           8   0.0%  glXQueryExtensionsString (libGL.so: glx_cmds.c, 1867)
+    [51]           0   0.0%  100.0%          13   0.1%  __glXInitialize (libGL.so: glx_ext.c, 1377)
+    [56]           0   0.0%  100.0%           8   0.0%  AllocAndFetchScreenConfigs (libGL.so: glx_ext.c, 1210)
+    [82]           0   0.0%  100.0%           2   0.0%  GetVisualConfigs (libGL.so: glx_ext.c, 477)
+    [62]           0   0.0%  100.0%           7   0.0%  __glXOverrideVisualGetVisualInfo (libGL.so: glx_ext.c, 111)
+     [3]           0   0.0%  100.0%       18143  99.4%  veiGlRenderWindow (libveglx.so: vei_gl.c, 172)
+     [6]           0   0.0%  100.0%       18054  99.0%  veiGlDisplayWindow (libveglx.so: vei_gl.c, 107)
+     [7]           0   0.0%  100.0%       18054  99.0%  display (tunnel: tunnel.c, 480)
+    [83]           0   0.0%  100.0%           2   0.0%  veiGlSetupWindow (libveglx.so: vei_gl.c, 86)
+    [84]           0   0.0%  100.0%           2   0.0%  winsetup (tunnel: tunnel.c, 397)
+    [85]           0   0.0%  100.0%           2   0.0%  load_texture (tunnel: txm.c, 189)
+    [86]           0   0.0%  100.0%           2   0.0%  ogl_load (tunnel: txmogl.c, 153)
+    [87]           0   0.0%  100.0%           2   0.0%  gluBuild2DMipmaps (libGLU.so: mipmap.c, 4659)
+    [88]           0   0.0%  100.0%           2   0.0%  gluBuild2DMipmapLevelsCore (libGLU.so: mipmap.c, 3861)
+    [89]           0   0.0%  100.0%           2   0.0%  __glKonInitPixelState (libGLcore.so: kon_pixel.c, 339)
+    [90]           0   0.0%  100.0%           2   0.0%  GetLineModeDist (libGLcore.so: kon_pixel.c, 311)
+    [91]           0   0.0%  100.0%           2   0.0%  __glkon_get_special (libGLcore.so: kon_get.c, 249)
+    [65]           0   0.0%  100.0%           6   0.0%  _ioctl (libc.so.1: ioctlSCI.c, 26)
+   [107]           0   0.0%  100.0%           1   0.0%  bufread (libve.so: ve_mp_posix.c, 87)
+   [108]           0   0.0%  100.0%           1   0.0%  _read (libc.so.1: readSCI.c, 27)
+   [109]           0   0.0%  100.0%           1   0.0%  _malloc (libc.so.1: malloc.c, 183)
+   [110]           0   0.0%  100.0%           1   0.0%  ___libc_lockmalloc (libc.so.1: libcthread.c, 285)
+   [111]           0   0.0%  100.0%           1   0.0%  __glSoftResetContext (libGLcore.so: so_context.c, 287)
+   [112]           0   0.0%  100.0%           1   0.0%  __glInitPixelState (libGLcore.so: px_api.c, 171)
+    [47]           0   0.0%  100.0%          22   0.1%  veMatrixLookAt (libve.so: ve_math.c, 147)
+    [48]           0   0.0%  100.0%          19   0.1%  veGetUnmapMatrix (libve.so: ve_core.c, 93)
+    [44]           0   0.0%  100.0%          44   0.2%  veMatrixInvLookAt (libve.so: ve_math.c, 171)
+    [92]           0   0.0%  100.0%           2   0.0%  veMatrixFrustum (libve.so: ve_math.c, 210)
+   [113]           0   0.0%  100.0%           1   0.0%  veClock (libveclock.so: ve_clock_unix.c, 117)
+    [75]           0   0.0%  100.0%           3   0.0%  __glXFindDisplay (libGL.so: glx_ext.c, 287)
+    [93]           0   0.0%  100.0%           2   0.0%  veThrBarrierEnter (libve.so: ve_thread_posix.c, 47)
+    [94]           0   0.0%  100.0%           2   0.0%  pthread_cond_wait (libpthread.so: cv.c, 192)
+   [114]           0   0.0%  100.0%           1   0.0%  _SGIPT_sched_block (libpthread.so: vp.c, 624)
+    [95]           0   0.0%  100.0%           2   0.0%  _XUnlockMutex (libX11.so.1: VisUtil.c, 114)
+
+-------------------------------------------------------------------------
+Butterfly function list, in descending order by inclusive counts
+-------------------------------------------------------------------------
+         attrib.% attrib.ovfs                         incl.ovfs  caller (callsite) [index]
+ [index]   incl.%   incl.ovfs    self%   self-ovfs       function [index]
+                              attrib.% attrib.ovfs    incl.ovfs  callee (callsite) [index]
+-------------------------------------------------------------------------
+     [1]    99.9%       18235     0.0%           0         _SGIPT_pt_start [1]
+                                 99.7%       18185        18185  render_thread (@0x0c21bd3c; libpthread.so: pt.c, 797) [2]
+                                  0.3%          50           50  msg_thread (@0x0c21bd3c; libpthread.so: pt.c, 797) [42]
+-------------------------------------------------------------------------
+            99.7%       18185                             18235  _SGIPT_pt_start (@0x0c21bd3c; libpthread.so: pt.c, 797) [1]
+     [2]    99.7%       18185     0.0%           0         render_thread [2]
+                                 99.4%       18143        18143  veiGlRenderWindow (@0x5ff6a090; libveglx.so: vei_glx.c, 476) [3]
+                                  0.1%          19           74  glXMakeCurrent (@0x5ff69fa4; libveglx.so: vei_glx.c, 468) [36]
+                                  0.1%          13           13  open_window (@0x5ff69ef8; libveglx.so: vei_glx.c, 450) [50]
+                                  0.1%          10           74  glXMakeCurrent (@0x5ff6a0ac; libveglx.so: vei_glx.c, 477) [36]
+-------------------------------------------------------------------------
+            99.4%       18143                             18185  render_thread (@0x5ff6a090; libveglx.so: vei_glx.c, 476) [2]
+     [3]    99.4%       18143     0.0%           0         veiGlRenderWindow [3]
+                                 99.4%       18142        18142  veiGlRenderMonoWindow (@0x5ff67258; libveglx.so: vei_gl.c, 176) [4]
+                                  0.0%           1            1  veClock (@0x5ff6723c; libveglx.so: vei_gl.c, 176) [113]
+-------------------------------------------------------------------------
+            99.4%       18142                             18143  veiGlRenderWindow (@0x5ff67258; libveglx.so: vei_gl.c, 176) [3]
+     [4]    99.4%       18142     0.0%           1         veiGlRenderMonoWindow [4]
+                                 99.0%       18054        18054  veiGlDisplayWindow (@0x5ff67160; libveglx.so: vei_gl.c, 162) [6]
+                                  0.5%          86           86  veGetWindowView (@0x5ff66fb4; libveglx.so: vei_gl.c, 143) [33]
+                                  0.0%           1            1  __glkonim_LoadMatrixf (@0x5ff670b4; libveglx.so: vei_gl.c, 152) [104]
+-------------------------------------------------------------------------
+            99.0%       18054                             18054  display (@0x10006028; tunnel: tunnel.c, 481) [7]
+     [5]    99.0%       18054     0.9%         166         RenderTunnel [5]
+                                 98.0%       17888        17888  drawElement (@0x10005fbc; tunnel: tunnel.c, 477) [8]
+-------------------------------------------------------------------------
+            99.0%       18054                             18142  veiGlRenderMonoWindow (@0x5ff67160; libveglx.so: vei_gl.c, 162) [4]
+     [6]    99.0%       18054     0.0%           0         veiGlDisplayWindow [6]
+                                 99.0%       18054        18054  display (@0x5ff66db0; libveglx.so: vei_gl.c, 109) [7]
+-------------------------------------------------------------------------
+            99.0%       18054                             18054  veiGlDisplayWindow (@0x5ff66db0; libveglx.so: vei_gl.c, 109) [6]
+     [7]    99.0%       18054     0.0%           0         display [7]
+                                 99.0%       18054        18054  RenderTunnel (@0x10006028; tunnel: tunnel.c, 481) [5]
+-------------------------------------------------------------------------
+            98.0%       17888                             18054  RenderTunnel (@0x10005fbc; tunnel: tunnel.c, 477) [5]
+     [8]    98.0%       17888    27.6%        5043         drawElement [8]
+                                 36.3%        6626         6628  txmBindTexture (@0x100057d0; tunnel: tunnel.c, 341) [9]
+                                  7.9%        1440         2705  glVertex3fv (@0x10005858; tunnel: tunnel.c, 346) [11]
+                                  5.7%        1041         2705  glVertex3fv (@0x100058b0; tunnel: tunnel.c, 348) [11]
+                                  5.2%         952         1844  __glkonim_TexCoord2f (@0x10005874; tunnel: tunnel.c, 347) [15]
+                                  4.3%         790         1844  __glkonim_TexCoord2f (@0x10005820; tunnel: tunnel.c, 345) [15]
+                                  3.6%         654          918  __glkonim_Vertex3fv (@0x100058b0; tunnel: tunnel.c, 348) [17]
+                                  1.2%         211          918  __glkonim_Vertex3fv (@0x10005858; tunnel: tunnel.c, 346) [17]
+                                  0.9%         164          374  glTexCoord2f (@0x10005820; tunnel: tunnel.c, 345) [22]
+                                  0.6%         115         2705  glVertex3fv (@0x10005940; tunnel: tunnel.c, 353) [11]
+                                  0.6%         109         2705  glVertex3fv (@0x10005904; tunnel: tunnel.c, 351) [11]
+                                  0.6%         102          374  glTexCoord2f (@0x10005918; tunnel: tunnel.c, 352) [22]
+                                  0.5%          99           99  glEnd (@0x1000594c; tunnel: tunnel.c, 354) [31]
+                                  0.4%          77           77  glBegin (@0x100057f0; tunnel: tunnel.c, 343) [34]
+                                  0.3%          60         1844  __glkonim_TexCoord2f (@0x100058e0; tunnel: tunnel.c, 350) [15]
+                                  0.3%          58           58  __glkonim_End (@0x1000594c; tunnel: tunnel.c, 354) [38]
+                                  0.3%          54          374  glTexCoord2f (@0x10005874; tunnel: tunnel.c, 347) [22]
+                                  0.3%          54          374  glTexCoord2f (@0x100058e0; tunnel: tunnel.c, 350) [22]
+                                  0.3%          52           52  glColor3fv (@0x100057e0; tunnel: tunnel.c, 342) [40]
+                                  0.3%          52           52  __glkonim_Color3fv (@0x100057e0; tunnel: tunnel.c, 342) [41]
+                                  0.2%          42         1844  __glkonim_TexCoord2f (@0x10005918; tunnel: tunnel.c, 352) [15]
+                                  0.2%          40           40  __glkonim_Begin (@0x100057f0; tunnel: tunnel.c, 343) [45]
+                                  0.1%          27          918  __glkonim_Vertex3fv (@0x10005940; tunnel: tunnel.c, 353) [17]
+                                  0.1%          26          918  __glkonim_Vertex3fv (@0x10005904; tunnel: tunnel.c, 351) [17]
+-------------------------------------------------------------------------
+             0.0%           2                                 2  winsetup (@0x10005d90; tunnel: tunnel.c, 408) [84]
+            36.3%        6626                             17888  drawElement (@0x100057d0; tunnel: tunnel.c, 341) [8]
+     [9]    36.3%        6628     4.8%         873         txmBindTexture [9]
+                                 16.1%        2930         2930  ogl_bind (@0x10008b88; tunnel: txm.c, 241) [10]
+                                 13.5%        2460         2460  getctx (@0x10008a1c; tunnel: txm.c, 224) [13]
+                                  2.0%         363          363  getmgr (@0x100089bc; tunnel: txm.c, 221) [23]
+                                  0.0%           2            2  load_texture (@0x10008b40; tunnel: txm.c, 237) [85]
+-------------------------------------------------------------------------
+            16.1%        2930                              6628  txmBindTexture (@0x10008b88; tunnel: txm.c, 241) [9]
+    [10]    16.1%        2930     1.4%         247         ogl_bind [10]
+                                 14.2%        2590         2590  __glkonim_BindTextureEXT (@0x1000ae08; tunnel: txmogl.c, 195) [12]
+                                  0.5%          93           93  glBindTextureEXT (@0x1000ae08; tunnel: txmogl.c, 195) [32]
+-------------------------------------------------------------------------
+             0.6%         109                             17888  drawElement (@0x10005904; tunnel: tunnel.c, 351) [8]
+             0.6%         115                             17888  drawElement (@0x10005940; tunnel: tunnel.c, 353) [8]
+             5.7%        1041                             17888  drawElement (@0x100058b0; tunnel: tunnel.c, 348) [8]
+             7.9%        1440                             17888  drawElement (@0x10005858; tunnel: tunnel.c, 346) [8]
+    [11]    14.8%        2705    14.8%        2705         glVertex3fv [11]
+-------------------------------------------------------------------------
+            14.2%        2590                              2930  ogl_bind (@0x1000ae08; tunnel: txmogl.c, 195) [10]
+    [12]    14.2%        2590     4.0%         721         __glkonim_BindTextureEXT [12]
+                                  8.8%        1599         1599  bind2DMipmapTexture (@0x0dab2ec0; libGLcore.so: kon_texture_api.c, 4824) [16]
+                                  0.8%         148          148  updateTexBindID (@0x0dab2e40; libGLcore.so: kon_texture_api.c, 4802) [27]
+                                  0.7%         122          122  __glKonHashFindTexFast (@0x0dab2f18; libGLcore.so: kon_texture_api.c, 4753) [30]
+-------------------------------------------------------------------------
+            13.5%        2460                              6628  txmBindTexture (@0x10008a1c; tunnel: txm.c, 224) [9]
+    [13]    13.5%        2460     3.0%         555         getctx [13]
+                                 10.4%        1905         1905  ogl_ctxid (@0x10007a78; tunnel: txm.c, 49) [14]
+-------------------------------------------------------------------------
+            10.4%        1905                              2460  getctx (@0x10007a78; tunnel: txm.c, 49) [13]
+    [14]    10.4%        1905     3.1%         568         ogl_ctxid [14]
+                                  3.1%         572          572  glXGetCurrentContext (@0x1000a9ec; tunnel: txmogl.c, 118) [18]
+                                  2.6%         483          483  glXGetCurrentDisplay (@0x1000aa34; tunnel: txmogl.c, 125) [19]
+                                  1.4%         252          252  glXQueryContextInfoEXT (@0x1000aa54; tunnel: txmogl.c, 125) [25]
+                                  0.2%          30           30  glXGetContextIDEXT (@0x1000aa70; tunnel: txmogl.c, 129) [46]
+-------------------------------------------------------------------------
+             0.2%          42                             17888  drawElement (@0x10005918; tunnel: tunnel.c, 352) [8]
+             0.3%          60                             17888  drawElement (@0x100058e0; tunnel: tunnel.c, 350) [8]
+             4.3%         790                             17888  drawElement (@0x10005820; tunnel: tunnel.c, 345) [8]
+             5.2%         952                             17888  drawElement (@0x10005874; tunnel: tunnel.c, 347) [8]
+    [15]    10.1%        1844    10.1%        1844         __glkonim_TexCoord2f [15]
+-------------------------------------------------------------------------
+             8.8%        1599                              2590  __glkonim_BindTextureEXT (@0x0dab2ec0; libGLcore.so: kon_texture_api.c, 4824) [12]
+    [16]     8.8%        1599     6.1%        1118         bind2DMipmapTexture [16]
+                                  1.2%         215          215  updateTexUsage (@0x0daadd84; libGLcore.so: kon_texture_api.c, 2391) [26]
+                                  0.8%         137          137  __glNop (@0x0daadd84; libGLcore.so: kon_texture_api.c, 2391) [28]
+                                  0.7%         129          129  loadPostTextureScaleBias (@0x0daadd3c; libGLcore.so: kon_texture_api.c, 2386) [29]
+-------------------------------------------------------------------------
+             0.1%          26                             17888  drawElement (@0x10005904; tunnel: tunnel.c, 351) [8]
+             0.1%          27                             17888  drawElement (@0x10005940; tunnel: tunnel.c, 353) [8]
+             1.2%         211                             17888  drawElement (@0x10005858; tunnel: tunnel.c, 346) [8]
+             3.6%         654                             17888  drawElement (@0x100058b0; tunnel: tunnel.c, 348) [8]
+    [17]     5.0%         918     5.0%         918         __glkonim_Vertex3fv [17]
+-------------------------------------------------------------------------
+             3.1%         572                              1905  ogl_ctxid (@0x1000a9ec; tunnel: txmogl.c, 118) [14]
+    [18]     3.1%         572     0.5%          97         glXGetCurrentContext [18]
+                                  2.6%         475          476  __glXInitThread (@0x0d8ba368; libGL.so: glx_ext.c, 152) [20]
+-------------------------------------------------------------------------
+             2.6%         483                              1905  ogl_ctxid (@0x1000aa34; tunnel: txmogl.c, 125) [14]
+    [19]     2.6%         483     2.6%         483         glXGetCurrentDisplay [19]
+-------------------------------------------------------------------------
+             0.0%           1                                13  __glXInitialize (@0x0d8bd9a0; libGL.so: glx_ext.c, 1385) [51]
+             2.6%         475                               572  glXGetCurrentContext (@0x0d8ba368; libGL.so: glx_ext.c, 152) [18]
+    [20]     2.6%         476     0.5%          97         __glXInitThread [20]
+                                  2.1%         379          379  _mplib_get_thread_id (@0x0d8bd804; libGL.so: glx_ext.c, 1313) [21]
+-------------------------------------------------------------------------
+             2.1%         379                               476  __glXInitThread (@0x0d8bd804; libGL.so: glx_ext.c, 1313) [20]
+    [21]     2.1%         379     0.7%         123         _mplib_get_thread_id [21]
+                                  1.4%         256          256  pthread_self (@0x0fac55fc; libc.so.1: mplib.c, 236) [24]
+-------------------------------------------------------------------------
+             0.3%          54                             17888  drawElement (@0x100058e0; tunnel: tunnel.c, 350) [8]
+             0.3%          54                             17888  drawElement (@0x10005874; tunnel: tunnel.c, 347) [8]
+             0.6%         102                             17888  drawElement (@0x10005918; tunnel: tunnel.c, 352) [8]
+             0.9%         164                             17888  drawElement (@0x10005820; tunnel: tunnel.c, 345) [8]
+    [22]     2.0%         374     2.0%         374         glTexCoord2f [22]
+-------------------------------------------------------------------------
+             2.0%         363                              6628  txmBindTexture (@0x100089bc; tunnel: txm.c, 221) [9]
+    [23]     2.0%         363     2.0%         363         getmgr [23]
+-------------------------------------------------------------------------
+             1.4%         256                               379  _mplib_get_thread_id (@0x0fac55fc; libc.so.1: mplib.c, 236) [21]
+    [24]     1.4%         256     1.4%         256         pthread_self [24]
+-------------------------------------------------------------------------
+             1.4%         252                              1905  ogl_ctxid (@0x1000aa54; tunnel: txmogl.c, 125) [14]
+    [25]     1.4%         252     1.4%         252         glXQueryContextInfoEXT [25]
+-------------------------------------------------------------------------
+             1.2%         215                              1599  bind2DMipmapTexture (@0x0daadd84; libGLcore.so: kon_texture_api.c, 2391) [16]
+    [26]     1.2%         215     1.2%         215         updateTexUsage [26]
+-------------------------------------------------------------------------
+             0.8%         148                              2590  __glkonim_BindTextureEXT (@0x0dab2e40; libGLcore.so: kon_texture_api.c, 4802) [12]
+    [27]     0.8%         148     0.8%         148         updateTexBindID [27]
+-------------------------------------------------------------------------
+             0.8%         137                              1599  bind2DMipmapTexture (@0x0daadd84; libGLcore.so: kon_texture_api.c, 2391) [16]
+    [28]     0.8%         137     0.8%         137         __glNop [28]
+-------------------------------------------------------------------------
+             0.7%         129                              1599  bind2DMipmapTexture (@0x0daadd3c; libGLcore.so: kon_texture_api.c, 2386) [16]
+    [29]     0.7%         129     0.7%         129         loadPostTextureScaleBias [29]
+-------------------------------------------------------------------------
+             0.7%         122                              2590  __glkonim_BindTextureEXT (@0x0dab2f18; libGLcore.so: kon_texture_api.c, 4753) [12]
+    [30]     0.7%         122     0.7%         122         __glKonHashFindTexFast [30]
+-------------------------------------------------------------------------
+             0.5%          99                             17888  drawElement (@0x1000594c; tunnel: tunnel.c, 354) [8]
+    [31]     0.5%          99     0.5%          99         glEnd [31]
+-------------------------------------------------------------------------
+             0.5%          93                              2930  ogl_bind (@0x1000ae08; tunnel: txmogl.c, 195) [10]
+    [32]     0.5%          93     0.5%          93         glBindTextureEXT [32]
+-------------------------------------------------------------------------
+             0.5%          86                             18142  veiGlRenderMonoWindow (@0x5ff66fb4; libveglx.so: vei_gl.c, 143) [4]
+    [33]     0.5%          86     0.0%           2         veGetWindowView [33]
+                                  0.1%          25           44  veMatrixInvLookAt (@0x5ff96df4; libve.so: ve_core.c, 155) [44]
+                                  0.1%          22           22  veMatrixLookAt (@0x5ff96dcc; libve.so: ve_core.c, 154) [47]
+                                  0.1%          19           19  veGetUnmapMatrix (@0x5ff96ae0; libve.so: ve_core.c, 122) [48]
+                                  0.1%          15           59  veMatrixMult (@0x5ff96f9c; libve.so: ve_core.c, 177) [37]
+                                  0.0%           2            2  veMatrixFrustum (@0x5ff96f7c; libve.so: ve_core.c, 175) [92]
+                                  0.0%           1            1  veMatrixMultPoint (@0x5ff96bec; libve.so: ve_core.c, 138) [99]
+-------------------------------------------------------------------------
+             0.4%          77                             17888  drawElement (@0x100057f0; tunnel: tunnel.c, 343) [8]
+    [34]     0.4%          77     0.4%          77         glBegin [34]
+-------------------------------------------------------------------------
+             0.4%          74                                74  glXMakeCurrent (@0x0d8bfac0; libGL.so: glx_ext.c, 2335) [36]
+    [35]     0.4%          74     0.1%          13         __glXMakeContextCurrent [35]
+                                  0.3%          53           53  MakeCurrentRead (@0x0d8beebc; libGL.so: glx_ext.c, 2212) [39]
+                                  0.0%           6            6  __glXSetupForCommand (@0x0d8bea78; libGL.so: glx_ext.c, 1852) [63]
+                                  0.0%           2            2  __glXUnbindHWContextFromThread (@0x0d8bf028; libGL.so: glx_ext.c, 1921) [79]
+-------------------------------------------------------------------------
+             0.0%           3                                13  open_window (@0x5ff69978; libveglx.so: vei_glx.c, 341) [50]
+             0.0%           5                                44  render_ctrl_handler (@0x5ff6abcc; libveglx.so: vei_glx.c, 611) [43]
+             0.1%          10                             18185  render_thread (@0x5ff6a0ac; libveglx.so: vei_glx.c, 477) [2]
+             0.1%          19                             18185  render_thread (@0x5ff69fa4; libveglx.so: vei_glx.c, 468) [2]
+             0.2%          37                                44  render_ctrl_handler (@0x5ff6ab88; libveglx.so: vei_glx.c, 608) [43]
+    [36]     0.4%          74     0.0%           0         glXMakeCurrent [36]
+                                  0.4%          74           74  __glXMakeContextCurrent (@0x0d8bfac0; libGL.so: glx_ext.c, 2335) [35]
+-------------------------------------------------------------------------
+             0.1%          14                                22  veMatrixLookAt (@0x5ffaa8b4; libve.so: ve_math.c, 166) [47]
+             0.1%          15                                86  veGetWindowView (@0x5ff96f9c; libve.so: ve_core.c, 177) [33]
+             0.2%          30                                44  veMatrixInvLookAt (@0x5ffaab80; libve.so: ve_math.c, 201) [44]
+    [37]     0.3%          59     0.3%          59         veMatrixMult [37]
+-------------------------------------------------------------------------
+             0.3%          58                             17888  drawElement (@0x1000594c; tunnel: tunnel.c, 354) [8]
+    [38]     0.3%          58     0.3%          58         __glkonim_End [38]
+-------------------------------------------------------------------------
+             0.3%          53                                74  __glXMakeContextCurrent (@0x0d8beebc; libGL.so: glx_ext.c, 2212) [35]
+    [39]     0.3%          53     0.2%          43         MakeCurrentRead [39]
+                                  0.0%           7            7  __glXBindHWContextToWindow (@0x0da89554; libGLcore.so: kon_context.c, 597) [60]
+                                  0.0%           2            2  __glKonInitPixelState (@0x0da8a134; libGLcore.so: kon_context.c, 747) [89]
+                                  0.0%           1            1  __glSoftResetContext (@0x0da8a080; libGLcore.so: kon_context.c, 709) [111]
+-------------------------------------------------------------------------
+             0.3%          52                             17888  drawElement (@0x100057e0; tunnel: tunnel.c, 342) [8]
+    [40]     0.3%          52     0.3%          52         glColor3fv [40]
+-------------------------------------------------------------------------
+             0.3%          52                             17888  drawElement (@0x100057e0; tunnel: tunnel.c, 342) [8]
+    [41]     0.3%          52     0.3%          52         __glkonim_Color3fv [41]
+-------------------------------------------------------------------------
+             0.3%          50                             18235  _SGIPT_pt_start (@0x0c21bd3c; libpthread.so: pt.c, 797) [1]
+    [42]     0.3%          50     0.0%           0         msg_thread [42]
+                                  0.2%          44           44  render_ctrl_handler (@0x5ffafe88; libve.so: ve_mp.c, 97) [43]
+                                  0.0%           3            3  veMP_OSRecv (@0x5ffb02b8; libve.so: ve_mp.c, 88) [70]
+                                  0.0%           3            3  recv_data (@0x5ffaffb0; libve.so: ve_mp.c, 110) [72]
+-------------------------------------------------------------------------
+             0.2%          44                                50  msg_thread (@0x5ffafe88; libve.so: ve_mp.c, 97) [42]
+    [43]     0.2%          44     0.0%           0         render_ctrl_handler [43]
+                                  0.2%          37           74  glXMakeCurrent (@0x5ff6ab88; libveglx.so: vei_glx.c, 608) [36]
+                                  0.0%           5           74  glXMakeCurrent (@0x5ff6abcc; libveglx.so: vei_glx.c, 611) [36]
+                                  0.0%           2            2  veThrBarrierEnter (@0x5ff6aa6c; libveglx.so: vei_glx.c, 592) [93]
+-------------------------------------------------------------------------
+             0.1%          19                                19  veGetUnmapMatrix (@0x5ff969a8; libve.so: ve_core.c, 97) [48]
+             0.1%          25                                86  veGetWindowView (@0x5ff96df4; libve.so: ve_core.c, 155) [33]
+    [44]     0.2%          44     0.0%           0         veMatrixInvLookAt [44]
+                                  0.2%          30           59  veMatrixMult (@0x5ffaab80; libve.so: ve_math.c, 201) [37]
+                                  0.0%           6           18  veMatrixIdentity (@0x5ffaa990; libve.so: ve_math.c, 184) [49]
+                                  0.0%           4            7  veMatrixTranslate (@0x5ffaab68; libve.so: ve_math.c, 200) [61]
+                                  0.0%           2            4  veVectorNorm (@0x5ffaa920; libve.so: ve_math.c, 177) [66]
+                                  0.0%           1            4  veVectorNorm (@0x5ffaa950; libve.so: ve_math.c, 179) [66]
+                                  0.0%           1            1  veVectorCross (@0x5ffaa968; libve.so: ve_math.c, 180) [106]
+-------------------------------------------------------------------------
+             0.2%          40                             17888  drawElement (@0x100057f0; tunnel: tunnel.c, 343) [8]
+    [45]     0.2%          40     0.2%          40         __glkonim_Begin [45]
+-------------------------------------------------------------------------
+             0.2%          30                              1905  ogl_ctxid (@0x1000aa70; tunnel: txmogl.c, 129) [14]
+    [46]     0.2%          30     0.2%          30         glXGetContextIDEXT [46]
+-------------------------------------------------------------------------
+             0.1%          22                                86  veGetWindowView (@0x5ff96dcc; libve.so: ve_core.c, 154) [33]
+    [47]     0.1%          22     0.0%           0         veMatrixLookAt [47]
+                                  0.1%          14           59  veMatrixMult (@0x5ffaa8b4; libve.so: ve_math.c, 166) [37]
+                                  0.0%           4           18  veMatrixIdentity (@0x5ffaa7d0; libve.so: ve_math.c, 159) [49]
+                                  0.0%           3            7  veMatrixTranslate (@0x5ffaa89c; libve.so: ve_math.c, 165) [61]
+                                  0.0%           1            4  veVectorNorm (@0x5ffaa790; libve.so: ve_math.c, 155) [66]
+-------------------------------------------------------------------------
+             0.1%          19                                86  veGetWindowView (@0x5ff96ae0; libve.so: ve_core.c, 122) [33]
+    [48]     0.1%          19     0.0%           0         veGetUnmapMatrix [48]
+                                  0.1%          19           44  veMatrixInvLookAt (@0x5ff969a8; libve.so: ve_core.c, 97) [44]
+-------------------------------------------------------------------------
+             0.0%           2                                 2  veMatrixFrustum (@0x5ffaac4c; libve.so: ve_math.c, 212) [92]
+             0.0%           4                                22  veMatrixLookAt (@0x5ffaa7d0; libve.so: ve_math.c, 159) [47]
+             0.0%           6                                 7  veMatrixTranslate (@0x5ffa9f5c; libve.so: ve_math.c, 70) [61]
+             0.0%           6                                44  veMatrixInvLookAt (@0x5ffaa990; libve.so: ve_math.c, 184) [44]
+    [49]     0.1%          18     0.1%          18         veMatrixIdentity [49]
+-------------------------------------------------------------------------
+             0.1%          13                             18185  render_thread (@0x5ff69ef8; libveglx.so: vei_glx.c, 450) [2]
+    [50]     0.1%          13     0.0%           0         open_window [50]
+                                  0.0%           8            8  glXQueryExtensionsString (@0x5ff68fd4; libveglx.so: vei_glx.c, 217) [55]
+                                  0.0%           3           74  glXMakeCurrent (@0x5ff69978; libveglx.so: vei_glx.c, 341) [36]
+                                  0.0%           2            2  veiGlSetupWindow (@0x5ff699f4; libveglx.so: vei_glx.c, 352) [83]
+-------------------------------------------------------------------------
+             0.0%           5                                 6  __glXSetupForCommand (@0x0d8bdd1c; libGL.so: glx_ext.c, 1522) [63]
+             0.0%           8                                 8  glXQueryExtensionsString (@0x0d8d6038; libGL.so: glx_cmds.c, 1874) [55]
+    [51]     0.1%          13     0.0%           0         __glXInitialize [51]
+                                  0.0%           8            8  AllocAndFetchScreenConfigs (@0x0d8bdb44; libGL.so: glx_ext.c, 1452) [56]
+                                  0.0%           3            3  __glXFindDisplay (@0x0d8bd990; libGL.so: glx_ext.c, 1378) [75]
+                                  0.0%           1          476  __glXInitThread (@0x0d8bd9a0; libGL.so: glx_ext.c, 1385) [20]
+                                  0.0%           1            1  XEHeadOfExtensionList (@0x0d8bd9e0; libGL.so: glx_ext.c, 1400) [100]
+-------------------------------------------------------------------------
+    [52]     0.1%          10     0.0%           0         __start [52]
+                                  0.1%          10           10  main (@0x10003e38; tunnel: crt1text.s, 177) [53]
+-------------------------------------------------------------------------
+             0.1%          10                                10  __start (@0x10003e38; tunnel: crt1text.s, 177) [52]
+    [53]     0.1%          10     0.0%           0         main [53]
+                                  0.1%          10           10  txmAddTexFile (@0x10006dcc; tunnel: tunnel.c, 702) [54]
+-------------------------------------------------------------------------
+             0.1%          10                                10  main (@0x10006dcc; tunnel: tunnel.c, 702) [53]
+    [54]     0.1%          10     0.0%           0         txmAddTexFile [54]
+                                  0.0%           7            7  txmLoadPNM (@0x10009238; tunnel: txm.c, 327) [57]
+                                  0.0%           3            3  txmAddTexture (@0x10009338; tunnel: txm.c, 338) [74]
+-------------------------------------------------------------------------
+             0.0%           8                                13  open_window (@0x5ff68fd4; libveglx.so: vei_glx.c, 217) [50]
+    [55]     0.0%           8     0.0%           0         glXQueryExtensionsString [55]
+                                  0.0%           8           13  __glXInitialize (@0x0d8d6038; libGL.so: glx_cmds.c, 1874) [51]
+-------------------------------------------------------------------------
+             0.0%           8                                13  __glXInitialize (@0x0d8bdb44; libGL.so: glx_ext.c, 1452) [51]
+    [56]     0.0%           8     0.0%           0         AllocAndFetchScreenConfigs [56]
+                                  0.0%           6            6  GetFBConfigs (@0x0d8bd5f0; libGL.so: glx_ext.c, 1266) [64]
+                                  0.0%           2            2  GetVisualConfigs (@0x0d8bd504; libGL.so: glx_ext.c, 1259) [82]
+-------------------------------------------------------------------------
+             0.0%           7                                10  txmAddTexFile (@0x10009238; tunnel: txm.c, 327) [54]
+    [57]     0.0%           7     0.0%           7         txmLoadPNM [57]
+-------------------------------------------------------------------------
+             0.0%           7                                 7  __glXOverrideVisualGetVisualInfo (@0x0d8dbc7c; libGL.so: glx_ext.c, 116) [62]
+    [58]     0.0%           7     0.0%           6         XGetVisualInfo [58]
+                                  0.0%           1            1  _malloc (@0x0f6de680; libX11.so.1: VisUtil.c, 77) [109]
+-------------------------------------------------------------------------
+             0.0%           1                                 6  _ioctl (@0x0fa573bc; libc.so.1: ioctlSCI.c, 28) [65]
+             0.0%           1                                 1  _read (@0x0fa58004; libc.so.1: readSCI.c, 29) [108]
+             0.0%           1                                 1  ___libc_lockmalloc (@0x0fac4918; libc.so.1: libcthread.c, 286) [110]
+             0.0%           4                                 6  _ioctl (@0x0fa57388; libc.so.1: ioctlSCI.c, 28) [65]
+    [59]     0.0%           7     0.0%           4         ptctl [59]
+                                  0.0%           3            3  _SGIPT_libc_blocking (@0x0c217cb0; libpthread.so: libcthread.c, 211) [68]
+-------------------------------------------------------------------------
+             0.0%           7                                53  MakeCurrentRead (@0x0da89554; libGLcore.so: kon_context.c, 597) [39]
+    [60]     0.0%           7     0.0%           1         __glXBindHWContextToWindow [60]
+                                  0.0%           3            6  _ioctl (@0x0d8ae9ec; libGL.so: glx_direct.c, 645) [65]
+                                  0.0%           2            6  _ioctl (@0x0d8ae944; libGL.so: glx_direct.c, 674) [65]
+                                  0.0%           1            1  __glXHWAttach (@0x0d8ae808; libGL.so: glx_direct.c, 634) [103]
+-------------------------------------------------------------------------
+             0.0%           3                                22  veMatrixLookAt (@0x5ffaa89c; libve.so: ve_math.c, 165) [47]
+             0.0%           4                                44  veMatrixInvLookAt (@0x5ffaab68; libve.so: ve_math.c, 200) [44]
+    [61]     0.0%           7     0.0%           1         veMatrixTranslate [61]
+                                  0.0%           6           18  veMatrixIdentity (@0x5ffa9f5c; libve.so: ve_math.c, 70) [49]
+-------------------------------------------------------------------------
+             0.0%           2                                 2  GetVisualConfigs (@0x0d8bb568; libGL.so: glx_ext.c, 644) [82]
+             0.0%           5                                 6  GetFBConfigs (@0x0d8bd1f4; libGL.so: glx_ext.c, 1166) [64]
+    [62]     0.0%           7     0.0%           0         __glXOverrideVisualGetVisualInfo [62]
+                                  0.0%           7            7  XGetVisualInfo (@0x0d8dbc7c; libGL.so: glx_ext.c, 116) [58]
+-------------------------------------------------------------------------
+             0.0%           6                                74  __glXMakeContextCurrent (@0x0d8bea78; libGL.so: glx_ext.c, 1852) [35]
+    [63]     0.0%           6     0.0%           1         __glXSetupForCommand [63]
+                                  0.0%           5           13  __glXInitialize (@0x0d8bdd1c; libGL.so: glx_ext.c, 1522) [51]
+-------------------------------------------------------------------------
+             0.0%           6                                 8  AllocAndFetchScreenConfigs (@0x0d8bd5f0; libGL.so: glx_ext.c, 1266) [56]
+    [64]     0.0%           6     0.0%           1         GetFBConfigs [64]
+                                  0.0%           5            7  __glXOverrideVisualGetVisualInfo (@0x0d8bd1f4; libGL.so: glx_ext.c, 1166) [62]
+-------------------------------------------------------------------------
+             0.0%           1                                 2  __glXUnbindHWContextFromThread (@0x0d8ae7a0; libGL.so: glx_direct.c, 616) [79]
+             0.0%           2                                 7  __glXBindHWContextToWindow (@0x0d8ae944; libGL.so: glx_direct.c, 674) [60]
+             0.0%           3                                 7  __glXBindHWContextToWindow (@0x0d8ae9ec; libGL.so: glx_direct.c, 645) [60]
+    [65]     0.0%           6     0.0%           0         _ioctl [65]
+                                  0.0%           4            7  ptctl (@0x0fa57388; libc.so.1: ioctlSCI.c, 28) [59]
+                                  0.0%           1            1  __ioctl (@0x0fa573a0; libc.so.1: ioctlSCI.c, 28) [98]
+                                  0.0%           1            7  ptctl (@0x0fa573bc; libc.so.1: ioctlSCI.c, 28) [59]
+-------------------------------------------------------------------------
+             0.0%           1                                22  veMatrixLookAt (@0x5ffaa790; libve.so: ve_math.c, 155) [47]
+             0.0%           1                                44  veMatrixInvLookAt (@0x5ffaa950; libve.so: ve_math.c, 179) [44]
+             0.0%           2                                44  veMatrixInvLookAt (@0x5ffaa920; libve.so: ve_math.c, 177) [44]
+    [66]     0.0%           4     0.0%           4         veVectorNorm [66]
+-------------------------------------------------------------------------
+             0.0%           3                                 3  txmAddTexture (@0x10009470; tunnel: txm.c, 352) [74]
+    [67]     0.0%           3     0.0%           3         cksumtex [67]
+-------------------------------------------------------------------------
+             0.0%           3                                 7  ptctl (@0x0c217cb0; libpthread.so: libcthread.c, 211) [59]
+    [68]     0.0%           3     0.0%           3         _SGIPT_libc_blocking [68]
+-------------------------------------------------------------------------
+             0.0%           3                                 3  fillCQueue (@0x10005648; tunnel: tunnel.c, 303) [73]
+    [69]     0.0%           3     0.0%           1         xformBases [69]
+                                  0.0%           1            2  mult_point (@0x1000525c; tunnel: tunnel.c, 214) [76]
+                                  0.0%           1            2  mult_point (@0x10005248; tunnel: tunnel.c, 213) [76]
+-------------------------------------------------------------------------
+             0.0%           3                                50  msg_thread (@0x5ffb02b8; libve.so: ve_mp.c, 88) [42]
+    [70]     0.0%           3     0.0%           1         veMP_OSRecv [70]
+                                  0.0%           2            2  forceread (@0x5ffb6400; libve.so: ve_mp_posix.c, 748) [80]
+-------------------------------------------------------------------------
+             0.0%           3                                 3  __glXFindDisplay (@0x0d8ba7f0; libGL.so: glx_ext.c, 294) [75]
+    [71]     0.0%           3     0.0%           1         XextFindDisplay [71]
+                                  0.0%           2            2  _XUnlockMutex (@0x0f676848; libXext.so: extutil.c, 228) [95]
+-------------------------------------------------------------------------
+             0.0%           3                                50  msg_thread (@0x5ffaffb0; libve.so: ve_mp.c, 110) [42]
+    [72]     0.0%           3     0.0%           0         recv_data [72]
+                                  0.0%           3            3  fillCQueue (@0x10006904; tunnel: tunnel.c, 630) [73]
+-------------------------------------------------------------------------
+             0.0%           3                                 3  recv_data (@0x10006904; tunnel: tunnel.c, 630) [72]
+    [73]     0.0%           3     0.0%           0         fillCQueue [73]
+                                  0.0%           3            3  xformBases (@0x10005648; tunnel: tunnel.c, 303) [69]
+-------------------------------------------------------------------------
+             0.0%           3                                10  txmAddTexFile (@0x10009338; tunnel: txm.c, 338) [54]
+    [74]     0.0%           3     0.0%           0         txmAddTexture [74]
+                                  0.0%           3            3  cksumtex (@0x10009470; tunnel: txm.c, 352) [67]
+-------------------------------------------------------------------------
+             0.0%           3                                13  __glXInitialize (@0x0d8bd990; libGL.so: glx_ext.c, 1378) [51]
+    [75]     0.0%           3     0.0%           0         __glXFindDisplay [75]
+                                  0.0%           3            3  XextFindDisplay (@0x0d8ba7f0; libGL.so: glx_ext.c, 294) [71]
+-------------------------------------------------------------------------
+             0.0%           1                                 3  xformBases (@0x10005248; tunnel: tunnel.c, 213) [69]
+             0.0%           1                                 3  xformBases (@0x1000525c; tunnel: tunnel.c, 214) [69]
+    [76]     0.0%           2     0.0%           2         mult_point [76]
+-------------------------------------------------------------------------
+             0.0%           2                                 2  gluBuild2DMipmapLevelsCore (@0x0ab91610; libGLU.so: mipmap.c, 4002) [88]
+    [77]     0.0%           2     0.0%           2         halveImage_ubyte [77]
+-------------------------------------------------------------------------
+             0.0%           2                                 2  __glkon_get_special (@0x0da9bbc8; libGLcore.so: kon_get.c, 262) [91]
+    [78]     0.0%           2     0.0%           2         __glkona_wait_rdata [78]
+-------------------------------------------------------------------------
+             0.0%           2                                74  __glXMakeContextCurrent (@0x0d8bf028; libGL.so: glx_ext.c, 1921) [35]
+    [79]     0.0%           2     0.0%           1         __glXUnbindHWContextFromThread [79]
+                                  0.0%           1            6  _ioctl (@0x0d8ae7a0; libGL.so: glx_direct.c, 616) [65]
+-------------------------------------------------------------------------
+             0.0%           2                                 3  veMP_OSRecv (@0x5ffb6400; libve.so: ve_mp_posix.c, 748) [70]
+    [80]     0.0%           2     0.0%           1         forceread [80]
+                                  0.0%           1            1  bufread (@0x5ffb3904; libve.so: ve_mp_posix.c, 134) [107]
+-------------------------------------------------------------------------
+             0.0%           2                                 2  _XUnlockMutex (@0x0f783da8; libX11.so.1: VisUtil.c, 115) [95]
+    [81]     0.0%           2     0.0%           1         pthread_mutex_unlock [81]
+                                  0.0%           1            1  _SGIPT_cmp_and_swap (@0x0c219a50; libpthread.so: mtx.c, 690) [102]
+-------------------------------------------------------------------------
+             0.0%           2                                 8  AllocAndFetchScreenConfigs (@0x0d8bd504; libGL.so: glx_ext.c, 1259) [56]
+    [82]     0.0%           2     0.0%           0         GetVisualConfigs [82]
+                                  0.0%           2            7  __glXOverrideVisualGetVisualInfo (@0x0d8bb568; libGL.so: glx_ext.c, 644) [62]
+-------------------------------------------------------------------------
+             0.0%           2                                13  open_window (@0x5ff699f4; libveglx.so: vei_glx.c, 352) [50]
+    [83]     0.0%           2     0.0%           0         veiGlSetupWindow [83]
+                                  0.0%           2            2  winsetup (@0x5ff66c60; libveglx.so: vei_gl.c, 88) [84]
+-------------------------------------------------------------------------
+             0.0%           2                                 2  veiGlSetupWindow (@0x5ff66c60; libveglx.so: vei_gl.c, 88) [83]
+    [84]     0.0%           2     0.0%           0         winsetup [84]
+                                  0.0%           2         6628  txmBindTexture (@0x10005d90; tunnel: tunnel.c, 408) [9]
+-------------------------------------------------------------------------
+             0.0%           2                              6628  txmBindTexture (@0x10008b40; tunnel: txm.c, 237) [9]
+    [85]     0.0%           2     0.0%           0         load_texture [85]
+                                  0.0%           2            2  ogl_load (@0x100087ac; tunnel: txm.c, 194) [86]
+-------------------------------------------------------------------------
+             0.0%           2                                 2  load_texture (@0x100087ac; tunnel: txm.c, 194) [85]
+    [86]     0.0%           2     0.0%           0         ogl_load [86]
+                                  0.0%           2            2  gluBuild2DMipmaps (@0x1000ad5c; tunnel: txmogl.c, 182) [87]
+-------------------------------------------------------------------------
+             0.0%           2                                 2  ogl_load (@0x1000ad5c; tunnel: txmogl.c, 182) [86]
+    [87]     0.0%           2     0.0%           0         gluBuild2DMipmaps [87]
+                                  0.0%           2            2  gluBuild2DMipmapLevelsCore (@0x0ab92170; libGLU.so: mipmap.c, 4677) [88]
+-------------------------------------------------------------------------
+             0.0%           2                                 2  gluBuild2DMipmaps (@0x0ab92170; libGLU.so: mipmap.c, 4677) [87]
+    [88]     0.0%           2     0.0%           0         gluBuild2DMipmapLevelsCore [88]
+                                  0.0%           2            2  halveImage_ubyte (@0x0ab91610; libGLU.so: mipmap.c, 4002) [77]
+-------------------------------------------------------------------------
+             0.0%           2                                53  MakeCurrentRead (@0x0da8a134; libGLcore.so: kon_context.c, 747) [39]
+    [89]     0.0%           2     0.0%           0         __glKonInitPixelState [89]
+                                  0.0%           2            2  GetLineModeDist (@0x0da92c68; libGLcore.so: kon_pixel.c, 368) [90]
+-------------------------------------------------------------------------
+             0.0%           2                                 2  __glKonInitPixelState (@0x0da92c68; libGLcore.so: kon_pixel.c, 368) [89]
+    [90]     0.0%           2     0.0%           0         GetLineModeDist [90]
+                                  0.0%           2            2  __glkon_get_special (@0x0da92ac4; libGLcore.so: kon_pixel.c, 324) [91]
+-------------------------------------------------------------------------
+             0.0%           2                                 2  GetLineModeDist (@0x0da92ac4; libGLcore.so: kon_pixel.c, 324) [90]
+    [91]     0.0%           2     0.0%           0         __glkon_get_special [91]
+                                  0.0%           2            2  __glkona_wait_rdata (@0x0da9bbc8; libGLcore.so: kon_get.c, 262) [78]
+-------------------------------------------------------------------------
+             0.0%           2                                86  veGetWindowView (@0x5ff96f7c; libve.so: ve_core.c, 175) [33]
+    [92]     0.0%           2     0.0%           0         veMatrixFrustum [92]
+                                  0.0%           2           18  veMatrixIdentity (@0x5ffaac4c; libve.so: ve_math.c, 212) [49]
+-------------------------------------------------------------------------
+             0.0%           2                                44  render_ctrl_handler (@0x5ff6aa6c; libveglx.so: vei_glx.c, 592) [43]
+    [93]     0.0%           2     0.0%           0         veThrBarrierEnter [93]
+                                  0.0%           2            2  pthread_cond_wait (@0x5ffb25e8; libve.so: ve_thread_posix.c, 67) [94]
+-------------------------------------------------------------------------
+             0.0%           2                                 2  veThrBarrierEnter (@0x5ffb25e8; libve.so: ve_thread_posix.c, 67) [93]
+    [94]     0.0%           2     0.0%           0         pthread_cond_wait [94]
+                                  0.0%           1            1  pthread_mutex_lock (@0x0c215c78; libpthread.so: cv.c, 230) [105]
+                                  0.0%           1            1  _SGIPT_sched_block (@0x0c215c68; libpthread.so: cv.c, 228) [114]
+-------------------------------------------------------------------------
+             0.0%           2                                 3  XextFindDisplay (@0x0f676848; libXext.so: extutil.c, 228) [71]
+    [95]     0.0%           2     0.0%           0         _XUnlockMutex [95]
+                                  0.0%           2            2  pthread_mutex_unlock (@0x0f783da8; libX11.so.1: VisUtil.c, 115) [81]
+-------------------------------------------------------------------------
+             0.0%           1                                 1  __glInitPixelState (@0x0dad8818; libGLcore.so: px_api.c, 333) [112]
+    [96]     0.0%           1     0.0%           1         __glPixelSetColorScales [96]
+-------------------------------------------------------------------------
+             0.0%           1                                 1  veClock (@0x5ffe0e08; libveclock.so: ve_clock_unix.c, 120) [113]
+    [97]     0.0%           1     0.0%           1         get_the_time [97]
+-------------------------------------------------------------------------
+             0.0%           1                                 6  _ioctl (@0x0fa573a0; libc.so.1: ioctlSCI.c, 28) [65]
+    [98]     0.0%           1     0.0%           1         __ioctl [98]
+-------------------------------------------------------------------------
+             0.0%           1                                86  veGetWindowView (@0x5ff96bec; libve.so: ve_core.c, 138) [33]
+    [99]     0.0%           1     0.0%           1         veMatrixMultPoint [99]
+-------------------------------------------------------------------------
+             0.0%           1                                13  __glXInitialize (@0x0d8bd9e0; libGL.so: glx_ext.c, 1400) [51]
+   [100]     0.0%           1     0.0%           1         XEHeadOfExtensionList [100]
+-------------------------------------------------------------------------
+             0.0%           1                                 1  _SGIPT_sched_block (@0x0c2209ac; libpthread.so: vp.c, 650) [114]
+   [101]     0.0%           1     0.0%           1         _SGIPT_sched_resume [101]
+-------------------------------------------------------------------------
+             0.0%           1                                 2  pthread_mutex_unlock (@0x0c219a50; libpthread.so: mtx.c, 690) [81]
+   [102]     0.0%           1     0.0%           1         _SGIPT_cmp_and_swap [102]
+-------------------------------------------------------------------------
+             0.0%           1                                 7  __glXBindHWContextToWindow (@0x0d8ae808; libGL.so: glx_direct.c, 634) [60]
+   [103]     0.0%           1     0.0%           1         __glXHWAttach [103]
+-------------------------------------------------------------------------
+             0.0%           1                             18142  veiGlRenderMonoWindow (@0x5ff670b4; libveglx.so: vei_gl.c, 152) [4]
+   [104]     0.0%           1     0.0%           1         __glkonim_LoadMatrixf [104]
+-------------------------------------------------------------------------
+             0.0%           1                                 2  pthread_cond_wait (@0x0c215c78; libpthread.so: cv.c, 230) [94]
+   [105]     0.0%           1     0.0%           1         pthread_mutex_lock [105]
+-------------------------------------------------------------------------
+             0.0%           1                                44  veMatrixInvLookAt (@0x5ffaa968; libve.so: ve_math.c, 180) [44]
+   [106]     0.0%           1     0.0%           1         veVectorCross [106]
+-------------------------------------------------------------------------
+             0.0%           1                                 2  forceread (@0x5ffb3904; libve.so: ve_mp_posix.c, 134) [80]
+   [107]     0.0%           1     0.0%           0         bufread [107]
+                                  0.0%           1            1  _read (@0x5ffb36a4; libve.so: ve_mp_posix.c, 105) [108]
+-------------------------------------------------------------------------
+             0.0%           1                                 1  bufread (@0x5ffb36a4; libve.so: ve_mp_posix.c, 105) [107]
+   [108]     0.0%           1     0.0%           0         _read [108]
+                                  0.0%           1            7  ptctl (@0x0fa58004; libc.so.1: readSCI.c, 29) [59]
+-------------------------------------------------------------------------
+             0.0%           1                                 7  XGetVisualInfo (@0x0f6de680; libX11.so.1: VisUtil.c, 77) [58]
+   [109]     0.0%           1     0.0%           0         _malloc [109]
+                                  0.0%           1            1  ___libc_lockmalloc (@0x0fa3b424; libc.so.1: malloc.c, 185) [110]
+-------------------------------------------------------------------------
+             0.0%           1                                 1  _malloc (@0x0fa3b424; libc.so.1: malloc.c, 185) [109]
+   [110]     0.0%           1     0.0%           0         ___libc_lockmalloc [110]
+                                  0.0%           1            7  ptctl (@0x0fac4918; libc.so.1: libcthread.c, 286) [59]
+-------------------------------------------------------------------------
+             0.0%           1                                53  MakeCurrentRead (@0x0da8a080; libGLcore.so: kon_context.c, 709) [39]
+   [111]     0.0%           1     0.0%           0         __glSoftResetContext [111]
+                                  0.0%           1            1  __glInitPixelState (@0x0db107d8; libGLcore.so: so_context.c, 745) [112]
+-------------------------------------------------------------------------
+             0.0%           1                                 1  __glSoftResetContext (@0x0db107d8; libGLcore.so: so_context.c, 745) [111]
+   [112]     0.0%           1     0.0%           0         __glInitPixelState [112]
+                                  0.0%           1            1  __glPixelSetColorScales (@0x0dad8818; libGLcore.so: px_api.c, 333) [96]
+-------------------------------------------------------------------------
+             0.0%           1                             18143  veiGlRenderWindow (@0x5ff6723c; libveglx.so: vei_gl.c, 176) [3]
+   [113]     0.0%           1     0.0%           0         veClock [113]
+                                  0.0%           1            1  get_the_time (@0x5ffe0e08; libveclock.so: ve_clock_unix.c, 120) [97]
+-------------------------------------------------------------------------
+             0.0%           1                                 2  pthread_cond_wait (@0x0c215c68; libpthread.so: cv.c, 228) [94]
+   [114]     0.0%           1     0.0%           0         _SGIPT_sched_block [114]
+                                  0.0%           1            1  _SGIPT_sched_resume (@0x0c2209ac; libpthread.so: vp.c, 650) [101]
+-------------------------------------------------------------------------
+

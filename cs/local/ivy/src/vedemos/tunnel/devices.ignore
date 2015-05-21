@@ -1,0 +1,47 @@
+#
+# This file list devices that are used at run-time, plus
+# filters
+#
+#use lmouse
+use keyboard
+#use sidewinder optional
+#use whoozit optional
+# filter sidewinder.axis0   { rename valuator.x }
+# filter sidewinder.axis1   { rename valuator.y }
+filter sidewinder.axis0 {
+	# use this event for both x and y
+	copy valuator.x
+	rename valuator.y
+}
+filter mouse.axes.0 {
+	rename valuator.x
+}
+filter mouse.axes.1 {
+	rename valuator.y
+}
+filter sidewinder.button0 { rename exit }
+filter keyboard.Escape    { rename exit }
+filter keyboard.F1        { rename exit }
+filter sidewinder.button2 {
+	# fake a valuator
+	to_valuator expr=1.0*x min=0.0 max=1.0
+	rename valuator.x
+}
+filter sidewinder.button3 {
+	# fake a valuator
+	to_valuator expr=1.0*x min=0.0 max=1.0
+	rename valuator.y
+}
+use _latency
+#use fobtrack
+#filter fobtrack.* {
+#	dump
+#}
+#use fobtrack2
+filter fobtrack2.pos {
+	headtrack format=pos {loccorr={0.0 1.0 0.0 0.0} {0.0 0.0 -1.0 0.0} {-1.0 0.0 0.0 0.0} {0.0 0.0 0.0 1.0}}
+}
+#filter fobtrack2.quat {
+#	headtrack format=quat {dircorr.dir=1.0 0.0 0.0} {dircorr.up=0.0 0.0 -1.0} {dirbase.dir=1.0 0.0 0.0} {dirbase.up=0.0 0.0 -1.0}
+#}
+

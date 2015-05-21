@@ -1,0 +1,6 @@
+#
+# More expression tests
+#
+set x 0.1
+set val [expr {$x + 1}]
+[stdout] writeln $val

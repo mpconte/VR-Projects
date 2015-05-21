@@ -1,0 +1,70 @@
+<html>
+<head>
+<title>File: ve_alloc.h</title>
+</head>
+<body>
+<h1 class="cdoc-file">File: ve_alloc.h</h1>
+
+
+<p class="cdoc-item">
+    This module provides memory allocation and freeing abstractions
+    for use within VE.  In particular, these abstractions:
+    <ul>
+    <li>Verify that the allocation succeeds and aborts program execution
+    if it fails.</li>
+    <li>Only frees a pointer if it is not NULL.</li>
+    </ul>
+    <p>In addition to the functions below, the macro
+    <code>veAllocObj()</code> is defined.  This macro takes a datatype
+    as an argument and allocates space for an object of that type.
+    For example: <code>veAllocObj(VeEnv)</code> would allocate space
+    to hold a <code>VeEnv</code> object.  The bytes of the object are
+    initialized to 0 and the value of the macro is automatically cast
+    to a pointer of the appropriate type.
+
+<p class="cdoc-item">
+<a name="function_veAlloc"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veAlloc</span>
+<div class="body-function">
+<div class="codeblock">void *veAlloc(unsigned nbytes, int zero);</div>    Allocates a region of memory.  Always returns a valid range of
+    memory or aborts program execution.
+    
+<div class="start-param"><span class="tag-param">nbytes</span> - 
+    The number of bytes to allocate.  This must not be zero.
+    If an allocation of 0 bytes is attempted, then the program will
+    exit.</div>
+<div class="start-param"><span class="tag-param">clear</span> - 
+    If this value is zero, then all allocated bytes will be initialized to
+    0.  If this value is not zero, then the initial value of the
+    allocated bytes is undefined.</div>
+<div class="start-returns"><span class="label-returns">Returns:</span> 
+    A pointer to a newly-allocated region of memory.</div></div></div>
+<p class="cdoc-item">
+<a name="function_veRealloc"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veRealloc</span>
+<div class="body-function">
+<div class="codeblock">void *veRealloc(void *ptr, unsigned nbytes);</div>    Reallocates a previously allocated region of memory (like realloc).
+ </div></div>
+<p class="cdoc-item">
+<a name="function_veFree"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veFree</span>
+<div class="body-function">
+<div class="codeblock">void veFree(void *);</div> </div></div>
+<p class="cdoc-item">
+<a name="function_veDupString"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veDupString</span>
+<div class="body-function">
+<div class="codeblock">char *veDupString(char *s);</div>    <p>Returns a duplicate of the given string.  The result
+    has been newly allocated from the heap.</p>
+    
+<div class="start-param"><span class="tag-param">s</span> - 
+    The string to duplicate.
+    </div>
+<div class="start-returns"><span class="label-returns">Returns:</span> 
+    A duplicate of the given string.</div></div></div>
+
+<h2 class="cdoc-index">Index</h2>
+<ul>
+<li><a class="link-function" href="#function_veAlloc">veAlloc (function)</a></li>
+<li><a class="link-function" href="#function_veDupString">veDupString (function)</a></li>
+<li><a class="link-function" href="#function_veFree">veFree (function)</a></li>
+<li><a class="link-function" href="#function_veRealloc">veRealloc (function)</a></li>
+</ul>
+</body>
+</html>

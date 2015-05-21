@@ -1,0 +1,17 @@
+Some useful (?) source code for the VR course.
+
+3ds - source for a library that understands 3ds models. You should not have to look
+      at this (or copy it anywhere) but it is here for your information.  The only
+      critical issue is that it only understands ppm imagery (not jpeg!) and 
+      that such imagery needs to be square where the width is a power of 2
+
+vesample - a very simple ve program that loads 3ds models and lets you 
+      manipulate them.  See the README file in the directory.
+
+vem - a simple 'walk around the environment' library for ve
+
+wingman - a stub for playing with a usb device
+
+vr-auto-show - vr application for a virtual auto show where users can interact with a room full of various cars
+
+

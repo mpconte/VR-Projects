@@ -1,0 +1,11 @@
+#
+# Exercise return code bug
+#
+proc foo {} {
+	if { "x" == "x" } {
+		return 5
+	}
+	return 10
+}
+
+[stdout] writeln [foo]

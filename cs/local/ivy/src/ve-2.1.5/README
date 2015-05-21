@@ -1,0 +1,10 @@
+To build (on a supported system):
+
+- make config
+	Sets up a configuration file.
+
+- make
+	Builds everything.
+
+- make VEROOT=/path/to/install install
+	Installs the VE files where you want them.

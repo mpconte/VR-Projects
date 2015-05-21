@@ -1,0 +1,29 @@
+#!/bin/sh
+# - filter output of tests to remove '\r' - while this could
+#   potentially cause false results, it's needed to keep sanity
+#   when porting between Windows and Posix systems
+tstfilt() {
+	tr -d '\r'
+}
+i=1
+x=0
+while [ -f script$i ]
+do
+	if [ ! -f script$i.out ]; then
+		echo >&2 "test $i: missing output check file"
+		exit 1
+	elif [ -f script$i.in ]; then
+		./test1 script$i <script$i.in | tstfilt | diff script$i.out -
+	else
+		./test1 script$i </dev/null | tstfilt | diff script$i.out -
+	fi
+	if [ $? -ne 0 ]; then
+		echo >&2 "test $i failed"
+		x=1
+	fi
+	i=`expr $i + 1`
+done
+if [ $x -eq 0 ]; then
+	echo "all tests passed"
+fi
+exit $x

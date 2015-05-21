@@ -1,0 +1,16 @@
+#
+# This is the device and filter manifest
+# - entries can be in any order
+#
+# - tell the system where to find drivers for devices and filters
+driver device x11keyboard x11drv.so
+driver device x11mouse x11drv.so
+driver device nid niddrv.so
+driver device fob fobdrv.so
+driver device linuxmouse linuxmousedrv.so
+driver device linuxjs linuxjsdrv.so
+# - declare real devices that we may use
+# - note that these only declare that the devices exist - we still need
+#   to specify somewhere that we want to use the devices
+device joystick linuxjs
+device mouse linuxmouse

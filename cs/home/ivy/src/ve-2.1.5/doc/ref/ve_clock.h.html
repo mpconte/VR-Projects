@@ -1,0 +1,127 @@
+<html>
+<head>
+<title>File: ve_clock.h</title>
+</head>
+<body>
+<h1>File: ve_clock.h</h1>
+
+
+<p>
+<p>The ve_clock module provides an abstraction for a general high-resolution
+clock.  This clock is not guaranteed to be high-resolution.  It will be
+limited by the available APIs and actual clocks on any platform.  In general,
+the package uses <code>clock_gettime()</code> where available, and 
+<code>gettimeofday()</code> on UNIX-like platforms where it is not available.
+A single clock is provided.</p>
+<p>The value of the clock is in reference to a zero-point.  This point can
+be retrieved or set by providing a reference in a string format:
+<blockquote>
+<i>Y M D h:m:s X u</i>
+</blockquote>
+where Y is the year, M is the month, D is the day of the month, h is the
+hour (in 24-hour format), m is minutes, s is seconds, X is 1 if DST is in
+effect, 0 otherwise, and u is milliseconds.  All values are numerical, e.g.
+<blockquote>
+2001 11 4 12:23:41 0 534
+</blockquote>
+The default is for the zero point to be declared whenever the clock is
+initialized.  You should only need to change the zero point when you
+want to synchronize the clock to another.  Note that no method is
+provided for synchronizing the <i>rate</i> of the clock.  This is beyond
+the scope of this library.
+</p>
+
+<p>
+<a name="function_veClockInit"></a><p><em>Function:</em> <b>veClockInit</b>
+<blockquote>
+<pre>
+void veClockInit();</pre>    Initializes the clock.  This function must be called before any other
+    function in this module.
+
+</blockquote>
+<p>
+<a name="function_veClockGetZeroRef"></a><p><em>Function:</em> <b>veClockGetZeroRef</b>
+<blockquote>
+<pre>
+char *veClockGetZeroRef();</pre>    Returns a string describing the current zero reference point.
+    This function is thread-safe in that many threads can retrieve
+    the string (which should be treated as read-only).  However, the
+    data returned may become invalid after another thread resets the
+    zero reference point.
+
+<p><i>Returns:</i> 
+    A pointer to a string describing the zero reference point.
+
+</blockquote>
+<p>
+<a name="function_veClockGetRef"></a><p><em>Function:</em> <b>veClockGetRef</b>
+<blockquote>
+<pre>
+char *veClockGetRef(long ref);</pre>    Returns a string describing the reference point for an arbitrary
+    point in the clock's absolute time.  This is useful for determining
+    the wall clock time of the clock's value.  Note that this function is
+    current <i>not</i> thread-safe.  If you only need the zero reference
+    point, it is preferred to use <code>veClockGetZeroRef()</code> as it
+    is safer.
+
+<p><b>ref</b> - 
+    The point in time for which to return the real-world time.
+    
+<p><i>Returns:</i> 
+    A string describing the real-world time at absolute clock time <i>ref</i>.
+
+</blockquote>
+<p>
+<a name="function_veClockSetRef"></a><p><em>Function:</em> <b>veClockSetRef</b>
+<blockquote>
+<pre>
+void veClockSetRef(long ref, char *str);</pre>    Provides a reference point for the clock.  The real-world time is given
+    in the string.  The absolute clock time to which this equates should be
+    given as the first argument.  Calling this function will change the
+    zero reference point.
+    
+<p><b>ref</b> - 
+    The clock time to which the real-world time equates.
+    
+<p><b>str</b> - 
+    The real-world time in string format.
+
+</blockquote>
+<p>
+<a name="function_veClock"></a><p><em>Function:</em> <b>veClock</b>
+<blockquote>
+<pre>
+long veClock();</pre>    The general function for retrieving the current value of the clock.
+
+<p><i>Returns:</i> 
+    The current value of the clock in milliseconds since the
+    zero reference point.
+
+</blockquote>
+<p>
+<a name="function_veClockNano"></a><p><em>Function:</em> <b>veClockNano</b>
+<blockquote>
+<pre>
+long veClockNano();</pre>    An alternate, potentially higher-resolution function returning a clock
+    time in nanoseconds, instead of milliseconds.  The effective resolution of
+    this clock will vary from system to system.  Its value is not guaranteed
+    to be relative to the zero reference point and will not be on most
+    systems to avoid overhead in measuring the time.  Thus this clock should
+    only be used for measuring intervals, not absolute points in time.
+
+<p><i>Returns:</i> 
+    A clock value in nanoseconds.
+
+</blockquote>
+
+<h2>Index</h2>
+<ul>
+<li><a href="#function_veClock">veClock (function)</a></li>
+<li><a href="#function_veClockGetRef">veClockGetRef (function)</a></li>
+<li><a href="#function_veClockGetZeroRef">veClockGetZeroRef (function)</a></li>
+<li><a href="#function_veClockInit">veClockInit (function)</a></li>
+<li><a href="#function_veClockNano">veClockNano (function)</a></li>
+<li><a href="#function_veClockSetRef">veClockSetRef (function)</a></li>
+</ul>
+</body>
+</html>

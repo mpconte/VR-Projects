@@ -1,0 +1,12 @@
+A port of the long-live oft-mangled SGI skyfly demo.  Originally written
+for the early SkyWriter multiprocessor systems, ported to GLUT, from
+which it was stolen for this port.  A lot of code has been culled or
+disabled.  Also has sounds for shots and explosions.
+
+Note that this program only works on the Onyx, or other single-process
+environments - as it is, it will not
+work on multi-node or multi-process VE environments - there is no MP
+support.  I don't recommend trying to add the MP support in - this is
+very old, very messy code which has been ported in every direction
+imaginable.  If you really think it's worth porting, consider rewriting
+it.

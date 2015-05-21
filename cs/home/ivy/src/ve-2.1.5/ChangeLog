@@ -1,0 +1,72 @@
+Started with v2.1.2
+
+v2.1.5 (bugfix)
+        * bad memory free call in head-track filter fixed
+	* fastrak driver revamped to support native timestamps
+	  (specify "tmstamp 1" option in device config)
+	* crash problem in fastrak driver fixed
+	
+v2.1.4 (bugfix)
+	* ve_core now propogates NVIDIA OpenGL environment variables
+	  to remote slaves (including __GL_SYNC_TO_VBLANK and
+	  __GL_FSAA_MODE)
+	* new fastrak driver can deal with bogus records returned
+	  from tracker due to serial noise
+
+v2.1.3
+	* Added linuxmouse driver
+	* Added fobg driver (provided by Lee Yan)
+	* fastrak driver now supports multiple devices (modified by Lee Yan)
+	* removed old grungy trivial example
+	* "calibrate" program is now cluster-friendly and built by default
+	* VeWallView structure now includes which stereo eye is being drawn
+	  (new VE_EYE_MONO added for monoscopic windows)
+	* some compiler warning clean-up
+	* fix whitespace-elimination bug in device specs
+	* added support for generic (i.e. non-API device functions)
+          see veDeviceFunc()
+	* support for "asynchronous" clients where we do not try to
+	  synchronize rendering
+	* forced update of screen on program initialization (avoid black
+	  screen startup)
+	* more MP bug/stability fixes
+	* faster startup times for larger clusters
+	* support for fragmenting MP packets to remote hosts to allow
+	  larger message sizes
+	* support for specifying accumulator buffer ("accum" option)
+	* X screen-saver can be disabled with "nosaver" option in
+          vei_glx implementation
+	* New clock functions:  veClockHires(), veClockConvUnix(),
+	  veClockConvTimeval(), veClockConvTimespec()
+	* profiling support
+		- to enable, set VE_PF to be the name of the file
+	          to which profiling events are written
+		- scripts in the util/ subdirectory will help to
+		  extract some interesting bits of information from
+		  the output (which is human-readable)
+		- to be expanded in future versions
+
+v2.1.2
+	* Support for viewport calibration.  A viewport can now be set
+	  per-window in the environment file.
+	* Calibration reorganized and rewritten for future ease of extension.
+	* Calibration program allows adjustment of viewport.
+	* Debugging messages are less munged together in multi-threaded apps
+	* Extraneous threads in slave-only processes removed
+	* veQuatMult (ve_math.c) was wrong - fixed
+	* added veRotMatrixToQuat (ve_math.c)
+	* MP layer is now more robust, both locally and across the network
+	* added gl_render_time, gl_frame_time to OpenGL stats
+	* renamed glx_frame_rate stat to gl_frame_rate
+	* swap group support can now be turned on/off at compile-time and
+	  at run-time.  If turned off at compile-time, then no swap group
+	  support will be compiled.  Off by default on Linux, on by default
+	  elsewhere at compile-time.
+	* Working "fastrak" driver merged.  Only tested with IS-900 so far,
+	  but should only be using general fastrak command set.
+	* headtrack filter more robust.
+	* "busy-wait timer" implementation can be enabled/disabled at
+	  run-time to work around coarse sleeping functions on various
+	  platforms.  Enabled by default on Linux, disabled by default
+	  elsewhere.
+	

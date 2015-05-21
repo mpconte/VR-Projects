@@ -1,0 +1,2219 @@
+<html>
+<head>
+<title>File: ve_device.h</title>
+</head>
+<body>
+<h1>File: ve_device.h</h1>
+<h2>Contents</h2>
+<ul>
+<li><a href="#sect_0"><b>Element Content</b></a></li>
+<li><a href="#sect_1"><b>Elements and Device Models</b></a></li>
+<li><a href="#sect_2"><b>Device Manifest</b></a></li>
+<li><a href="#sect_3"><b>Devices and Drivers</b></a></li>
+<li><a href="#sect_4"><b>Events</b></a></li>
+<li><a href="#sect_5"><b>Callbacks</b></a></li>
+<li><a href="#sect_6"><b>Filters</b></a></li>
+<li><a href="#sect_7"><b>Filter Table</b></a></li>
+<li><a href="#sect_8"><b>Event Queue</b></a></li>
+</ul>
+
+
+<p>
+    The ve_device module provides a flexible model for input devices.
+    Input devices and drivers are loaded at run-time either explicitly
+    from a program or from a user-provided manifest.  Input devices
+    generate events which can then be filtered, through explicit
+    structures or through filters loaded at run-time as part of the
+    device settings.  The event process model allows for the use of
+    virtual devices - that is, remapping incoming events to arbitrary
+    names that allow the application to be built independent of the
+    actual input devices and to provide for the adoption of new input
+    devices and methods with rebuilding the program.
+    <p>
+    Devices are represented as collections of elements.  Each element
+    represents a particular piece of input data.  For example, a joystick
+    may be divided into several elements - each button would be an element,
+    an axis or a collection of axes would be another element, and so on.
+    An element is uniquely identified by a pair of a device name
+    and an element name.
+    <p>
+    Events that have a similar structure to elements are generated
+    representing changes of state.  These events are passed through
+    any number of filters as determined by the system's filter table.
+    Through a filtering, an event can be modified, renamed (i.e. its
+    device and/or its element name changed), duplicated, or discarded.
+    <p>
+    Finally, events are delivered to the application's callbacks.
+    Callbacks can be set to receive specific events or general collections
+    of events.
+
+<p>
+<a name="sect_0"></a><h2>Element Content</h2>
+    The core data in an event or an element is called
+    <i>element content</i>.
+
+<p>
+<a name="enum_VeDeviceEType"></a><p><em>Enumeration:</em> <b>VeDeviceEType</b>
+<blockquote>
+    All elements and events use a type field 
+    There are several types of element data.  
+
+<pre>
+typedef enum ve_device_etype {
+  VE_ELEM_UNDEF = -1,</pre><p>
+<p><b>VE_ELEM_TRIGGER</b> - 
+      A trigger is an element without state.  It is used to indicate
+      an event that occurs.  For example, a vending machine would
+      have a trigger to indicate that a quarter has been inserted.
+      There is no state to report - simply that a quarter has been
+      inserted.
+  
+<pre>
+  VE_ELEM_TRIGGER = 0,</pre><p>
+<p><b>VE_ELEM_SWITCH</b> - 
+      A switch is an element with two states - an active state and
+      an inactive state.  An obvious real-world example is a light
+      switch which is either "on" or "off".  Switch events occur when
+      the switch transitions from one state to another.  Other 
+      common examples include joystick and mouse buttons.
+  
+<pre>
+  VE_ELEM_SWITCH,</pre><p>
+<p><b>VE_ELEM_VALUATOR</b> - 
+      A valuator is an element with a range of possible values represented
+      as a real number.  A valuator may be either bounded, meaning that
+      it has both a minimum and maximum value, or unbounded, meaning that
+      any value is possible.  Unbounded valuators are represented as
+      having minimum and maximum values that are both 0.0.  A throttle
+      control or a steering wheel would be a valuator.
+  
+<pre>
+  VE_ELEM_VALUATOR,</pre><p>
+<p><b>VE_ELEM_VECTOR</b> - 
+      A vector is an array of valuators.  The size of a vector is
+      fixed throughout its lifetime.  When a vector is created it may
+      be given any size, but thereafter, that size remains fixed.
+      Each valuator in the vector has an independent set of bounds.
+      Unbounded and bounded valuators can be mixed within the same
+      vector.
+      <p>Vectors are typically used in cases where a set of valuators
+      are interdependent or represent multi-dimensional data and reporting
+      changes of individual valuators would be erroneous.  For example,
+      a head-tracker will typically have several dimensions of data, and
+      any collection of changes in the data should be reported as a change
+      to the head-tracker data as a whole.  In other words, it would be
+      wrong to report a change in the head's x-axis location and then
+      a change in the head's y-axis location when the head had moved along
+      a path which caused simultaneous displacements along both axes.
+      <p>Filters can be used to isolate individual valuators within a
+      vector if so desired.
+   
+<pre>
+  VE_ELEM_VECTOR,</pre><p>
+<p><b>VE_ELEM_KEYBOARD</b> - 
+      A keyboard is a special case of an input device.  It is really
+      a collection of switches.  However, the set of switches is generally
+      indefinite from the program's point of view.  A keyboard is
+      usually considered a device and its individual keys elements.
+      Thus there are no keyboard "elements", but there are keyboard events.
+      A keyboard event will represent both the state of the switch as
+      well as including a code which identifies the key to which the
+      event applies.
+      <p>General practice is that the name of an element in a keyboard
+      device corresponds to the key (if it has an ASCII representation)
+      or the name of the key (e.g. Control_L or F1).
+  
+<pre>
+  VE_ELEM_KEYBOARD
+</pre><pre></pre><pre></pre><pre></pre><pre></pre><pre>} VeDeviceEType;</pre></blockquote>
+<p>
+<a name="struct_VeDeviceEContent"></a><p><em>Structure:</em> <b>VeDeviceEContent</b>
+<blockquote>
+    The actual content in an element or device is stored in a structure
+    that is modelled after the VeDeviceEContent structure.  All actual
+    content structures have the fields defined in VeDeviceEContent in
+    common, and these fields always appear first and in the same order
+    as in VeDeviceEContent.
+    <p>In general, you only use the info in a VeDeviceEContent structure
+    to figure out what it really is, and then cast to the type of
+    structure that you really want to use.  Note that a VeDeviceEContent
+    structure is not guaranteed to be as large as real content structures,
+    so you cannot pass VeDeviceEContent structures around by value - it
+    must always be passed by reference.
+ 
+<pre>
+
+
+typedef struct ve_device_econtent {</pre><p>
+<p><b>type</b> - 
+      The type field determines what type of content we are actually
+      dealing with.
+   
+<pre>
+  VeDeviceEType type;</pre><pre>
+} VeDeviceEContent;</pre></blockquote>
+<p>
+<a name="struct_VeDeviceE_Trigger"></a><p><em>Structure:</em> <b>VeDeviceE_Trigger</b>
+<blockquote>
+    If the type of content is <code>VE_ELEM_TRIGGER</code> then there
+    is no effectively no content.  For consistency this structure is
+    defined for a trigger, but currently it contains no fields beyond
+    the ones in <code>VeDeviceEContent</code>.
+
+<pre>
+typedef struct ve_device_e_trigger {
+  VeDeviceEType type;
+} VeDeviceE_Trigger;</pre></blockquote>
+<p>
+<a name="struct_VeDeviceE_Switch"></a><p><em>Structure:</em> <b>VeDeviceE_Switch</b>
+<blockquote>
+    If the type of content is <code>VE_ELEM_SWITCH</code> then this
+    structure represents the real content.
+
+<pre>
+typedef struct ve_device_e_switch {
+  VeDeviceEType type;</pre><p>
+<p><b>state</b> - 
+      If non-zero, then the switch is in an "active" state.  If
+      zero, then the switch is in an "inactive" state.  Most functions
+      will limit the possible values to 1 and 0.
+  
+<pre>
+  int state;</pre><pre>
+} VeDeviceE_Switch;</pre></blockquote>
+<p>
+<a name="struct_VeDeviceE_Valuator"></a><p><em>Structure:</em> <b>VeDeviceE_Valuator</b>
+<blockquote>
+    If the type of content is <code>VE_ELEM_VALUATOR</code> then this
+    structure represents the real content.
+
+<pre>
+typedef struct ve_device_e_valuator {
+  VeDeviceEType type;</pre><p>
+<p><b>min,max</b> - 
+      These values represent the bounds of the valuator.  If both values
+      are 0.0 then the valuator is unbounded.  A valuator either has both
+      a minimum and a maximum or neither - there is no way to specify a
+      only one of the two bounds.
+   
+<pre>
+  float min,max;</pre><pre></pre><p>
+<p><b>value</b> - 
+      The current value of the valuator.  The VE library will generally
+      constrain this value to be within the bounds (if defined) but these
+      conditions may be violated by user-supplied filters.  In cases where
+      these limits are critical to the application, filters may be applied
+      to clamp values.
+  
+<pre>
+  float value;</pre><pre>
+} VeDeviceE_Valuator;</pre></blockquote>
+<p>
+<a name="struct_VeDeviceE_Vector"></a><p><em>Structure:</em> <b>VeDeviceE_Vector</b>
+<blockquote>
+    If the type of content is <code>VE_ELEM_VECTOR</code> then this
+    structure represents the real data.
+ 
+<pre>
+typedef struct ve_device_e_vector {
+  VeDeviceEType type;</pre><p>
+<p><b>size</b> - 
+      The size of the vector.  A vector's size should not change after
+      it has been created.
+  
+<pre>
+  int size;</pre><pre></pre><p>
+<p><b>min,max</b> - 
+      The bounds of the individual valuators.  Both min and max are
+      arrays of size <b>size</b>.  For valuator <i>n</i>, min[<i>n</i>]
+      represents the minimum bound, and max[<i>n</i>] represents the 
+      maximum bound.  If both min[<i>n</i>] and max[<i>n</i>] are 0.0
+      then valuator <i>i</i> of the vector is unbounded.
+  
+<pre>
+  float *min, *max;</pre><pre></pre><p>
+<p><b>value</b> - 
+      The value of the individual valuators in the vector.  
+      This is an array of size <b>size</b>. The value of
+      valuator <i>n</i> is value[<i>n</i>].
+  
+<pre>
+  float *value;</pre><pre>
+} VeDeviceE_Vector;</pre></blockquote>
+<p>
+<a name="struct_VeDeviceE_Keyboard"></a><p><em>Structure:</em> <b>VeDeviceE_Keyboard</b>
+<blockquote>
+    If the type of content is <code>VE_ELEM_KEYBOARD</code> then
+    this structure represents the real data.  Note that this
+    structure will never be used as an element - only as event
+    data.
+ 
+<pre>
+
+typedef struct ve_device_e_keyboard {
+  VeDeviceEType type;</pre><p>
+<p><b>key</b> - 
+      The code for the key to which this data relates.
+      Constants for key codes are defined in the <code>ve_keysym.h</code>
+      header files.  All input drivers which provide keyboards should
+      conform to these pre-defined constants as much as possible to
+      ensure consistency.
+   
+<pre>
+  int key;</pre><pre></pre><p>
+<p><b>state</b> - 
+      As with a switch, a non-zero value indicates an "active" or
+      "down" state for the key, and a zero value indicates an "inactive"
+      or "up" state.
+  
+<pre>
+  int state;</pre><pre>
+} VeDeviceE_Keyboard;</pre></blockquote>
+<p>
+<a name="function_veDeviceEContentCreate"></a><p><em>Function:</em> <b>veDeviceEContentCreate</b>
+<blockquote>
+<pre>
+VeDeviceEContent *veDeviceEContentCreate(VeDeviceEType type, int vsize);</pre>    Allocates memory for and initializes the given type of content.
+
+<p><b>type</b> - 
+    The type of content to create.
+    
+<p><b>vsize</b> - 
+    If the type of content being created is <code>VE_ELEM_VECTOR</code>
+    then this is the size of the vector to create.  Otherwise this
+    parameter is ignored.
+
+<p><i>Returns:</i> 
+    A pointer to the newly-allocated element content structure.
+
+</blockquote>
+<p>
+<a name="function_veDeviceEContentCopy"></a><p><em>Function:</em> <b>veDeviceEContentCopy</b>
+<blockquote>
+<pre>
+VeDeviceEContent *veDeviceEContentCopy(VeDeviceEContent *c);</pre>    Creates a duplicate of the given content.  The copy does not share
+    any memory with the original but contains the same information.
+    
+<p><b>c</b> - 
+    The content to copy.
+
+<p><i>Returns:</i> 
+    A newly-allocated element content structure which contains the same
+    data as the original.
+
+</blockquote>
+<p>
+<a name="function_veDeviceEContentDestroy"></a><p><em>Function:</em> <b>veDeviceEContentDestroy</b>
+<blockquote>
+<pre>
+void veDeviceEContentDestroy(VeDeviceEContent *c);</pre>    Frees a previously allocated veDeviceEContent structure.  Note that
+    this frees all memory associated with the element content.
+    
+<p><b>c</b> - 
+    The element content structure to free.
+
+</blockquote>
+<p>
+<a name="sect_1"></a><h2>Elements and Device Models</h2>
+    The first place that element content is used is in elements
+    and device models.  A <i>device model</i> is an abstract representation
+    of a device which shows both its structure and its current state.
+    <p>Devices do not require device models, but without a model, the
+    application has no information of the structure of a device.
+ 
+<p>
+<a name="struct_VeDeviceElement"></a><p><em>Structure:</em> <b>VeDeviceElement</b>
+<blockquote>
+    An element in a device model is a combination of a name (identifying
+    the element) and element content.
+ 
+<pre>
+typedef struct ve_device_element {</pre><p>
+<p><b>name</b> - 
+      The name of the element.  Every element must have a name.
+  
+<pre>
+  char *name;</pre><pre></pre><p>
+<p><b>content</b> - 
+      A pointer to the element content structure for this element.
+      The type of the element is defined in the content structure.
+  
+<pre>
+  VeDeviceEContent *content;</pre><pre>
+} VeDeviceElement;</pre></blockquote>
+<p>
+<a name="function_veDeviceElementCreate"></a><p><em>Function:</em> <b>veDeviceElementCreate</b>
+<blockquote>
+<pre>
+VeDeviceElement *veDeviceElementCreate(char *name, VeDeviceEType type,
+				       int vsize);</pre>    Creates an element.  The created element is not associated with
+    any model.
+    
+<p><b>name</b> - 
+    The name of the element.
+    
+<p><b>type</b> - 
+    The type of the element content.
+
+<p><b>vsize</b> - 
+    If the element content is of type <code>VE_ELEM_VECTOR</code>
+    then this parameter determines the size of the vector.  Otherwise
+    this parameter is ignored.
+    
+<p><i>Returns:</i> 
+    A newly-allocated element.
+ 
+</blockquote>
+<p>
+<a name="function_veDeviceParseElem"></a><p><em>Function:</em> <b>veDeviceParseElem</b>
+<blockquote>
+<pre>
+VeDeviceElement *veDeviceParseElem(char *spec);</pre>    Creates an element based upon a string describing an element.
+    A string description has the following format:
+    <blockquote>[<b>elem</b>] <i>name</i> <i>type</i> [<i>type_args</i> ...]</blockquote>
+    The word <b>elem</b> at the beginning is optional.  If it is there it
+    will be ignored.  This means that it is a bad idea to call an element
+    "elem".  A name for the element and a type must be specified.  Following
+    the type may be initialization options for that particular type of
+    element content.  The following types and arguments are supported:
+<dl>
+<dt><b>trigger</b></dt>
+<dd>A trigger has no arguments</dd>
+<dt><b>switch</b> [<i>state</i>]</dt>
+<dd>A switch may optionally take an initial state for the switch.  If the
+initial state is not specified, then it is left undefined.</dd>
+<dt><b>valuator</b> [<i>min</i> [<i>max</i> [<i>value</i>]]]</dt>
+<dd>If no arguments are given to a valuator, then its minimum, maximum
+and value all default to 0.0.  If the arguments are specified (as
+real numbers) then they are initialized appropriately.</dd>
+<dt><b>vector</b> <i>size</i> [<b>{</b> [<i>min</i> [<i>max</i> [<i>value</i>]]] <b>}</b>]</dt>
+<dd>A size must always be specified for a vector.  Each valuator in the
+vector can have an initializer as for the "valuator" type, but it must
+be surrounded in curly braces: "{}".</dd>
+</dd>
+</dl>
+For example:
+<blockquote>elem foobar valuator -5.0 5.0</blockquote>
+would create an element called "foobar" as a valuator with a minimum 
+bound of -5.0 and a maximum bound of 5.0.  Since the value was not
+specified it defaults to 0.0.
+<blockquote>skippy vector 4 {-2.0 2.0} {} {0.0 0.0 40.0}</blockquote>
+creates a vector called "skippy" of size 4.  The first valuator of the
+vector will have a minimum bound of -2.0 and a maximum bound of 2.0
+and a value of 0.0 (default).  The second valuator will be set to defaults
+(no bounds, value = 0.0).  The third valuator is unbounded and has an
+initial value of 40.0.  The fourth valuator's parameters are not specified
+so they are set to the defaults.
+
+<p><b>spec</b> - 
+The string to parse.
+
+<p><i>Returns:</i> 
+A pointer to a newly-created element.  If an error is encountered
+a <code>NULL</code> pointer is returned.
+
+</blockquote>
+<p>
+<a name="function_veDeviceElementDestroy"></a><p><em>Function:</em> <b>veDeviceElementDestroy</b>
+<blockquote>
+<pre>
+void veDeviceElementDestroy(VeDeviceElement *e);</pre>    Destroys a previously allocated element, including its element content.
+    
+<p><b>e</b> - 
+    The element to destroy.
+
+</blockquote>
+<p>
+<a name="struct_VeDeviceModel"></a><p><em>Structure:</em> <b>VeDeviceModel</b>
+<blockquote>
+    A device model is just a hash of names to VeDeviceElement pointers.
+    See <code>ve_util.h</code> for more information on working with
+    string maps.  Convenience functions are provided so that you do
+    not need to access the string map directly.
+
+<pre>
+typedef struct ve_device_model {
+  VeStrMap elems;
+} VeDeviceModel;</pre></blockquote>
+<p>
+<a name="function_veDeviceCreateModel"></a><p><em>Function:</em> <b>veDeviceCreateModel</b>
+<blockquote>
+<pre>
+VeDeviceModel *veDeviceCreateModel();</pre>    Creates a new VeDeviceModel structure with an empty element map.
+
+<p><i>Returns:</i> 
+    A newly-allocated VeDeviceModel object.
+
+</blockquote>
+<p>
+<a name="function_veDeviceAddElem"></a><p><em>Function:</em> <b>veDeviceAddElem</b>
+<blockquote>
+<pre>
+int veDeviceAddElem(VeDeviceModel *model, VeDeviceElement *elem);</pre>    Adds an element to a device model.  The element must have already
+    been allocated and created.  This does not create a copy of the
+    element - the device model stores the given pointer.  Thus the
+    given element should not be freed after passing it to this function.
+    Once an element is added to a device model, the device model will
+    take care of freeing the memory associated with the element when
+    necessary.  If an element already exists in the device model with the
+    name of the new element, the old element is removed and destroyed,
+    and the new element is inserted in its place.
+
+<p><b>model</b> - 
+    The model to add the element to.
+
+<p><b>elem</b> - 
+    The element to add.
+    
+<p><i>Returns:</i> 
+    0 on success, non-zero on failure.
+
+</blockquote>
+<p>
+<a name="function_veDeviceAddElemSpec"></a><p><em>Function:</em> <b>veDeviceAddElemSpec</b>
+<blockquote>
+<pre>
+int veDeviceAddElemSpec(VeDeviceModel *model, char *spec);</pre>    Adds an element to a device model given a string representation
+    of that element.  This in effect a convenience function for
+    <blockquote><code>veDeviceAddElem(model,veDeviceParseElem(spec))</code></blockquote>
+    with some added error checking.
+
+<p><b>model</b> - 
+    The model to add the element to.
+    
+<p><b>spec</b> - 
+    The string describing the element in a form that is acceptable to
+    <code>veDeviceParseElem()</code>.
+
+<p><i>Returns:</i> 
+    0 on success, non-zero on failure.
+
+</blockquote>
+<p>
+<a name="function_veDeviceFindElem"></a><p><em>Function:</em> <b>veDeviceFindElem</b>
+<blockquote>
+<pre>
+VeDeviceElement *veDeviceFindElem(VeDeviceModel *model, char *name);</pre>    Looks up an element by name in a device model.
+
+<p><b>model</b> - 
+    The model to search in.
+    
+<p><b>name</b> - 
+    The name of the element you are looking for.
+    
+<p><i>Returns:</i> 
+    A pointer to the element if one exists in this model with the
+    given name.  <code>NULL</code> otherwise.
+
+</blockquote>
+<p>
+<a name="sect_2"></a><h2>Device Manifest</h2>
+    Devices are put together from a number of pieces.  First, a
+    <i>device description</i> describes that specifics of a particular device
+    - name, type, driver, settings, etc.  These descriptions are usually
+    read in from a manifest.  A <i>manifest</i> lists possible devices in the
+    system.  A device needs to be <i>used</i> before it is accessible to
+    the system.  The manifest is generally fixed for a particular computer
+    system.  Individual applications then specify which devices they actually
+    use.  There is general support in the VE library for loading a device
+    usage file at run-time so that the set of devices to use and their
+    mappings can be easily loaded at run-time.
+    <p>A manifest also contains driver references, which let the system
+    know what drivers need to be loaded for what types of devices.
+    Driver references have general types - currently driver references
+    for devices and filters are supported.  Other driver references may
+    be supported in the future.
+    <p>There is a single device manifest in memory at run-time.  All
+    additions or removals are done to this global manifest.
+ 
+<p>
+<a name="struct_VeDeviceDesc"></a><p><em>Structure:</em> <b>VeDeviceDesc</b>
+<blockquote>
+    A description of a device.  Every description must include a name
+    and a type.  Names and types are just strings.  As well, an
+    arbitrary number of options can be defined for a device.  These
+    options are usually device specific (e.g. the x11 driver has a
+    "display" option which allows you to specify which X server you
+    want to use for input devices).  These options are stored in
+    a string map when the entries being strings.  Strings in the
+    options map are all allocated copies - that is, they have their
+    own storage.  If an option is removed from the string map, its
+    value (i.e. the pointer to its contents) should be retrieved and
+    freed first.
+
+<pre>
+typedef struct ve_device_desc {</pre><p>
+<p><b>name</b> - 
+      The name of this device as a null-terminated string.
+  
+<pre>
+  char *name;</pre><pre></pre><p>
+<p><b>type</b> - 
+      The type of this device as a null-terminated string.
+  
+<pre>
+  char *type;</pre><pre></pre><p>
+<p><b>options</b> - 
+      Device-specific options as a string map.  The value of an option
+      is stored as string.
+  
+<pre>
+  VeStrMap options;</pre><pre>
+} VeDeviceDesc;</pre></blockquote>
+<p>
+<a name="function_veDeviceDescCreate"></a><p><em>Function:</em> <b>veDeviceDescCreate</b>
+<blockquote>
+<pre>
+VeDeviceDesc *veDeviceDescCreate();</pre>    Creates an empty device description.
+
+<p><i>Returns:</i> 
+    A newly-allocated VeDeviceDesc object.
+
+</blockquote>
+<p>
+<a name="function_veDeviceDescDestroy"></a><p><em>Function:</em> <b>veDeviceDescDestroy</b>
+<blockquote>
+<pre>
+void veDeviceDescDestroy(VeDeviceDesc *desc);</pre>    Frees memory allocated to a VeDeviceDesc object.  This includes
+    any strings in the options map as well as the object itself.
+    
+<p><b>desc</b> - 
+    The description to free.
+
+</blockquote>
+<p>
+<a name="function_veDeviceDescOption"></a><p><em>Function:</em> <b>veDeviceDescOption</b>
+<blockquote>
+<pre>
+char *veDeviceDescOption(VeDeviceDesc *desc, char *name);</pre>    Retrieves an option from a description.
+
+<p><b>desc</b> - 
+    The description from which to retrieve the option.
+    
+<p><b>name</b> - 
+    The name of the option to retrieve.
+
+<p><i>Returns:</i> 
+    The value of the option if it is defined, <code>NULL</code> otherwise.
+
+</blockquote>
+<p>
+<a name="function_veClearDeviceManifest"></a><p><em>Function:</em> <b>veClearDeviceManifest</b>
+<blockquote>
+<pre>
+int veClearDeviceManifest();</pre>    Clears the in-memory global device manifest.  This does not affect
+    any data on disk.  After calling this function, the manifest will
+    contain no data.
+    
+<p><i>Returns:</i> 
+    0 on success, non-zero on failure.
+
+</blockquote>
+<p>
+<a name="function_veAddDeviceDesc"></a><p><em>Function:</em> <b>veAddDeviceDesc</b>
+<blockquote>
+<pre>
+int veAddDeviceDesc(VeDeviceDesc *desc);</pre>    Adds a device description to the global device manifest.
+    
+<p><b>desc</b> - 
+    The description to add to the manifest.
+    
+<p><i>Returns:</i> 
+    0 on success, non-zero on failure.
+
+</blockquote>
+<p>
+<a name="function_veFindDeviceDesc"></a><p><em>Function:</em> <b>veFindDeviceDesc</b>
+<blockquote>
+<pre>
+VeDeviceDesc *veFindDeviceDesc(char *name);</pre>    Looks up an existing device description in the manifest by device
+    name.
+    
+<p><b>name</b> - 
+    The name of the device to locate.
+
+<p><i>Returns:</i> 
+    A pointer to the description of the device if it exists, <code>NULL</code>
+    otherwise.
+
+</blockquote>
+<p>
+<a name="function_veDeviceAddDriverRef"></a><p><em>Function:</em> <b>veDeviceAddDriverRef</b>
+<blockquote>
+<pre>
+int veDeviceAddDriverRef(char *type, char *name, char *driverpath);</pre>    Adds a driver reference to the manifest.  Driver references are used
+    to locate run-time loadable drivers for devices, filters, etc.
+    A driver reference consists of a type (currently either <b>"device"</b>
+    or <b>"filter"</b>) and a name.  For drivers, the name is the type of
+    the device.  That is, all devices of the same type share the same
+    driver.
+
+<p><b>type</b> - 
+    The type of driver reference to add.  This is a string.  Currently
+    valid values are <b>device</b> and <b>filter</b>.
+    
+<p><b>name</b> - 
+    The name of the specific object to add.  For devices, this
+    is the type of the device.  For filters, this is the name of the
+    filter.
+
+<p><b>driverpath</b> - 
+    The path to the driver.  This path will be searched using VE's
+    usual rules for loading drivers (see <code>ve_driver.h</code>
+    for driver details).
+ 
+</blockquote>
+<p>
+<a name="function_veDeviceFindDriverRef"></a><p><em>Function:</em> <b>veDeviceFindDriverRef</b>
+<blockquote>
+<pre>
+char *veDeviceFindDriverRef(char *type, char *name);</pre>    Looks up a driver reference by driver type (<b>device</b> or
+    <b>filter</b>) and name.
+
+<p><b>type</b> - 
+    The type of driver reference to find.  This is a string.  Currently
+    valid values are <b>device</b> and <b>filter</b>.
+    
+<p><b>name</b> - 
+    The name of the specific object to look up.  For devices, this
+    is the type of the device.  For filters, this is the name of the
+    filter.
+
+<p><i>Returns:</i> 
+    A string containing the path to the driver if it was found,
+    or <code>NULL</code> if it was not found.  The returned string
+    should be treated as static and should <em>not</em> be freed by the
+    application.
+ 
+</blockquote>
+<p>
+<a name="function_veReadDeviceManifest"></a><p><em>Function:</em> <b>veReadDeviceManifest</b>
+<blockquote>
+<pre>
+int veReadDeviceManifest(FILE *stream, char *fname);</pre>    Reads data from the given stdio stream and appends it to the global
+    device manifest.  This will overwrite any definitions that exist
+    both in the stream and in the global manifest.  Other definitions
+    currently in the manifest will not be overwritten.  If you wish
+    to ensure that only those devices in the manifest are defined,
+    call <code>veClearDeviceManifest()</code> before calling this function.
+    <p>The following entries can be found in a manifest file:
+    <ul>
+    <li><b>driver</b> <i>type</i> <i>name</i> <i>path</i> - a driver reference.
+    <li><b>device</b> <i>name</i> <i>type</i> [<b>{</b><i>options</i> ...<b>}</b>] - a device description.  Options are spread out over separate lines.
+    On each option line, the first word is the name of the option and the 
+    remainder of the line is the value of the option.
+    <li><b>use</b> <i>name</i>  [ [<i>type</i>] <b>{</b><i>override-options</i> ...<b>}</b>] - uses a device.  Format is the same as a "device" line with the 
+    following changes.  Both type and options may be omitted, but if "type" is
+    included then options must also be specified.  This means that there are
+    three valid formats for the "use" statement:
+    <ul>
+    <li><code>use devicename</code> - use the device with the options given
+    in the "device" declaration.</li>
+    <li><code>use devicename { newopts ... }</code> - use the device with the
+    options given in the "device" declaration but override those options with
+    any values given in the option section of this "use" statement.</li>
+    <li><code>use devicename devicetype { newopts ... }</code> - define a
+    new device and use it all in one line.  The options section must be
+    specified (even if it is empty) or "devicetype" will be interpreted as
+    options (and it looks like the second form).</li>
+    </ul>
+    </li>
+    <li><b>filter</b> ... - a filter table entre (see 
+    <code>veDeviceParseFTableEntry()</code></li>
+    </ul>
+    Blank lines and lines beginning with '#' are ignored.
+    <p>Here is an example:
+<pre>
+        # This is a device manifest
+        # Entries can be in any order
+        # - for x11keyboard type devices, load the x11drv.so driver
+        driver device x11keyboard x11drv.so
+        # - for x11mouse type devices, load the x11drv.so driver - VE knows
+        #   enough to only load the driver once
+        driver device x11mouse x11drv.so
+        # - declare a device called "keyboard" - since we omit options,
+        #   the defaults for that driver are used
+        device keyboard x11mouse
+        # - the following is a Flock of Birds head-tracker
+        device headtrack fob {
+                line /dev/ttya
+                speed 115200
+                flow rtscts
+                hemisphere forward
+        }
+</pre>
+
+<p><b>stream</b> - 
+     The stdio stream from which to read the manifest.
+
+<p><b>fname</b> - 
+     The name of the file from which data is being read.  This is only
+     used for informational purposes in error messages.  If NULL, a
+     fixed string will be substituted by the function.
+
+<p><i>Returns:</i> 
+     0 on success, non-zero on failure.
+
+</blockquote>
+<p>
+<a name="function_veGetDeviceManifest"></a><p><em>Function:</em> <b>veGetDeviceManifest</b>
+<blockquote>
+<pre>
+VeStrMap veGetDeviceManifest(void);</pre>    Returns a string map containing all known names in the device manifest.
+    The returned string map must not be altered by the calling program.
+    The string map should only be used to determine the set of names
+    in the device manifest - the data mapped to the string in the map
+    should be left alone by the calling program.
+
+<p><i>Returns:</i> 
+    A pointer to the current device manifest or <code>NULL</code> if there
+    is currently no device manifest.
+ 
+</blockquote>
+<p>
+<a name="sect_3"></a><h2>Devices and Drivers</h2>
+    Support for devices is provided through device drivers.  Each driver
+    is responsible for providing support for a particular device type.
+    The VE library keeps an internal table mapping known device types to
+    drivers.  When a device is created in the system, the VE library uses
+    the driver to <i>instantiate</i> the device, creating both a link to
+    the driver but a private structure for the driver containing the
+    information specific to that instance of the device.  A device
+    description (see the section on the manifest above) is required to
+    instantiate a device.
+    <p>Be wary of the distinction between general drivers (i.e. shared
+    objects and libraries) which are system objects, versus device drivers
+    (module that handles input devices) which are VE objects.
+    <p>A device in the system has up to two parts.  One part is a model
+    (as discussed earlier).  The model is an abstract representation of
+    a device.  The other part is an instance, which represents an
+    input device that will generate events.  We group devices into two
+    sets: <i>real devices</i> - that is, devices with instances that
+    represent some source of input events for the program, and 
+    <i>virtual devices</i> - devices that do not generate input events,
+    but which we may model, or refer to by name.  The distinction is
+    purely conceptual - the system itself makes no explicit distinction
+    between virtual and real devices.  Real devices always have an instance
+    but may or may not have a model.  Without a model, real devices can
+    still generate input events, but the structure of the device cannot be 
+    inspected from the program.  Virtual devices do not have an instance
+    and may or may not have a model.  Virtual devices are typically used
+    for devices that are inherent to the application.  For example,
+    a driving simulator might have a virtual steering wheel, accelerator,
+    brake, gear shift, etc.  The real devices that control these may
+    be joysticks, mice, keyboards, etc.  The accelerator is virtual.
+    If we provide a model for it, then that model can track changes made
+    to its state by incoming events.  However, even if we do not provide
+    a model, we can still map incoming events to the accelerator.  A
+    device which has neither a model nor an instance is considered to be
+    <i>purely virtual</i>.  Purely virtual devices cannot be inspected but
+    we can still receive and handle events mapped to these devices.  The
+    section below on events and filters describe some of the mechanisms
+    for managing events and mapping events from one device to another.
+    <p>Device drivers are expected to spawn any threads required to
+    collect incoming data and generate events when a device is instantiated.
+ 
+<p>
+<a name="struct_VeDeviceDriver"></a><p><em>Structure:</em> <b>VeDeviceDriver</b>
+<blockquote>
+    Entry in the internal driver table that maps a device type to the
+    code that instantiates devices of that type.  If a particular
+    piece of driver code can support more than one type of device,
+    then multiple VeDeviceDriver structures will need to be created.
+ 
+<pre>
+typedef struct ve_device_driver {</pre><p>
+<p><b>type</b> - 
+      The type of device that this driver supports.
+   
+<pre>
+  char *type;</pre><pre></pre><p>
+<p><b>instantiate</b> - 
+      The function that will create the device.  The arguments to the function
+      will be a pointer to this driver structure as well as a device
+      description.  The function should return a pointer to e VeDevice
+      structure (see below) on success, and <code>NULL</code> on failure.
+  
+<pre>
+  struct ve_device *(*instantiate)(struct ve_device_driver *d,VeDeviceDesc *desc,VeStrMap override);</pre><pre>
+} VeDeviceDriver;</pre></blockquote>
+<p>
+<a name="struct_VeDeviceInstance"></a><p><em>Structure:</em> <b>VeDeviceInstance</b>
+<blockquote>
+    An instance of a device consists of a reference to its driver, plus
+    a private structure containing the instance-specific information.
+ 
+<pre>
+typedef struct ve_device_instance {</pre><p>
+<p><b>driver</b> - 
+      A pointer to the driver structure from which this instance was spawned.
+  
+<pre>
+  VeDeviceDriver *driver;</pre><pre></pre><p>
+<p><b>idata</b> - 
+      The instance-specific data.  This structure is private to the driver
+      and should not be referenced from outside the driver.
+  
+<pre>
+  void *idata;</pre><pre></pre><p>
+<p><b>options</b> - 
+      A string map of options that are specific to this instance of this
+      device.
+   
+<pre>
+  VeStrMap options;</pre><pre>
+} VeDeviceInstance;</pre></blockquote>
+<p>
+<a name="function_veDeviceInstanceInit"></a><p><em>Function:</em> <b>veDeviceInstanceInit</b>
+<blockquote>
+<pre>
+VeDeviceInstance *veDeviceInstanceInit(VeDeviceDriver *driver, void *idata,
+				       VeDeviceDesc *desc,
+				       VeStrMap override);</pre>    Creates and initializes a device instance structure.  This
+    function call is provided as a convenience for device drivers.
+
+<p><b>driver</b> - 
+    The driver from which this device was created or <code>NULL</code>
+    if there is none.
+
+<p><b>idata</b> - 
+    The private (driver-specific) structure for this instance, or
+    <code>NULL</code> if there is none.
+
+<p><b>desc</b> - 
+    The description from which to initialize the option set, or
+    <code>NULL</code> if no description is provided.
+
+<p><b>override</b> - 
+    A set of options that override those in the description or
+    <code>NULL</code> if there are no override options.
+    
+<p><i>Returns:</i> 
+    A pointer to a newly created instance structure if successful,
+    or <code>NULL</code> if an error occurred.
+
+</blockquote>
+<p>
+<a name="function_veDeviceInstOption"></a><p><em>Function:</em> <b>veDeviceInstOption</b>
+<blockquote>
+<pre>
+char *veDeviceInstOption(VeDeviceInstance *i, char *name);</pre>    Retrieves an option from an instance.  Device driver writers should
+    create an instance with <code>veDeviceInstanceInit()</code> and
+    retrieve options with <code>veDeviceInstOption()</code> rather than
+    <code>veDeviceDescOption()</code>.
+    
+<p><b>i</b> - 
+    The instance from which to retrieve the option.
+
+<p><b>name</b> - 
+    The name of the option to retrieve.
+
+<p><i>Returns:</i> 
+    The value of the option if it is defined, <code>NULL</code> otherwise.
+ 
+</blockquote>
+<p>
+<a name="function_veDeviceAddDriver"></a><p><em>Function:</em> <b>veDeviceAddDriver</b>
+<blockquote>
+<pre>
+int veDeviceAddDriver(VeDeviceDriver *d);</pre>    Adds a device driver to the system table.
+    
+<p><b>d</b> - 
+    The driver to add.
+
+<p><i>Returns:</i> 
+    0 on success, non-zero on failure.
+ 
+</blockquote>
+<p>
+<a name="function_veDeviceFindDriver"></a><p><em>Function:</em> <b>veDeviceFindDriver</b>
+<blockquote>
+<pre>
+VeDeviceDriver *veDeviceFindDriver(char *type);</pre>    Finds a device driver in the system table for the given device type.
+    
+<p><b>type</b> - 
+    The type of device for which we want to find a driver.
+    
+<p><i>Returns:</i> 
+    A pointer to a VeDeviceDriver structure if successful, 
+    <code>NULL</code> if a driver cannot be found.
+
+</blockquote>
+<p>
+<a name="struct_VeDevice"></a><p><em>Structure:</em> <b>VeDevice</b>
+<blockquote>
+    An actual device.  Only those devices with either an instance
+    or model should have a VeDevice structure associated with them.
+    It is possible to create a purely virtual device structure (with
+    null entries for the instance and the model) but this structure does
+    not serve any purpose.
+ 
+<pre>
+typedef struct ve_device {</pre><p>
+<p><b>name</b> - 
+      The name of the device (from the device description used to
+      generate this device).
+  
+<pre>
+  char *name;</pre><pre></pre><p>
+<p><b>instance</b> - 
+      A pointer to the instance of this device.  Virtual devices will
+      have a null value here.
+  
+<pre>
+  VeDeviceInstance *instance;</pre><pre></pre><p>
+<p><b>model</b> - 
+      A pointer to the model for this device.  This will be a null value
+      if the device has no model.
+  
+<pre>
+  VeDeviceModel *model;</pre><pre>
+} VeDevice;</pre></blockquote>
+<p>
+<a name="function_veDeviceCreate"></a><p><em>Function:</em> <b>veDeviceCreate</b>
+<blockquote>
+<pre>
+VeDevice *veDeviceCreate(char *name);</pre>    Creates a new device.  The structure will initially be purely virtual
+    in that the instance and model will not be defined.  This function
+    just allocates the structure - it does not attempt to build all of
+    the aspects of the device object.  See <code>veDeviceUse()</code> for
+    this.
+
+<p><b>name</b> - 
+    The name of the device to create.
+
+<p><i>Returns:</i> 
+    A pointer to a newly-allocated VeDevice object.
+
+</blockquote>
+<p>
+<a name="function_veDeviceCreateVirtual"></a><p><em>Function:</em> <b>veDeviceCreateVirtual</b>
+<blockquote>
+<pre>
+VeDevice *veDeviceCreateVirtual(char *name, VeDeviceModel *model);</pre>    Creates a new virtual device.  This device will be locatable
+    using <code>veDeviceFind()</code> and if it has a model then
+    incoming events will be applied to it.
+
+<p><b>name</b> - 
+    The name of the device.
+    
+<p><b>model</b> - 
+    An optional model for the device.  If this is <code>NULL</code> then
+    a purely virtual device is created (i.e. without a model).
+
+<p><i>Returns:</i> 
+    A pointer to the newly-created VeDevice object or <code>NULL</code>
+    if there is an error or if a device with that name already exists.
+
+</blockquote>
+<p>
+<a name="function_veDeviceUseByDesc"></a><p><em>Function:</em> <b>veDeviceUseByDesc</b>
+<blockquote>
+<pre>
+VeDevice *veDeviceUseByDesc(VeDeviceDesc *desc, VeStrMap override);</pre>    Creates a device based upon a device description.  This will also load
+    any drivers the device may need as defined by driver references.  If
+    the driver has been previously created via a <code>veDeviceUseByDesc()</code>
+    or <code>veDeviceUse()</code> call, then a new device will not be created
+    and a pointer to the old device will be returned.  The device will be
+    instantiated if necessary.
+
+<p><b>desc</b> - 
+    A pointer to the device description.
+
+<p><i>Returns:</i> 
+    A pointer to the device.  If the device is not in use, then the device
+    will be instantiated.  <code>NULL</code> is returned in the event of an
+    error.
+
+</blockquote>
+<p>
+<a name="function_veDeviceUse"></a><p><em>Function:</em> <b>veDeviceUse</b>
+<blockquote>
+<pre>
+VeDevice *veDeviceUse(char *name, VeStrMap override);</pre>    Creates a device based upon a device description from the global
+    device manifest.  This is the command that is typically used for
+    instantiating devices.  Its behaviour is the same as 
+    <code>veDeviceUseByDesc()</code> except that the device description
+    comes from the global manifest rather than being explicitly given
+    as a parameter.
+
+<p><b>name</b> - 
+    The name of the device to use.
+    
+<p><i>Returns:</i> 
+    A pointer to the device.  If the device is not in use, then the device
+    will be instantiated.  <code>NULL</code> is returned in the event of an
+    error, including the case if the device cannot be found in the manifest.
+ 
+</blockquote>
+<p>
+<a name="function_veDeviceFind"></a><p><em>Function:</em> <b>veDeviceFind</b>
+<blockquote>
+<pre>
+VeDevice *veDeviceFind(char *name);</pre>    Finds the device structures of active devices.  This will not
+    instantiate a device.  Only devices that have been previously used
+    can be retrieved with this function.  Note that purely virtual devices
+    do not exist as active devices and thus cannot be found by this
+    command.
+
+<p><b>name</b> - 
+    The name of the device to find.
+
+<p><i>Returns:</i> 
+    A pointer to the device if it has been previously used,
+    <code>NULL</code> if the device is not in use.
+
+</blockquote>
+<p>
+<a name="sect_4"></a><h2>Events</h2>
+    Real devices generate events.  Events combine element data with
+    information about the time the event occured and from which 
+    device and element the event is believed to have originated.
+ 
+<p>
+<a name="struct_VeDeviceEvent"></a><p><em>Structure:</em> <b>VeDeviceEvent</b>
+<blockquote>
+    The object that represents a single event.  A number of macros
+    are provided to simplify working with event structures.  All
+    arguments to these macros are pointers to VeDeviceEvent objects.
+<dl>
+<dt><code>VE_EVENT_TYPE(x)</code></dt>
+<dd>Returns the type of the event pointed to by <code>x</code>.</dd>
+<dt><code>VE_EVENT_KEYBOARD(x)</code></dt>
+<dd>Returns a pointer to a VeDeviceE_Keyboard structure which is the
+event's element content.  If the type of the event is not 
+<code>VE_ELEM_KEYBOARD</code> then the result of this macro is undefined.</dd>
+<dt><code>VE_EVENT_TRIGGER(x)</code></dt>
+<dd>Returns a pointer to a VeDeviceE_Trigger structure which is the
+event's element content.  If the type of the event is not 
+<code>VE_ELEM_TRIGGER</code> then the result of this macro is undefined.</dd>
+<dt><code>VE_EVENT_SWITCH(x)</code></dt>
+<dd>Returns a pointer to a VeDeviceE_Switch structure which is the
+event's element content.  If the type of the event is not 
+<code>VE_ELEM_SWITCH</code> then the result of this macro is undefined.</dd>
+<dt><code>VE_EVENT_VALUATOR(x)</code></dt>
+<dd>Returns a pointer to a VeDeviceE_Valuator structure which is the
+event's element content.  If the type of the event is not 
+<code>VE_ELEM_VALUATOR</code> then the result of this macro is undefined.</dd>
+<dt><code>VE_EVENT_VECTOR(x)</code></dt>
+<dd>Returns a pointer to a VeDeviceE_Vector structure which is the
+event's element content.  If the type of the event is not 
+<code>VE_ELEM_VECTOR</code> then the result of this macro is undefined.</dd>
+</dl>
+
+<pre>
+typedef struct ve_device_event {</pre><p>
+<p><b>timestamp</b> - 
+      The time at which this event occurred.  This time is typically
+      the value of <code>veClock()</code> at the time the event occurred.
+      Its units are milliseconds and the time is relative to the clock's
+      zero reference point.
+  
+<pre>
+  long timestamp;</pre><pre></pre><p>
+<p><b>device</b> - 
+      The name of the device from which this event originates.  This
+      may be a real, virtual or purely virtual device.  This name may be
+      modified by filters before being passed to callbacks.
+   
+<pre>
+  char *device;</pre><pre></pre><p>
+<p><b>elem</b> - 
+      The name of the element from which this event originates.  This
+      element may or may not be a declared member of the device.  In other
+      words, there are no restrictions on what this value may be.
+  
+<pre>
+  char *elem;</pre><pre></pre><p>
+<p><b>index</b> - 
+      Filters and callbacks may operate on a specific valuator in a vector.
+      In those cases, this field is used to indicate which valuator in
+      the vector to use.
+  
+<pre>
+  int index;</pre><pre></pre><p>
+<p><b>content</b> - 
+      The actual data (i.e. element content) for the event.
+  
+<pre>
+  VeDeviceEContent *content;</pre><pre>
+} VeDeviceEvent;</pre></blockquote>
+<p>
+<a name="function_veDeviceEventCreate"></a><p><em>Function:</em> <b>veDeviceEventCreate</b>
+<blockquote>
+<pre>
+VeDeviceEvent *veDeviceEventCreate(VeDeviceEType type, int vsize);</pre>    Creates a device event object.
+    
+<p><b>type</b> - 
+    The type of the event to create.
+
+<p><b>vsize</b> - 
+    If the event is of type <code>VE_ELEM_VECTOR</code> then this argument
+    is the size of the vector.
+
+<p><i>Returns:</i> 
+    A pointer to the newly created object, or <code>NULL</code> if an
+    error occurs.
+ 
+</blockquote>
+<p>
+<a name="function_veDeviceEventInit"></a><p><em>Function:</em> <b>veDeviceEventInit</b>
+<blockquote>
+<pre>
+VeDeviceEvent *veDeviceEventInit(VeDeviceEType type, int vsize,
+				 char *device, char *elem);</pre>    Creates a device event object and initializes some fields.
+    Note that the call <code>veDeviceEventInit(type,vsize,NULL,NULL)</code>
+    is not equivalent to <code>veDeviceEventCreate(type,vsize)</code>.
+    Some fields (e.g. timestamp) are implicitly initialized (e.g. with
+    the current time).
+    
+<p><b>type</b> - 
+    The type of the event to create.
+
+<p><b>vsize</b> - 
+    If the event is of type <code>VE_ELEM_VECTOR</code> then this argument
+    is the size of the vector.
+
+<p><b>device</b> - 
+    The name of the device from which this event originates, or 
+    <code>NULL</code> to not initialize the device field.
+
+<p><b>elem</b> - 
+    The name of the element from which this event originates, or
+    <code>NULL</code> to not initialize the event field.
+    
+<p><i>Returns:</i> 
+    A pointer to the newly created object, or <code>NULL</code> if an
+    error occurs.
+ 
+</blockquote>
+<p>
+<a name="function_veDeviceEventCopy"></a><p><em>Function:</em> <b>veDeviceEventCopy</b>
+<blockquote>
+<pre>
+VeDeviceEvent *veDeviceEventCopy(VeDeviceEvent *e);</pre>    Creates a copy of an event.  The new event shares no memory with the old
+    event - i.e. you can modify or destroy the old event without affecting
+    the new event and vice versa.
+
+<p><b>e</b> - 
+    The event to copy.
+
+<p><i>Returns:</i> 
+    A duplicate of the given event.
+ 
+</blockquote>
+<p>
+<a name="function_veDeviceEventDestroy"></a><p><em>Function:</em> <b>veDeviceEventDestroy</b>
+<blockquote>
+<pre>
+void veDeviceEventDestroy(VeDeviceEvent *e);</pre>    Destroys an event object and frees any memory associated with it.
+    
+<p><b>e</b> - 
+    The event to destroy.
+ 
+</blockquote>
+<p>
+<a name="function_veDeviceEventFromElem"></a><p><em>Function:</em> <b>veDeviceEventFromElem</b>
+<blockquote>
+<pre>
+VeDeviceEvent *veDeviceEventFromElem(char *device, VeDeviceElement *el);</pre>    Creates an event based upon an element structure.  The device
+    name must also be specified.  Other fields (e.g. timestamp) are
+    filled in the same way as <code>veDeviceEventInit()</code>.
+    
+<p><b>device</b> - 
+    The name of the device to use, or the <code>NULL</code> to leave
+    the device field of the event unspecified.
+
+<p><i>Returns:</i> 
+    A pointer to the newly created object, or <code>NULL</code> if an
+    error occurs.
+
+</blockquote>
+<p>
+<a name="function_veDeviceApplyEventToModel"></a><p><em>Function:</em> <b>veDeviceApplyEventToModel</b>
+<blockquote>
+<pre>
+void veDeviceApplyEventToModel(VeDeviceModel *m, VeDeviceEvent *e);</pre>    Updates a device model based upon the given event.  This function
+    does not consider the device name in the event, but the element
+    named in the event must exist in the device model, otherwise the
+    function has no effect.  If the element does exist in the model,
+    then its state is updated to match the state information in the
+    event's element content.
+    
+<p><b>m</b> - 
+    The model to update.
+    
+<p><b>e</b> - 
+    The event which is used to update the model.
+ 
+</blockquote>
+<p>
+<a name="function_veDeviceApplyEvent"></a><p><em>Function:</em> <b>veDeviceApplyEvent</b>
+<blockquote>
+<pre>
+void veDeviceApplyEvent(VeDeviceEvent *e);</pre>    Applies an event to a matching device if that device has a model
+    associated with it.  In effect, this function looks up a device
+    based upon the device name in the event and then uses
+    <code>veDeviceApplyEventToModel()</code> to update the device model.
+    For this function to update a device, the device must have a
+    corresponding VeDevice object.
+
+<p><b>e</b> - 
+    The event to apply.
+ 
+</blockquote>
+<p>
+<a name="sect_5"></a><h2>Callbacks</h2>
+    A device sets up any number of callbacks to process events.  When an
+    event is received, it is filtered and then passed to the first callback
+    that matches its device and element specifications.
+    <p>
+    All callbacks must be of type <code>VeDeviceEventProc</code> which
+    is a function which takes two arguments:  a pointer to the event
+    which is being passed to it, and an abritrary argument which should
+    be supplied by the application when setting up the callback.
+    <p>
+    Although events are generally consumed by the first callback they
+    are passed to, there is one exception.  If a callback matches one
+    valuator of a vector, then callback processing will continue
+    after handling that callback.  Callbacks can abort any further
+    processing by returning a non-zero value.
+    <p>
+    Callbacks are passed pointers to events whose memory is managed elsewhere.
+    They should not destroy these events.
+ 
+<p>
+<a name="struct_VeDeviceSpec"></a><p><em>Structure:</em> <b>VeDeviceSpec</b>
+<blockquote>
+    For both callbacks and filters, events are selected based upon
+    a device specification.  A specification has three parts - a device part,
+    an element part, and an index part.
+    The device part defines which devices match the specification.
+    It can either be a specific device or "*" which is a wildcard meaning
+    that any device matches the device part.  The device part can be omitted
+    which is equivalent to specifying "*".  The element part defines which
+    elements match the specification.  Like the device part, it is either
+    a specific name or "*" denoting any element.  However, specific strings
+    can match either an element's name or an element's type.  For example,
+    an element part of "foo" would match an element with a name of "foo" and
+    would also match an element of type "foo".  Types are given obvious
+    names ("trigger", "switch", "valuator", "vector", "keyboard").
+    The index part is only meaningful if the type of element being matched
+    is a vector, otherwise it is ignored.  If specified, it must be an
+    integer denoting a specific valuator in a vector.
+    <p>See <code>veDeviceParseSpec()</code> for how to express specifications
+    as a string.
+ 
+<pre>
+typedef struct ve_device_spec {</pre><p>
+<p><b>device</b> - 
+      The device part of the specification.  If NULL, then the device
+      part is not specified.
+  
+<pre>
+  char *device;</pre><pre></pre><p>
+<p><b>elem</b> - 
+      The element part of the specification.  If NULL, then the element
+      part is not specified.
+  
+<pre>
+  char *elem;</pre><pre></pre><p>
+<p><b>index</b> - 
+      If this value is greater then or equal to 0 then it matches a specific
+      valuator of a vector.  If this is less than 0 or if the element type
+      being matched is not a vector then this field is ignored.
+  
+<pre>
+  int index;</pre><pre>
+} VeDeviceSpec;</pre></blockquote>
+<p>
+<a name="function_veDeviceSpecCreate"></a><p><em>Function:</em> <b>veDeviceSpecCreate</b>
+<blockquote>
+<pre>
+VeDeviceSpec *veDeviceSpecCreate();</pre>    Creates a new empty specification.  By default the specification is
+    all unspecified, meaning that it is equivalent to wildcards.
+    
+<p><i>Returns:</i> 
+    A pointer to a newly created VeDeviceSpec object.
+ 
+</blockquote>
+<p>
+<a name="function_veDeviceSpecDestroy"></a><p><em>Function:</em> <b>veDeviceSpecDestroy</b>
+<blockquote>
+<pre>
+void veDeviceSpecDestroy(VeDeviceSpec *s);</pre>    Destroys a previously created device specification and frees any memory
+    associated with it.
+    
+<p><b>s</b> - 
+    The specification to destroy.
+
+</blockquote>
+<p>
+<a name="function_veDeviceParseSpec"></a><p><em>Function:</em> <b>veDeviceParseSpec</b>
+<blockquote>
+<pre>
+VeDeviceSpec *veDeviceParseSpec(char *str);</pre>    Parses a device specification given as a string.  The three parts
+    are given in order separated by periods:
+    <blockquote><i>device</i>.<i>elem</i>.<i>index</i></blockquote>
+    Any part can be omitted.  If trailing parts (e.g. index, or elem and
+    index) are omitted, then the periods preceeding them must also be
+    omitted.  If a part is omitted is left unspecified 
+    in the structure.
+    For devices and elements this leaves a null field and for the index this
+    sets the value to -1.  For example:
+<dl>
+<dt><b>foobar</b></dt>
+<dt><b>foobar.*</b></dt>
+<dd>Matches any element of any device called foobar.  Both cases are
+equivalent.</dd>
+<dt><b>*.thingy</b></dt>
+<dd>Matches any element called "thingy" or of type "thingy" in any device.</dd>
+<dt><b>foobar.thingy.4</b></dt>
+<dd>Matches the valuator with index 4 of device foobar and element name/type
+thingy.  If the event being matched is not for a vector, then the index
+portion is ignored.</dd> 
+</dl>
+<p><b>str</b> - 
+    The string containg the specification to parse.
+
+<p><i>Returns:</i> 
+    A pointer to a newly-created device specification or <code>NULL</code>
+    if an error is encountered.
+
+</blockquote>
+<p>
+<a name="function_veDeviceMatchSpec"></a><p><em>Function:</em> <b>veDeviceMatchSpec</b>
+<blockquote>
+<pre>
+int veDeviceMatchSpec(VeDeviceEvent *e, VeDeviceSpec *s);</pre>    Compares an event to a device specification.
+
+<p><b>e</b> - 
+    The event.
+    
+<p><b>s</b> - 
+    The specification.
+
+<p><i>Returns:</i> 
+    A boolean value.  True (non-zero) if the event matches the specification
+    nad false (zero) otherwise.
+
+</blockquote>
+<p>
+<a name="function_veDeviceAddCallbackSpec"></a><p><em>Function:</em> <b>veDeviceAddCallbackSpec</b>
+<blockquote>
+<pre>
+int veDeviceAddCallbackSpec(VeDeviceEventProc p, void *arg, VeDeviceSpec *s);</pre>    Adds a callback to the internal list of callbacks given a
+    device specification object.
+
+<p><b>p</b> - 
+    The callback to add.
+    
+<p><b>arg</b> - 
+    An application-supplied argument that will be passed to the callback
+    when it is called due to an event matching the given specification.
+    The library does not interpret this argument at all - it is provided
+    for applications to pass some context to callbacks.
+
+<p><b>s</b> - 
+    A device specification object defining which events should be passed
+    to this callback.
+
+<p><i>Returns:</i> 
+    0 on success, non-zero on failure.
+ 
+</blockquote>
+<p>
+<a name="function_veDeviceAddCallback"></a><p><em>Function:</em> <b>veDeviceAddCallback</b>
+<blockquote>
+<pre>
+int veDeviceAddCallback(VeDeviceEventProc p, void *arg, char *spec);</pre>    Adds a callback to the internal list of callbacks given a device
+    specification as a string.  This is the more common function for
+    adding callbacks.
+
+<p><b>p</b> - 
+    The callback to add.
+    
+<p><b>arg</b> - 
+    An application-supplied argument that will be passed to the callback
+    when it is called due to an event matching the given specification.
+    The library does not interpret this argument at all - it is provided
+    for applications to pass some context to callbacks.
+
+<p><b>spec</b> - 
+    A device specification as a string suitable for 
+    <code>veDeviceParseSpec()</code>.
+
+<p><i>Returns:</i> 
+    0 on success, non-zero on failure.
+ 
+</blockquote>
+<p>
+<a name="function_veDeviceRemoveCallback"></a><p><em>Function:</em> <b>veDeviceRemoveCallback</b>
+<blockquote>
+<pre>
+int veDeviceRemoveCallback(VeDeviceEventProc p);</pre>    Removes a callback previously added to the internal list.  All
+    callbacks that call the given function will be removed.
+    
+<p><b>p</b> - 
+    All callbacks that would call this function will be removed from
+    the internal list.
+
+<p><i>Returns:</i> 
+    0 on success, non-zero on failure.
+ 
+</blockquote>
+<p>
+<a name="function_veDeviceHandleCallback"></a><p><em>Function:</em> <b>veDeviceHandleCallback</b>
+<blockquote>
+<pre>
+int veDeviceHandleCallback(VeDeviceEvent *e);</pre>    Processes callbacks for an event.  This function will call any
+    callbacks that are appropriate for the given event based upon
+    the internal list of callbacks.  If a callback returns a non-zero
+    value then any further processing is aborted.
+    
+<p><b>e</b> - 
+    The event to pass to callbacks.
+
+<p><i>Returns:</i> 
+    The result of the last callback called.
+ 
+</blockquote>
+<p>
+<a name="sect_6"></a><h2>Filters</h2>
+    Incoming events can be passed through any number of filters.  Filters
+    can generally modify events, including changing data, renaming events,
+    discarding events or generating new events.
+    <p>
+    A filter is in effect a callback that is passed an event.  
+    Filters are arranged sequentially in a filter table.  Normally an
+    event is applied to each filter in the table in turn.  The
+    return value of the result determines the result of the filter
+    and affects the disposition of the library towards that event:
+<dl>
+<dt><b>VE_FILT_CONTINUE</b></dt>
+<dd>Continue processing the event with the next applicable filter in the
+table.  If no applicable filters remain, pass the event to the appropriate
+callbacks, if any.</dd>
+<dt><b>VE_FILT_RESTART</b></dt>
+<dd>Continue processing the event, but start at the beginning of the table
+rather than the current position.  Beware that it is possible to build 
+infinite loops in the filter table using the restart result.</dd>
+<dt><b>VE_FILT_DISCARD</b></dt>
+<dd>Stop all further filter processing of the event and discard it without
+passing it to callbacks.</dd>
+<dt><b>VE_FILT_DELIVER</b></dt>
+<dd>Stop all further filter processing of the event and immediately pass it to
+any applicable callbacks.</dd>
+<dt><b>VE_FILT_ERROR</b></dt>
+<dd>Indicates that the filter encountered an error in processing the event.
+The event is discarded and an error reported through VE's error module.</dd>
+</dd>
+<dt><b>VE_FILT_EXIT</b></dt>
+<dd>Indicates that the program as a whole should terminate.  This is provided
+for convenience so that a device event can be easily made to exit the program.
+</dd>
+</dl>
+<p>A filter may have many instances, each with different parameters and each
+handling a different set of events.  Filters are in effect factories which
+generate instances.  Instances of filters do the actual processing.
+When instantiated, filters can take arguments of two kinds - positional
+arguments that are passed in an array in the order they appear and named
+arguments which are passed as a string map pointing to strings (see ve_util.h).
+The specific use of these arguments is up to the specific filter 
+implementation.</p>
+ 
+<p>
+<a name="struct_VeDeviceFilter"></a><p><em>Structure:</em> <b>VeDeviceFilter</b>
+<blockquote>
+    This objects defines the general properties of a filter and allows
+    it to be instantiated.  Instances of filter share the same processing
+    code but may have their own arguments, settings.
+ 
+<pre>
+typedef struct ve_device_filter {</pre><p>
+<p><b>name</b> - 
+      The name of this filter.
+  
+<pre>
+  char *name;</pre><pre></pre><p>
+<p><b>proc</b> - 
+      A pointer to the function containing the actual execution code for
+      this filter.  The format of proc is the same as a callback function.
+  
+<pre>
+  VeDeviceEventProc proc;</pre><pre></pre><p>
+<p><b>filtarg</b> - 
+      A generic argument that filter implementations can use to share
+      an instantiation function among different filters.  The library
+      makes no use of this argument - it is reserved for filter 
+      implementations.
+  
+<pre>
+  void *filtarg;</pre><pre></pre><p>
+<p><b>inst</b> - 
+      The instantiation function.  All filters must provide this function
+      as a method of creating filter instances.  The arguments include
+      a pointer to the filter object (this one), and a set of positional 
+      arguments (defined by args and nargs) and a set of named arguments
+      given as a reference to a string map.  The function should return
+      a pointer to a new VeDeviceFilterInst structure representing the
+      new filter instance.
+  
+<pre>
+  struct ve_device_filter_inst *(*inst)(struct ve_device_filter *filt, 
+					char **args, int nargs,
+					VeStrMap optargs);</pre><pre></pre><p>
+<p><b>deinst</b> - 
+      A function that will destroy an instance previously created by
+      the <i>inst</i> function.  If this is <code>NULL</code> then
+      the library will use its default action, which is just to free
+      the instance object.
+  
+<pre>
+  void (*deinst)(struct ve_device_filter_inst *);</pre><pre>
+} VeDeviceFilter;</pre></blockquote>
+<p>
+<a name="function_veDeviceAddFilter"></a><p><em>Function:</em> <b>veDeviceAddFilter</b>
+<blockquote>
+<pre>
+int veDeviceAddFilter(VeDeviceFilter *filter);</pre>    Adds a filter to the program's set of available filters.  Note that
+    this is not the table of filter instances which will be applied to
+    events, but the set of filters which may be instantiated.  If a filter
+    exists in the system with the same name, the previous filter will be
+    replaced with this one.
+    
+<p><b>filter</b> - 
+    The filter to add.
+
+<p><i>Returns:</i> 
+    0 on success, non-zero on failure.
+
+</blockquote>
+<p>
+<a name="function_veDeviceFindFilter"></a><p><em>Function:</em> <b>veDeviceFindFilter</b>
+<blockquote>
+<pre>
+VeDeviceFilter *veDeviceFindFilter(char *name);</pre>    Finds a filter by name in the program's set of available filters.
+    
+<p><b>name</b> - 
+    The name of the filter to find.
+    
+<p><i>Returns:</i> 
+    A pointer to the filter object if it exists or <code>NULL</code> if
+    the filter does not exist.
+
+</blockquote>
+<p>
+<a name="struct_VeDeviceFilterInst"></a><p><em>Structure:</em> <b>VeDeviceFilterInst</b>
+<blockquote>
+    An instance of a filter.
+
+<pre>
+typedef struct ve_device_filter_inst {</pre><p>
+<p><b>filter</b> - 
+      A pointer to the filter object from which this one was instantiated.
+      There are special cases of filters where this argument is equivalent 
+      to <code>NULL</code>.  See the <i>special</i> member below.
+  
+<pre>
+  VeDeviceFilter *filter;</pre><pre></pre><p>
+<p><b>arg</b> - 
+      This argument is passed to the filter processing function.  This
+      is generally chosen by the instantiating function of the filter and
+      typically points to internal state information for the filter.  The
+      library does not interpret this argument at all but merely passes it
+      to the filter processing function.
+  
+<pre>
+  void *arg;</pre><pre></pre><p>
+<p><b>special</b> - 
+      If the <i>filter</i> member is <code>NULL</code> then this field
+      determines what this filter does.  This value should be the return
+      code (<code>VE_FILT_CONTINUE</code>, <code>VE_FILT_RESTART</code>,
+      etc.) which should be returned as the result of this filter.  Note
+      that for a special filter like this, there is no actual processing
+      done.
+  
+<pre>
+  int special;</pre><pre></pre><p>
+<p><b>next</b> - 
+      This field is used to point to next filter instance in a chain.
+      See the section on the filter table below.
+  
+<pre>
+  struct ve_device_filter_inst *next;</pre><pre>
+} VeDeviceFilterInst;</pre></blockquote>
+<p>
+<a name="function_veDeviceCreateFilterInst"></a><p><em>Function:</em> <b>veDeviceCreateFilterInst</b>
+<blockquote>
+<pre>
+VeDeviceFilterInst *veDeviceCreateFilterInst();</pre>    Creates a new filter instance.  This creates an empty object.
+    
+<p><i>Returns:</i> 
+    A pointer to a newly-created filter instance object.
+
+</blockquote>
+<p>
+<a name="function_veDeviceDestroyFilterInst"></a><p><em>Function:</em> <b>veDeviceDestroyFilterInst</b>
+<blockquote>
+<pre>
+void veDeviceDestroyFilterInst(VeDeviceFilterInst *inst);</pre>    Frees memory associated with a filter instance.  If a filter
+    provides a <i>deinst</i> function then that will be used to
+    destroy the instance.  Otherwise, the instance is just freed.
+    
+<p><b>inst</b> - 
+    The instance to destroy.
+
+</blockquote>
+<p>
+<a name="function_veDeviceParseFilterDesc"></a><p><em>Function:</em> <b>veDeviceParseFilterDesc</b>
+<blockquote>
+<pre>
+VeDeviceFilterInst *veDeviceParseFilterDesc(char *fdesc);</pre>    Creates a filter instance based upon a string description of the
+    filter instance.  A filter instance string has the following format:
+    <blockquote><i>name</i> (<i>parg</i>|<i>name</i><b>=</b><i>value</i>) ...</blockquote>
+    The first argument is always the name of the filter. Every word after
+    that is a named argument if it contains an "=" character, and otherwise
+    a positional parameter.  For example, 
+    <blockquote>rename newdev.button</blockquote>
+    has a single positional argument, and
+    <blockquote>to_valuator expr=1.0*x min=0.0 max=1.0</blockquote>
+    has three named arguments.  Named arguments and positional arguments
+    can be mixed, e.g.
+    <blockquote>junk a b v=199 c d</blockquote>
+    <p>There are three special names which are reserved.  If the name
+    of the filter in the description is <b>discard</b>, <b>deliver</b>,
+    <b>restart</b>, or <b>exit</b> then a special filter is created with the
+    appropriate disposition.  Other arguments in the description are
+    ignored.
+    
+<p><b>fdesc</b> - 
+    The string containing the filter instance description.
+    
+<p><i>Returns:</i> 
+    A pointer to a newly-created filter instance corresponding to the
+    description if successful, <code>NULL</code> on error.
+ 
+</blockquote>
+<p>
+<a name="sect_7"></a><h2>Filter Table</h2>
+    How to apply filters to events is described in the system's filter
+    table.  The filter table is a sequence of filter chains.  Each chain
+    has a device specification describing what events it applies to.
+    The chain itself is made up of a sequence of linked filter instances.
+    A filter chain is applied if its device specification is matched.
+    Unless a filter halts processing, each filter in the chain is applied
+    in succession.
+ 
+<p>
+<a name="struct_VeDeviceFTableEntry"></a><p><em>Structure:</em> <b>VeDeviceFTableEntry</b>
+<blockquote>
+    An entry in the filter table representing a filter chain.
+ 
+<pre>
+typedef struct ve_device_ftable_entry {</pre><p>
+<p><b>spec</b> - 
+      The device specification describing what events this filter chain
+      should process.
+  
+<pre>
+  VeDeviceSpec       *spec;</pre><pre></pre><p>
+<p><b>head</b> - 
+      The start of the filter chain.  The <i>next</i> member of the
+      VeDeviceFilterInst structure is used to point to the next filter
+      instance in the chain.
+  
+<pre>
+  VeDeviceFilterInst *head;</pre><pre></pre><p>
+<p><b>next</b> - 
+      Points to the next filter table entry (not the next filter in the
+      chain).
+  
+<pre>
+  struct ve_device_ftable_entry *next;</pre><pre>
+} VeDeviceFTableEntry;</pre></blockquote>
+<p>
+<a name="function_veDeviceRunFilterChain"></a><p><em>Function:</em> <b>veDeviceRunFilterChain</b>
+<blockquote>
+<pre>
+int veDeviceRunFilterChain(VeDeviceFilterInst *head, VeDeviceEvent *e);</pre>    Processes a filter chain.  Applies each filter instance in the chain
+    in turn to the given event.
+
+<p><b>head</b> - 
+    The head of the filter chain to apply.
+
+<p><b>e</b> - 
+    The event to process.
+
+<p><i>Returns:</i> 
+    The status of the last filter applied.  This may not be the last
+    filter in the chain if a filter instance returns a result other
+    than "continue".
+ 
+</blockquote>
+<p>
+<a name="function_veDeviceCreateFTableEntry"></a><p><em>Function:</em> <b>veDeviceCreateFTableEntry</b>
+<blockquote>
+<pre>
+VeDeviceFTableEntry *veDeviceCreateFTableEntry();</pre>    Creates a new filter table entry object.
+
+<p><i>Returns:</i> 
+    A pointer to a newly-created filter table entry object.
+ 
+</blockquote>
+<p>
+<a name="function_veDeviceDestroyFTableEntry"></a><p><em>Function:</em> <b>veDeviceDestroyFTableEntry</b>
+<blockquote>
+<pre>
+void veDeviceDestroyFTableEntry(VeDeviceFTableEntry *e);</pre>    Frees memoery associated with a previously-created filter table entry
+    object.
+
+<p><b>e</b> - 
+    The object to free.
+
+</blockquote>
+<p>
+<a name="function_veDeviceParseFTableEntry"></a><p><em>Function:</em> <b>veDeviceParseFTableEntry</b>
+<blockquote>
+<pre>
+VeDeviceFTableEntry *veDeviceParseFTableEntry(char *desc);</pre>    The most convenient way of creating filter table entries is
+    to parse them from a string.  An entry has the following structure:
+    <blockquote>[<b>filter</b>] <i>spec</i> <b>{</b><i>flist</i><b>}</b></blockquote>
+    The entry can optionally begin with the word "filter" - if it is
+    present, then the word "filter" is discarded.  A device specification
+    is followed by a list of filter descriptions.  The list of filter
+    descriptions should have at most one filter description per line.
+    Blank lines and lines beginning with '#' in the filter list are ignored.
+    For example:
+<pre>
+        filter sidewinder.button2 {
+                # fake a valuator
+                to_valuator expr=1.0*x min=0.0 max=1.0
+                rename location.x
+        }
+</pre>
+    This creates a filter chain that will affect all events matching the
+    device specification "sidewinder.button2".  Events that match will be
+    passed to the "to_valuator" filter and then the "rename" filter with
+    the given arguments.
+
+<p><b>desc</b> - 
+    The description to parse.
+
+<p><i>Returns:</i> 
+    A pointer to a newly-created fitler table entry if successful or
+    <code>NULL</code> if an error occurs.
+
+</blockquote>
+<p>
+<a name="struct_VeDeviceFTable"></a><p><em>Structure:</em> <b>VeDeviceFTable</b>
+<blockquote>
+    All filter table entries are kept in a global filter table.
+    The entries are arranged in a linear list.
+
+<pre>
+typedef struct ve_device_ftable {
+  VeDeviceFTableEntry *head, *tail;
+} VeDeviceFTable;</pre></blockquote>
+<p>
+<a name="function_veDeviceCreateFTable"></a><p><em>Function:</em> <b>veDeviceCreateFTable</b>
+<blockquote>
+<pre>
+VeDeviceFTable *veDeviceCreateFTable();</pre>    Creates an empty filter table object.  This function is currently 
+    only used internally within the library.
+    
+<p><i>Returns:</i> 
+    A newly-created filter table object.
+ 
+</blockquote>
+<p>
+<a name="function_veDeviceDestroyFTable"></a><p><em>Function:</em> <b>veDeviceDestroyFTable</b>
+<blockquote>
+<pre>
+void veDeviceDestroyFTable(VeDeviceFTable *f);</pre>    Frees memory associated with a previously-created filter table object.
+    This will also free any filter table entry objects in the table.
+
+<p><b>f</b> - 
+    The table to destroy.
+
+</blockquote>
+<p>
+<a name="function_veDeviceFTableAdd"></a><p><em>Function:</em> <b>veDeviceFTableAdd</b>
+<blockquote>
+<pre>
+int veDeviceFTableAdd(VeDeviceFTableEntry *e, int where);</pre>    Adds a filter table entry to the global table.
+
+<p><b>e</b> - 
+    The filter table entry to add.  This pointer will be stored in
+    the table so the structure it points to should be left alone
+    by the program.
+
+<p><b>where</b> - 
+    If <i>where</i> is <code>VE_FTABLE_HEAD</code> then the entry is inserted
+    at the beginning of the table.  If <i>where</i> is <code>VE_FTABLE_TAIL</code>
+    then the entry is inserted at the end of the table.  Other values for
+    this parameter are undefined.
+
+<p><i>Returns:</i> 
+    0 on success, non-zero on error.
+ 
+</blockquote>
+<p>
+<a name="function_veDeviceFTableAddDesc"></a><p><em>Function:</em> <b>veDeviceFTableAddDesc</b>
+<blockquote>
+<pre>
+int veDeviceFTableAddDesc(char *desc, int where);</pre>    Adds an entry to the filter table based upon a string describing
+    the filter.  This is in effect shorthand for:
+    <blockquote><code>veDeviceFTableAdd(veDeviceParseFTableEntry(desc),where)</code></blockquote>
+    with some extra error checking.
+
+<p><b>desc</b> - 
+    The description of the filter table entry as would be acceptable to
+    <code>veDeviceParseFTableEntry()</code>.
+
+<p><b>where</b> - 
+    If <i>where</i> is <code>VE_FTABLE_HEAD</code> then the entry is inserted
+    at the beginning of the table.  If <i>where</i> is <code>VE_FTABLE_TAIL</code>
+    then the entry is inserted at the end of the table.  Other values for
+    this parameter are undefined.
+
+<p><i>Returns:</i> 
+    0 on success, non-zero on error.
+
+</blockquote>
+<p>
+<a name="function_veDeviceFTableFind"></a><p><em>Function:</em> <b>veDeviceFTableFind</b>
+<blockquote>
+<pre>
+VeDeviceFTableEntry *veDeviceFTableFind(VeDeviceEvent *e,
+					VeDeviceFTableEntry *last);</pre>    Finds the next filter table entry in the global table that matches the
+    given event.
+
+<p><b>e</b> - 
+    The event to match.
+
+<p><b>last</b> - 
+    If <code>NULL</code> then the search begins at the beginning of the
+    table.  Otherwise, the search begins with the entry following this
+    one.
+    
+<p><i>Returns:</i> 
+    A pointer to a matching table entry if there is one, <code>NULL</code>
+    otherwise.
+
+</blockquote>
+<p>
+<a name="sect_8"></a><h2>Event Queue</h2>
+    Events are conceptually organized into a queue.  All events are
+    processed in the order that they arrive.  Events are not necessarily
+    queued - if no events are being processed when an event arrives
+    from a device, it is processed immediately.  Events are only queued
+    when other processing is going on that prevents the event from being
+    processed immediately.  Events that are generated due to processing
+    another event are also queued (e.g. from a filter) are added to
+    queue but are typically added at the head of the queue rather than
+    the tail since they are assumed to have occured at the same time
+    as the original event.
+ 
+<p>
+<a name="function_veDevicePushEvent"></a><p><em>Function:</em> <b>veDevicePushEvent</b>
+<blockquote>
+<pre>
+int veDevicePushEvent(VeDeviceEvent *e, int where);</pre>    Adds an event to the event queue.  This function is thread-safe.
+    
+<p><b>e</b> - 
+    The event to add.  This pointer will be added to the queue so it
+    should not refer to volatile memory.  The library will take care
+    of freeing resources related to the event at a later point.
+    
+<p><b>where</b> - 
+    Where to add the event.  If this is <code>VE_QUEUE_HEAD</code> then
+    the event is added to the head of the queue.  If this is 
+    <code>VE_QUEUE_TAIL</code> then it is added to the tail.  Other
+    values for this parameter are undefined.
+    
+<p><i>Returns:</i> 
+    0 on success, non-zero on failure.
+
+</blockquote>
+<p>
+<a name="function_veDeviceEventPending"></a><p><em>Function:</em> <b>veDeviceEventPending</b>
+<blockquote>
+<pre>
+int veDeviceEventPending();</pre>    Checks to see if there are any events in the queue.
+
+<p><i>Returns:</i> 
+    0 if there are no events in the queue, 1 if there are events available.
+ 
+</blockquote>
+<p>
+<a name="function_veDeviceNextEvent"></a><p><em>Function:</em> <b>veDeviceNextEvent</b>
+<blockquote>
+<pre>
+VeDeviceEvent *veDeviceNextEvent(int where);</pre>    Retrieves the next event in the queue (if any).
+
+<p><b>where</b> - 
+    Where to retrieve the event from.  If this is <code>VE_QUEUE_HEAD</code> then
+    the event is retrieved from the head of the queue.  If this is 
+    <code>VE_QUEUE_TAIL</code> then it is retrieved from the tail.  Other
+    values for this parameter are undefined.
+
+<p><i>Returns:</i> 
+    A pointer to an event object if there are events in the queue.  
+    <code>NULL</code> is returned if the queue is empty.  The returned
+    event is removed from the queue - it is up to the calling program to
+    destroy the event when it has finished with it.
+ 
+</blockquote>
+<p>
+<a name="function_veDeviceWaitForEvents"></a><p><em>Function:</em> <b>veDeviceWaitForEvents</b>
+<blockquote>
+<pre>
+void veDeviceWaitForEvents();</pre>    Puts this thread to sleep until there are events in the queue.
+ 
+</blockquote>
+<p>
+<a name="function_veDeviceProcessEvent"></a><p><em>Function:</em> <b>veDeviceProcessEvent</b>
+<blockquote>
+<pre>
+int veDeviceProcessEvent(VeDeviceEvent *e);</pre>    Processes an event.  This entails applying all applicable filter chains
+    in the filter table, applying the event to a device model (if
+    applicable) and then passing it to any existing callbacks.  Only
+    one event may be processed at a time and other threads that attempt
+    to process events while this thread is processing will be blocked.
+    <p>Note that there are special circumstances for vectors that get
+    processed through a filter chain which selects a specific index
+    of the vector.  In this case, the filter only applies to that valuator
+    and not the whole vector.  A new event of type valuator is created to
+    be filtered.  If that event does not change its type, device or element,
+    then the new filtered content is merged back into the vector and the new
+    event is destroyed.  Otherwise
+    if any of the type, device or element names change, and the result is
+    not merged back into the vector and the filtered event is treated as
+    a new valuator event separate from the original vector event.  In this
+    case (where a particular index of a vector is selected) the result of the 
+    filter only ever applies to the new valuator event and not to the vector
+    event (which always continues).
+
+<p><b>e</b> - 
+    The event to process.
+
+<p><i>Returns:</i> 
+    0 on success, non-zero on error, either internal or from a filter
+    (i.e. <code>VE_FILT_ERROR</code> status).
+ 
+</blockquote>
+<p>
+<a name="function_veDeviceInsertEvent"></a><p><em>Function:</em> <b>veDeviceInsertEvent</b>
+<blockquote>
+<pre>
+int veDeviceInsertEvent(VeDeviceEvent *e);</pre>    Similar to <code>veDeviceProcessEvent()</code> but meant as a hook
+    for devices to deliver events to the system.  If there are no
+    events in the queue, then this will attempt to process the event
+    immediately.  Otherwise the event will be queued for later processing.
+    
+<p><b>e</b> - 
+    The event to insert.
+    
+<p><i>Returns:</i> 
+    0 on success, non-zero on error, either internal or from a filter
+    (i.e. <code>VE_FILT_ERROR</code> status).  Note that if the event
+    needs to be queued for later the result will be 0 and any filter
+    errors will be delivered to the thread that processes the event
+    from the queue.
+
+</blockquote>
+<p>
+<a name="function_veDeviceBlockEvents"></a><p><em>Function:</em> <b>veDeviceBlockEvents</b>
+<blockquote>
+<pre>
+void veDeviceBlockEvents(int disp);</pre>    Prevents events from being dispatched to handlers.  No events
+    will be processed until <code>veDeviceUnblockEvents()</code> is
+    called.
+    
+<p><b>disp</b> - 
+    The disposition towards events.  The following constants are defined
+    and recognized:
+    <ul>
+    <li><code>VE_DEVICE_DISCARD</code> - any blocked events should be
+    discarded.</li>
+    <li><code>VE_DEVICE_QUEUE</code> - any blocked events should be queued
+    and will be processed once the block is lifted.
+
+</blockquote>
+<p>
+<a name="function_veDeviceUnblockEvents"></a><p><em>Function:</em> <b>veDeviceUnblockEvents</b>
+<blockquote>
+<pre>
+void veDeviceUnblockEvents(void);</pre>    Removes a previous block on events.  If the disposition towards blocked
+    events was to queue them, then when the event queue handler next runs,
+    all blocked events will be processed.  If the disposition towards
+    blocked events was to discard them, then all events that were blocked
+    are lost, and only events generated after the block is lifted will be
+    processed.  If no block currently exists, then this callback has no
+    effect.
+
+</blockquote>
+<p>
+<a name="function_veDeviceInit"></a><p><em>Function:</em> <b>veDeviceInit</b>
+<blockquote>
+<pre>
+int veDeviceInit();</pre>    This function must be called before calling any other ve_device
+    functions.  It is generally called by <code>veInit()</code>.
+
+</blockquote>
+<p>
+<a name="function_veDeviceDumpFTable"></a><p><em>Function:</em> <b>veDeviceDumpFTable</b>
+<blockquote>
+<pre>
+void veDeviceDumpFtable(void);</pre>    This function is strictly for debugging purposes.  It prints the
+    contents of the filter table on stderr.
+
+</blockquote>
+<p>
+<a name="function_veDeviceToValuator"></a><p><em>Function:</em> <b>veDeviceToValuator</b>
+<blockquote>
+<pre>
+float veDeviceToValuator(VeDeviceEvent *e);</pre>    Forces an event to be treated as a valuator.  The actual effect of
+    this function varies depending upon the input event.  The result
+    will be a valuator value.  For triggers, the value
+    is always 1.0.  For switches and keyboards the value is either 0.0
+    (state == 0) or 1.0 (state == 1).  For vectors, the first valuator in 
+    the vector is returned.  For valuators, the value of the valuator is
+    returned.
+    <p>This function is provided as a convenience and is meant to handle
+    a reasonable number of common cases.  More complex conversions should be
+    done by hand or with the conversion filters.</p>
+
+<p><b>e</b> - 
+    The event to interpret.
+
+<p><i>Returns:</i> 
+    A valuator value.  If this is not a valuator type (valuator
+    or vector) then the implicit range of the valuator is 0.0 - 1.0.
+
+</blockquote>
+<p>
+<a name="function_veDeviceToSwitch"></a><p><em>Function:</em> <b>veDeviceToSwitch</b>
+<blockquote>
+<pre>
+int veDeviceToSwitch(VeDeviceEvent *e);</pre>    Forces an event to be treated as a switch.  The actual effect of
+    this function varies depending upon the input event.  The result
+    will be either 0 or 1.  For triggers, the value is always 1.
+    For switches and keyboards, the value of the event's state is returned.
+    For valuators, a threshold at (min+max)/2 is set - values above the
+    threshold are 1, values below the threshold are 0.  If the valuator is
+    unbounded then implicit ranges of 0.0 - 1.0 are used.  Vectors are treated
+    the same as a valuator, except that only the first value is used.
+			 
+    <p>This function is provided as a convenience and is meant to handle
+    a reasonable number of common cases.  More complex conversions should be
+    done by hand or with the conversion filters.</p>
+
+<p><b>e</b> - 
+    The event to interpret.
+
+<p><i>Returns:</i> 
+    A switch value.
+
+</blockquote>
+
+<h2>Index</h2>
+<ul>
+<li><a href="#enum_VeDeviceEType">VeDeviceEType (enum)</a></li>
+<li><a href="#function_veAddDeviceDesc">veAddDeviceDesc (function)</a></li>
+<li><a href="#function_veClearDeviceManifest">veClearDeviceManifest (function)</a></li>
+<li><a href="#function_veDeviceAddCallback">veDeviceAddCallback (function)</a></li>
+<li><a href="#function_veDeviceAddCallbackSpec">veDeviceAddCallbackSpec (function)</a></li>
+<li><a href="#function_veDeviceAddDriver">veDeviceAddDriver (function)</a></li>
+<li><a href="#function_veDeviceAddDriverRef">veDeviceAddDriverRef (function)</a></li>
+<li><a href="#function_veDeviceAddElem">veDeviceAddElem (function)</a></li>
+<li><a href="#function_veDeviceAddElemSpec">veDeviceAddElemSpec (function)</a></li>
+<li><a href="#function_veDeviceAddFilter">veDeviceAddFilter (function)</a></li>
+<li><a href="#function_veDeviceApplyEvent">veDeviceApplyEvent (function)</a></li>
+<li><a href="#function_veDeviceApplyEventToModel">veDeviceApplyEventToModel (function)</a></li>
+<li><a href="#function_veDeviceBlockEvents">veDeviceBlockEvents (function)</a></li>
+<li><a href="#function_veDeviceCreate">veDeviceCreate (function)</a></li>
+<li><a href="#function_veDeviceCreateFilterInst">veDeviceCreateFilterInst (function)</a></li>
+<li><a href="#function_veDeviceCreateFTable">veDeviceCreateFTable (function)</a></li>
+<li><a href="#function_veDeviceCreateFTableEntry">veDeviceCreateFTableEntry (function)</a></li>
+<li><a href="#function_veDeviceCreateModel">veDeviceCreateModel (function)</a></li>
+<li><a href="#function_veDeviceCreateVirtual">veDeviceCreateVirtual (function)</a></li>
+<li><a href="#function_veDeviceDescCreate">veDeviceDescCreate (function)</a></li>
+<li><a href="#function_veDeviceDescDestroy">veDeviceDescDestroy (function)</a></li>
+<li><a href="#function_veDeviceDescOption">veDeviceDescOption (function)</a></li>
+<li><a href="#function_veDeviceDestroyFilterInst">veDeviceDestroyFilterInst (function)</a></li>
+<li><a href="#function_veDeviceDestroyFTable">veDeviceDestroyFTable (function)</a></li>
+<li><a href="#function_veDeviceDestroyFTableEntry">veDeviceDestroyFTableEntry (function)</a></li>
+<li><a href="#function_veDeviceDumpFTable">veDeviceDumpFTable (function)</a></li>
+<li><a href="#function_veDeviceEContentCopy">veDeviceEContentCopy (function)</a></li>
+<li><a href="#function_veDeviceEContentCreate">veDeviceEContentCreate (function)</a></li>
+<li><a href="#function_veDeviceEContentDestroy">veDeviceEContentDestroy (function)</a></li>
+<li><a href="#function_veDeviceElementCreate">veDeviceElementCreate (function)</a></li>
+<li><a href="#function_veDeviceElementDestroy">veDeviceElementDestroy (function)</a></li>
+<li><a href="#function_veDeviceEventCopy">veDeviceEventCopy (function)</a></li>
+<li><a href="#function_veDeviceEventCreate">veDeviceEventCreate (function)</a></li>
+<li><a href="#function_veDeviceEventDestroy">veDeviceEventDestroy (function)</a></li>
+<li><a href="#function_veDeviceEventFromElem">veDeviceEventFromElem (function)</a></li>
+<li><a href="#function_veDeviceEventInit">veDeviceEventInit (function)</a></li>
+<li><a href="#function_veDeviceEventPending">veDeviceEventPending (function)</a></li>
+<li><a href="#function_veDeviceFind">veDeviceFind (function)</a></li>
+<li><a href="#function_veDeviceFindDriver">veDeviceFindDriver (function)</a></li>
+<li><a href="#function_veDeviceFindDriverRef">veDeviceFindDriverRef (function)</a></li>
+<li><a href="#function_veDeviceFindElem">veDeviceFindElem (function)</a></li>
+<li><a href="#function_veDeviceFindFilter">veDeviceFindFilter (function)</a></li>
+<li><a href="#function_veDeviceFTableAdd">veDeviceFTableAdd (function)</a></li>
+<li><a href="#function_veDeviceFTableAddDesc">veDeviceFTableAddDesc (function)</a></li>
+<li><a href="#function_veDeviceFTableFind">veDeviceFTableFind (function)</a></li>
+<li><a href="#function_veDeviceHandleCallback">veDeviceHandleCallback (function)</a></li>
+<li><a href="#function_veDeviceInit">veDeviceInit (function)</a></li>
+<li><a href="#function_veDeviceInsertEvent">veDeviceInsertEvent (function)</a></li>
+<li><a href="#function_veDeviceInstanceInit">veDeviceInstanceInit (function)</a></li>
+<li><a href="#function_veDeviceInstOption">veDeviceInstOption (function)</a></li>
+<li><a href="#function_veDeviceMatchSpec">veDeviceMatchSpec (function)</a></li>
+<li><a href="#function_veDeviceNextEvent">veDeviceNextEvent (function)</a></li>
+<li><a href="#function_veDeviceParseElem">veDeviceParseElem (function)</a></li>
+<li><a href="#function_veDeviceParseFilterDesc">veDeviceParseFilterDesc (function)</a></li>
+<li><a href="#function_veDeviceParseFTableEntry">veDeviceParseFTableEntry (function)</a></li>
+<li><a href="#function_veDeviceParseSpec">veDeviceParseSpec (function)</a></li>
+<li><a href="#function_veDeviceProcessEvent">veDeviceProcessEvent (function)</a></li>
+<li><a href="#function_veDevicePushEvent">veDevicePushEvent (function)</a></li>
+<li><a href="#function_veDeviceRemoveCallback">veDeviceRemoveCallback (function)</a></li>
+<li><a href="#function_veDeviceRunFilterChain">veDeviceRunFilterChain (function)</a></li>
+<li><a href="#function_veDeviceSpecCreate">veDeviceSpecCreate (function)</a></li>
+<li><a href="#function_veDeviceSpecDestroy">veDeviceSpecDestroy (function)</a></li>
+<li><a href="#function_veDeviceToSwitch">veDeviceToSwitch (function)</a></li>
+<li><a href="#function_veDeviceToValuator">veDeviceToValuator (function)</a></li>
+<li><a href="#function_veDeviceUnblockEvents">veDeviceUnblockEvents (function)</a></li>
+<li><a href="#function_veDeviceUse">veDeviceUse (function)</a></li>
+<li><a href="#function_veDeviceUseByDesc">veDeviceUseByDesc (function)</a></li>
+<li><a href="#function_veDeviceWaitForEvents">veDeviceWaitForEvents (function)</a></li>
+<li><a href="#function_veFindDeviceDesc">veFindDeviceDesc (function)</a></li>
+<li><a href="#function_veGetDeviceManifest">veGetDeviceManifest (function)</a></li>
+<li><a href="#function_veReadDeviceManifest">veReadDeviceManifest (function)</a></li>
+<li><a href="#struct_VeDevice">VeDevice (struct)</a></li>
+<li><a href="#struct_VeDeviceDesc">VeDeviceDesc (struct)</a></li>
+<li><a href="#struct_VeDeviceDriver">VeDeviceDriver (struct)</a></li>
+<li><a href="#struct_VeDeviceE_Keyboard">VeDeviceE_Keyboard (struct)</a></li>
+<li><a href="#struct_VeDeviceE_Switch">VeDeviceE_Switch (struct)</a></li>
+<li><a href="#struct_VeDeviceE_Trigger">VeDeviceE_Trigger (struct)</a></li>
+<li><a href="#struct_VeDeviceE_Valuator">VeDeviceE_Valuator (struct)</a></li>
+<li><a href="#struct_VeDeviceE_Vector">VeDeviceE_Vector (struct)</a></li>
+<li><a href="#struct_VeDeviceEContent">VeDeviceEContent (struct)</a></li>
+<li><a href="#struct_VeDeviceElement">VeDeviceElement (struct)</a></li>
+<li><a href="#struct_VeDeviceEvent">VeDeviceEvent (struct)</a></li>
+<li><a href="#struct_VeDeviceFilter">VeDeviceFilter (struct)</a></li>
+<li><a href="#struct_VeDeviceFilterInst">VeDeviceFilterInst (struct)</a></li>
+<li><a href="#struct_VeDeviceFTable">VeDeviceFTable (struct)</a></li>
+<li><a href="#struct_VeDeviceFTableEntry">VeDeviceFTableEntry (struct)</a></li>
+<li><a href="#struct_VeDeviceInstance">VeDeviceInstance (struct)</a></li>
+<li><a href="#struct_VeDeviceModel">VeDeviceModel (struct)</a></li>
+<li><a href="#struct_VeDeviceSpec">VeDeviceSpec (struct)</a></li>
+<li><a href="#value_VE_ELEM_KEYBOARD">VE_ELEM_KEYBOARD (value)</a></li>
+<li><a href="#value_VE_ELEM_SWITCH">VE_ELEM_SWITCH (value)</a></li>
+<li><a href="#value_VE_ELEM_TRIGGER">VE_ELEM_TRIGGER (value)</a></li>
+<li><a href="#value_VE_ELEM_VALUATOR">VE_ELEM_VALUATOR (value)</a></li>
+<li><a href="#value_VE_ELEM_VECTOR">VE_ELEM_VECTOR (value)</a></li>
+</ul>
+</body>
+</html>

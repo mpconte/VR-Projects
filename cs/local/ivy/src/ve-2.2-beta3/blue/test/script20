@@ -1,0 +1,25 @@
+#
+# hash tests
+#
+set h [hash]
+$h set foo 0
+$h set bar 1
+$h set joe 2
+if { [$h get foo] != 0 || [$h get bar] != 1 || [$h get joe] != 2 } {
+    error "basic set/get failed"
+}
+if { [$h get foobar] != "" } {
+    error "get of non-existent failed"
+}
+[stdout] writeln [$h export]
+
+# create new hash
+set h [hash]
+$h import {{foo 0} {bar 1} {joe 2}}
+if { [$h get foo] != 0 || [$h get bar] != 1 || [$h get joe] != 2 } {
+    error "basic set/get failed (2)"
+}
+if { [$h get foobar] != "" } {
+    error "get of non-existent failed (2)"
+}
+[stdout] writeln [$h export]

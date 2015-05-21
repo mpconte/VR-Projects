@@ -1,0 +1,99 @@
+<html>
+<head>
+<title>File: vei_glx.h</title>
+</head>
+<body>
+<h1>File: vei_glx.h</h1>
+
+
+<p>
+    vei_glx is a multithreaded implementation of the VE OpenGL renderer
+    using the GLX X extension for processing OpenGL commands.
+    <p>Functions in this module that are not implementations of another
+    API should only be called sparingly by applications, as they are not
+    portable to other OpenGL-based implementations of VE.  Applications
+    which include the <code>vei_glx.h</code> header file do not need to
+    include the <code>vei_gl.h</code> header file or other OpenGL
+    header files.  These are included automatically.
+    <p>This module implements functions from the <code>ve_render.h</code>
+    and <code>vei_gl.h</code> modules.
+
+<p>
+<a name="struct_VeiGlxWindow"></a><p><em>Structure:</em> <b>VeiGlxWindow</b>
+<blockquote>
+    Represents the GLX window.  There is one VeiGlxWindow structure for
+    each open VeWindow object.
+
+<pre>
+typedef struct vei_glx_window {</pre><p>
+<p><b>dpy</b> - 
+      The X display on which this window is located.
+  
+<pre>
+  Display *dpy;</pre><pre></pre><p>
+<p><b>pipe</b> - 
+      All displays used by the renderer are enumerated at run-time.
+      The pipe value is the enumeration of the Display represented
+      by the <code>dpy</code> member.  This field allows for quick
+      and easy comparisons of displays (i.e. if two windows share
+      the same display even if the windows have separate connections
+      to the display).
+  
+<pre>
+  int pipe;</pre><pre></pre><p>
+<p><b>win</b> - 
+      The X window which the render is using for this window.
+  
+<pre>
+  Window win;</pre><pre></pre><p>
+<p><b>ctx</b> - 
+      The GLX context which this window is rendered with.  Each window
+      has its own GLX context.
+  
+<pre>
+  GLXContext ctx;</pre><pre></pre><p>
+<p><b>stereo</b> - 
+      A boolean value - if non-zero, then this window is stereo.
+  
+<pre>
+  int stereo;</pre><pre></pre><p>
+<p><b>x,y,w,h</b> - 
+      A cached copy of the window's geometry.  It is assumed in the
+      current model that the geometry does not change once the window
+      has been opened.
+  
+<pre>
+  int x,y,w,h;</pre><pre></pre><p>
+<p><b>ext_swap_group</b> - 
+      If non-zero then it has been detected that the display upon which
+      this window is located supports the <code>SGIX_swap_group</code> 
+      extension.  If detected, the system will attempt to take advantage
+      of this extension.
+  
+<pre>
+  int ext_swap_group;</pre><pre>
+} VeiGlxWindow;</pre></blockquote>
+<p>
+<a name="function_veiGlxSetVisualAttr"></a><p><em>Function:</em> <b>veiGlxSetVisualAttr</b>
+<blockquote>
+<pre>
+void veiGlxSetVisualAttr(int *attr);</pre>    Adds the given terminated list of GLX attributes to the set of
+    attributes to use when opening windows.  These attributes will apply
+    to all windows that are opened.  These attributes must be set after
+    the call to <code>veRenderInit()</code> but before the call to 
+    <code>veRenderRun</code>.
+
+<p><b>attr</b> - 
+    An array of attributes, the last of which must be <code>None</code>.
+    See the manual page for <code>glXChooseVisual()</code> for details
+    on known attributes.
+
+</blockquote>
+
+<h2>Index</h2>
+<ul>
+<li><a href="#function_veiGlxSetVisualAttr">veiGlxSetVisualAttr (function)</a></li>
+<li><a href="#struct_VeiGlxWindow">VeiGlxWindow (struct)</a></li>
+</ul>
+</body>
+</html>

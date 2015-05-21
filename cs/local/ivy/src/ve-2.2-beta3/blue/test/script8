@@ -1,0 +1,11 @@
+#
+# Test for string copying bug
+#
+set str1 "abcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyzabcdefghijklmnopqrstuvwxyz"
+set str2 $str1
+if { $str1 != $str2 } {
+	[stdout] writeln "str1 = '$str1'"
+	[stdout] writeln "str2 = '$str2'"
+	error "strings are not equal"
+}
+[stdout] writeln "strings match"

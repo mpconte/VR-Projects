@@ -1,0 +1,1065 @@
+<html>
+<head>
+<title>File: nid.h</title>
+</head>
+<body>
+<h1 class="cdoc-file">File: nid.h</h1>
+<h2 class="cdoc-contents">Contents</h2>
+<ul>
+<li class="cdoc-centry"><a href="#sect_0" class="link-section"><span class="text-section">Protocol History</span></a></li>
+<li class="cdoc-centry"><a href="#sect_1" class="link-section"><span class="text-section">Data Types</span></a></li>
+<li class="cdoc-centry"><a href="#sect_2" class="link-section"><span class="text-section">Client Function-Specific Calls</span></a></li>
+<li class="cdoc-centry"><a href="#sect_3" class="link-section"><span class="text-section">Low-Level Calls</span></a></li>
+</ul>
+
+
+<p class="cdoc-item">
+    <p>NID (Network Input Device) is a simple protocol for integrating remote
+    devices into a VE world.  The NID library is separate from the VE library
+    and can be used separately - i.e. there are no dependencies upon the
+    VE code itself.  The NID library uses the "veclock" library.
+
+    <p>NID nominally uses TCP to deliver data, although its protocol could be
+    easily adapted to any serial transport with reliable delivery.  By default
+    NID runs on port 1138 although it can potentially run anywhere.  NID 
+    follows a similar scheme to VE input devices.  A NID server provides any
+    number of devices.  A device is made up of some number of elements.  Each
+    element has one of the following types:
+    <ul>
+    <li><b>TRIGGER</b> - a "single-shot" switch.  There is no state information.
+    A trigger is equivalent to saying "something happened".
+    <li><b>SWITCH</b> - a two-state switch.  A switch is always in either an
+    active (non-zero value) or inactive state (zero value).
+    <li><b>VALUATOR</b> - an element that can have a range of values
+    represented as a real number.  A valuator can either be bounded (i.e.
+    minimum and maximum values specified) or unbounded (minimum and maximum
+    both declared as 0.0 - no limit on values).  For a bounded valuator,
+    a NID server must never return a value outside of those limits.  How
+    a NID server accomplishes this (e.g. rejection of data or clamping) is
+    implementation-specific.  An example of a bounded valuator would be a
+    steering wheel - there is limit to how far you can turn the wheel.
+    An example of an unbounded valuator would be the integration of a
+    bicycle wheel.
+    <li><b>VECTOR</b> - some number of valuators that are associated together.
+    A vector has a fixed size.  If any valuators in that vector change, then
+    the entire vector is reported as having changed.  Vectors are used where
+    the data reported by the input device is multi-dimensional and those 
+    dimensions are interdependent (e.g. a head-tracker) and reporting such
+    changes independently would be erroneous.  Valuators in a vector can
+    be bounded or unbounded independently of the limits on other valuators
+    in the same vector.
+    <li><b>KEYBOARD</b> - a special case of a collection of switches.  Each
+    individual button is not reported.  In addition to reporting a state
+    change, the index of the button on the keyboard for which the state change
+    occurred is also reported.  This index corresponds to a value defined in
+    the <code>nid_keysym.h</code> header file.
+    </ul>
+
+    <p>The NID protocol in general terms requires that both ends initially
+    send a handshake packet upon connecting.  The handshake packet contains
+    the protocol version (major and minor revision) that each end speaks.
+    If an end is happy with the offered protocol, it should send an "ack"
+    packet.  If not, then it should send a "nak" packet.  Then, it should
+    wait for the other end's response to the handshake.  After receiving
+    the response, if the end had either sent a "nak" in response to the
+    handshake, or received a "nak", it should close the connection.  In
+    other words, if either side does not accept the handshake, both sides
+    should close the connection.
+
+    <p>By default a NID server should send no data.  It is up to the client
+    to either poll the state of a device, or request that the server send 
+    data when the state of the input device changes.  There is some support
+    for throttling the reporting of device changes to avoiding queueing
+    up too many changes and thus hurting the latency of input.
+
+    <p>When data is sent over the wire, it is sent in "network-order"
+    byte ordering (big-endian).  Real values are sent in their IEEE
+    binary format (again using big-endian byte ordering).  The following
+    data-types are defined as abstractions:
+    <ul>
+    <li><code>nid_uint32</code> - an unsigned 32-bit integer
+    <li><code>nid_int32</code> - a signed 32-bit integer
+    <li><code>nid_real</code> - a 32-bit real number in IEEE format.  On
+    most systems, this is just "float".
+    </ul>
+
+    <p>Every client-side function is also represented as a library call,
+    so clients using this library should not need to explictily send and
+    receive packets.
+
+<p class="cdoc-item">
+<a name="sect_0"></a><h2 class="tag-section">Protocol History</h2>
+    <p>This documentation describes support for the 1.4 revision of the
+    NID protocol.  The following is a brief list of changes that have
+    been made in various revisions of the protocol:</p>
+
+    <p><b>Revision 1.4</b></p>
+    <ul>
+    <li>added TIME_PING_PONG packet</li>
+    <li>added QUERY_CAP packet</li>
+    <li>add support for "REV" portion of protocol.
+    A revision (less than a minor step) must have the following properties:
+    <ul>
+    <li>is protocol compatible with all MAJOR.MINOR servers</li>
+    <li>behaviour of any existing exchanges does not change</li>
+    <li>new commands may be added with the following catches:</li>
+           <ul>
+           <li>QUERY_CAP call is used to test if server supports that call</li>
+	   <li>client copes cleanly with any revision capability being nak'ed</li>
+	   <li>server nak's any unknown requests</li>
+	   </ul>
+   </ul>
+   <p>
+   Revisions will allow small changes to the protocol without voiding
+   compatibility with older code (1.4 and later only).  
+   Note that the "nak any unknown
+   request" is stipulated for the first time in 1.4.  With the next minor
+   step after 1.4, handshake rules may change (e.g. it may be valid for
+   1.5 to handshake okay against 1.4).
+   </p>
+   </li>
+   </ul>
+   </p>
+
+   <p><b>Revision 1.3</b> 
+   <ul>
+   <li>added SET_EVENT_SINK request</li>
+   <li>allows redirection of event delivery to other,
+   potentially more efficient routes (e.g. UDP)</li>
+   </ul>
+
+
+   <p><b>Revision 1.2</b>
+   <ul>
+   <li>added COMPRESS_EVENTS, UNCOMPRESS_EVENTS, DUMP_EVENTS requests,
+   EVENTS_AVAIL response</li>
+   </ul>
+
+   <p><b>Revision 1.1</b> 
+   <ul>
+   <li>added FIND_DEVICE call</li>
+   <li>allow naming of elements (servers should assign arbitrary names if none)</li>
+   <li>longer strings for device naming and typing</li>
+   </ul>
+
+<p class="cdoc-item">
+<a name="sect_1"></a><h2 class="tag-section">Data Types</h2>
+<p class="cdoc-item">
+    Note that the nid_uint32, nid_int32 and nid_real types 
+    are provided to abstract out the specific implementation of
+    these types.  They should not be assumed to relate to any
+    specific type (e.g. "float") in general.
+
+<p class="cdoc-item">
+<a name="type_nid_uint32"></a><div class="start-type"><span class="label-type">Type:</span> <span class="tag-type">nid_uint32</span>
+<div class="body-type">
+    An unsigned 32-bit integer.
+
+<div class="codeblock">typedef unsigned nid_uint32;</div></div></div>
+<p class="cdoc-item">
+<a name="type_nid_int32"></a><div class="start-type"><span class="label-type">Type:</span> <span class="tag-type">nid_int32</span>
+<div class="body-type">
+    A signed 32-bit integer.
+
+<div class="codeblock">typedef int      nid_int32;</div></div></div>
+<p class="cdoc-item">
+<a name="type_nid_real"></a><div class="start-type"><span class="label-type">Type:</span> <span class="tag-type">nid_real</span>
+<div class="body-type">
+    A 32-bit signed, real
+
+<div class="codeblock">typedef float    nid_real;</div></div></div>
+<p class="cdoc-item">
+<a name="struct_NidHeader"></a><div class="start-struct"><span class="label-struct">Structure:</span> <span class="tag-struct">NidHeader</span>
+<div class="body-struct">
+    All NID packets begin with this header.  Many packets are followed by
+    a payload (see the <code>NidPacket</code> structure).
+
+<div class="codeblock">typedef struct nid_header {</div><p class="cdoc-item">
+<div class="start-member"><span class="tag-member">size</span> - 
+      The size of the packet minus 4 bytes (the size of the "size" field).
+  
+<div class="codeblock">  nid_uint32 size;</div></div>
+<p class="cdoc-item">
+<div class="start-member"><span class="tag-member">request</span> - 
+      A number identifying a particular request.  The existing servers do
+      not support interleaving of requests, but may in the future.  This
+      field is also used to distinguish between state updates and responses
+      to an explicit request.
+  
+<div class="codeblock">  nid_uint32 request;</div></div>
+<p class="cdoc-item">
+<div class="start-member"><span class="tag-member">type</span> - 
+      The type of the packet.  The types are defined by the <code>NID_PKT_*</code>
+      macros in the <code>nid.h</code> header file.
+  
+<div class="codeblock">  nid_uint32 type;</div></div>
+<div class="codeblock">} NidHeader;</div></div></div>
+<p class="cdoc-item">
+    Used in the ping-pong algorithm for time-synching.  This algorithm
+    is meant for millisecond accuracy, although the actual accuracy
+    is dependent upon how the time values below are determined.
+
+<div class="codeblock">typedef struct nid_time_ping {
+  nid_uint32 k;
+  nid_uint32 ct0, ctk;
+  nid_uint32 st1, stk;
+} NidTimePingPong;</div><p class="cdoc-item">
+<a name="struct_NidTimeSynch"></a><div class="start-struct"><span class="label-struct">Structure:</span> <span class="tag-struct">NidTimeSynch</span>
+<div class="body-struct">
+    Used for synchronizing a Nid server's clock with the client's.  The
+    string format for the time is same as is used in the "veclock" library.
+
+<div class="codeblock">typedef struct nid_time_synch {
+  nid_uint32 refpt;
+  char absolute[NID_DEVICE_STR_SZ];
+} NidTimeSynch;</div></div></div>
+<p class="cdoc-item">
+<a name="struct_NidDeviceFunc"></a><div class="start-struct"><span class="label-struct">Structure:</span> <span class="tag-struct">NidDeviceFunc</span>
+<div class="body-struct">
+    An extended function call.  Allows for non-standard special functions to
+    be accessed on a particular device.  This should only be used for
+    cases which are not covered by the NID protocol itself and where such
+    functionality is desperately needed.  In other words, the use of 
+    special function calls is strongly discouraged.
+
+<div class="codeblock">typedef struct nid_device_func {</div><p class="cdoc-item">
+<div class="start-member"><span class="tag-member">devid</span> - 
+      The identifier of the device.
+  
+<div class="codeblock">  nid_uint32 devid;</div></div>
+<p class="cdoc-item">
+<div class="start-member"><span class="tag-member">func</span> - 
+      The name of the special function to be called.  No pre-defined names
+      exist.  These are all specific to the device in question and should
+      be considered non-portable.
+  
+<div class="codeblock">  char func[NID_DEVICE_STR_SZ];</div></div>
+<p class="cdoc-item">
+<div class="start-member"><span class="tag-member">args</span> - 
+      Arguments to the special function.  The arguments are represented as
+      a string.  The size of the arguments is limited by the size of a string
+      in NID.
+  
+<div class="codeblock">  char args[NID_DEVICE_STR_SZ];</div></div>
+<div class="codeblock">} NidDeviceFunc;</div></div></div>
+<p class="cdoc-item">
+<a name="struct_NidDeviceResp"></a><div class="start-struct"><span class="label-struct">Structure:</span> <span class="tag-struct">NidDeviceResp</span>
+<div class="body-struct">
+    The response to a special function call.  This is effectively an "ack"
+    with extra data.  If a function call fails, then a regular NID "nak"
+    packet should be sent.
+
+<div class="codeblock">typedef struct nid_device_resp {
+  nid_uint32 code;
+  char data[NID_DEVICE_STR_SZ];
+} NidDeviceResp;</div></div></div>
+<p class="cdoc-item">
+<a name="struct_NidHandshake"></a><div class="start-struct"><span class="label-struct">Structure:</span> <span class="tag-struct">NidHandshake</span>
+<div class="body-struct">
+    A handshake payload which consists of the major and minor revisions
+    of the protocol.  These should be defined in the <code>nid.h</code>
+    header file as the <code>NID_PROTO_MAJOR</code> and <code>NID_PROTO_MINOR</code>
+    macros.  Note that where supported, the <code>NID_PROTO_REV</code> is
+    not used as part of the handshake.
+
+<div class="codeblock">typedef struct nid_handshake {
+  nid_uint32 protocol_major;
+  nid_uint32 protocol_minor;
+} NidHandshake;</div></div></div>
+<p class="cdoc-item">
+<a name="struct_NidNak"></a><div class="start-struct"><span class="label-struct">Structure:</span> <span class="tag-struct">NidNak</span>
+<div class="body-struct">
+    A non-acknowledgement.  This response indicates that a command failed.
+
+<div class="codeblock">typedef struct nid_nak {</div><p class="cdoc-item">
+<div class="start-member"><span class="tag-member">reason</span> - 
+      Optionally a command may include a numeric code indicating why
+      it failed.  There are no generally defined values for the reason -
+      this is specific to each command.
+  
+<div class="codeblock">  nid_uint32 reason;</div></div>
+<div class="codeblock">} NidNak;</div></div></div>
+<p class="cdoc-item">
+<a name="struct_NidEnumElements"></a><div class="start-struct"><span class="label-struct">Structure:</span> <span class="tag-struct">NidEnumElements</span>
+<div class="body-struct">
+    A request to return a list of all elements of a particular device.
+
+<div class="codeblock">typedef struct nid_enum_elements {</div><p class="cdoc-item">
+<div class="start-member"><span class="tag-member">id</span> - 
+      The numeric identifier of the device for which you are requesting
+      data.
+  
+<div class="codeblock">  nid_uint32 id;</div></div>
+<div class="codeblock">} NidEnumElements;</div></div></div>
+<p class="cdoc-item">
+<a name="struct_NidElementId"></a><div class="start-struct"><span class="label-struct">Structure:</span> <span class="tag-struct">NidElementId</span>
+<div class="body-struct">
+    A structure identifying a specific element of a specific device 
+    using numeric identifiers.
+
+<div class="codeblock">typedef struct {
+  nid_uint32 devid;
+  nid_uint32 elemid;
+} NidElementId;</div></div></div>
+<p class="cdoc-item">
+<a name="struct_NidElementRequests"></a><div class="start-struct"><span class="label-struct">Structure:</span> <span class="tag-struct">NidElementRequests</span>
+<div class="body-struct">
+    An array of elements identified using NidElementId structures.
+    This payload is used to request details of specific device elements.
+
+<div class="codeblock">typedef struct nid_element_requests {
+  nid_uint32 num_requests;
+  NidElementId *requests;
+} NidElementRequests;</div></div></div>
+<p class="cdoc-item">
+<a name="struct_NidFindDevice"></a><div class="start-struct"><span class="label-struct">Structure:</span> <span class="tag-struct">NidFindDevice</span>
+<div class="body-struct">
+    A device name and type specifier used for locating devices
+    on the server.  These specifiers are either the name of a particular
+    device or type, or an asterisk "*" to denote a wildcard.
+
+<div class="codeblock">typedef struct nid_find_device {
+  char name[NID_DEVICE_STR_SZ];
+  char type[NID_DEVICE_STR_SZ];
+} NidFindDevice;</div></div></div>
+<p class="cdoc-item">
+<a name="struct_NidDeviceInfo"></a><div class="start-struct"><span class="label-struct">Structure:</span> <span class="tag-struct">NidDeviceInfo</span>
+<div class="body-struct">
+    The basic information of a device returned in response to a FIND_DEVICE
+    or ENUM_DEVICES call.
+
+<div class="codeblock">typedef struct nid_device_info {</div><p class="cdoc-item">
+<div class="start-member"><span class="tag-member">devid</span> - 
+      The numeric identifier of the device.  This will be unique within
+      a particular server.  It is used as an argument to other calls to
+      identifiy the device.
+   
+<div class="codeblock">  nid_uint32 devid;</div></div>
+<p class="cdoc-item">
+<div class="start-member"><span class="tag-member">name</span> - 
+      The name of the device.  If the name of the device is larger than the
+      given space in the string, the name will be truncated to fit.  This
+      name is unique within a particular server.
+  
+<div class="codeblock">  char name[NID_DEVICE_STR_SZ];</div></div>
+<p class="cdoc-item">
+<div class="start-member"><span class="tag-member">type</span> - 
+      The type of the device.  This is just a string identifying the class
+      of the device.  There may be several devices on a server with the same
+      type.  Types are not pre-defined in the protocol - they are specific
+      to however a server chooses to report a type.  Servers should try to
+      keep type names consistent.
+  
+<div class="codeblock">  char type[NID_DEVICE_STR_SZ];</div></div>
+<div class="codeblock">} NidDeviceInfo;</div></div></div>
+<p class="cdoc-item">
+<a name="struct_NidDeviceList"></a><div class="start-struct"><span class="label-struct">Structure:</span> <span class="tag-struct">NidDeviceList</span>
+<div class="body-struct">
+    An array of NidDeviceInfo structures.
+
+<div class="codeblock">typedef struct nid_device_list {
+  nid_uint32 num_devices;
+  NidDeviceInfo *devices;
+} NidDeviceList;</div></div></div>
+<p class="cdoc-item">
+<a name="struct_NidElementInfo"></a><div class="start-struct"><span class="label-struct">Structure:</span> <span class="tag-struct">NidElementInfo</span>
+<div class="body-struct">
+    The details of an element, excluding its current state.
+
+<div class="codeblock">typedef struct nid_elem_info {</div><p class="cdoc-item">
+<div class="start-member"><span class="tag-member">name</span> - 
+      The name of the element.  This is unique within a particular device
+      but not necessarily between devices - e.g. two devices may have elements
+      with the same name.
+  
+<div class="codeblock">  char name[NID_DEVICE_STR_SZ];</div></div>
+<p class="cdoc-item">
+<div class="start-member"><span class="tag-member">elemid</span> - 
+      A numeric identifier for this element.  This identifier is unique
+      within a particular device.
+  
+<div class="codeblock">  nid_uint32 elemid;</div></div>
+<p class="cdoc-item">
+<div class="start-member"><span class="tag-member">type</span> - 
+      The type of the element (i.e. trigger, switch, valuator, etc.).
+  
+<div class="codeblock">  nid_uint32 type;</div></div>
+<p class="cdoc-item">
+<div class="start-member"><span class="tag-member">vsize</span> - 
+      If the element is a vector, the size of the vector.  This must not
+      change once defined.  Each vector can have its own size, but a vector
+      cannot be resized during any particular client's connection.  A
+      hard-coded constant (<code>NID_VECTOR_MAX_SZ</code>) limits the
+      maximum size of a vector.  If this constant is changed then the
+      protocol number should be changed to avoid problems with programs
+      expecting a different maximum vector size.
+  
+<div class="codeblock">  nid_uint32 vsize;</div></div>
+<p class="cdoc-item">
+<div class="start-member"><span class="tag-member">min,max</span> - 
+      The bounds on valuators and vectors.  For a valuator, only the first
+      item in the array (index 0) is used.  If both min and max are 0.0 for
+      a valuator, or for a particular offset in a vector, then that particular
+      valuator is unbounded - that is, no explicit limits are set on its
+      possible value.
+  
+<div class="codeblock">  nid_real   min[NID_VECTOR_MAX_SZ], max[NID_VECTOR_MAX_SZ];</div></div>
+<div class="codeblock">} NidElementInfo;</div></div></div>
+<p class="cdoc-item">
+<a name="struct_NidElementList"></a><div class="start-struct"><span class="label-struct">Structure:</span> <span class="tag-struct">NidElementList</span>
+<div class="body-struct">
+    An array of NidElementList structures for a particular device.  
+    This is sent in response to an ENUM_ELEMENTS request.
+
+<div class="codeblock">typedef struct nid_elem_list {
+  nid_uint32 devid;
+  nid_uint32 num_elems;
+  NidElementInfo *elements;
+} NidElementList;</div></div></div>
+<p class="cdoc-item">
+<a name="struct_NidElementState"></a><div class="start-struct"><span class="label-struct">Structure:</span> <span class="tag-struct">NidElementState</span>
+<div class="body-struct">
+    The state of a particular element.  The value of the type field determines
+    which of the representations of the "data" union is valid.
+
+<div class="codeblock">typedef struct nid_elem_state {</div><p class="cdoc-item">
+<div class="start-member"><span class="tag-member">timestamp</span> - 
+      The time at which this element state came into being.  This is relative
+      to the server's clock which can be synchronized through NID.
+      (See the <code>nidTimeSynch()</code> command.)  Otherwise, this value
+      is interpreted as a value returned from the <code>veClock()</code>
+      command from the veclock library.  This value is in milliseconds.
+  
+<div class="codeblock">  nid_uint32 timestamp;</div></div>
+<p class="cdoc-item">
+<div class="start-member"><span class="tag-member">devid</span> - 
+      The numeric identifier of the device.
+  
+<div class="codeblock">  nid_uint32 devid;</div></div>
+<p class="cdoc-item">
+<div class="start-member"><span class="tag-member">elemid</span> - 
+      The numeric identifier of the element.
+  
+<div class="codeblock">  nid_uint32 elemid;</div></div>
+<p class="cdoc-item">
+<div class="start-member"><span class="tag-member">type</span> - 
+      The type of the element.  This is provided as a convenience.  Its
+      type must always match the real type of the element.
+  
+<div class="codeblock">  nid_uint32 type;</div></div>
+<p class="cdoc-item">
+<div class="start-member"><span class="tag-member">data</span> - 
+      The actual state of the element.  Note the use of "switch_" instead
+      of "switch" to avoiding clashing with the reserved word "switch" in C.
+      For the keyboard element, "code" indicates to which key the given state
+      applies.  Key codes are defined in the <code>nid_keysym.h</code> header
+      file.
+  
+<div class="codeblock">  union {
+    nid_uint32 switch_;
+    nid_real valuator;
+    struct {
+      nid_uint32 code;
+      nid_uint32 state;} keyboard;
+    struct {
+      nid_uint32 size;
+      nid_real data[NID_VECTOR_MAX_SZ];} vector;} data;</div></div>
+<div class="codeblock">} NidElementState;</div></div></div>
+<p class="cdoc-item">
+<a name="struct_NidStateList"></a><div class="start-struct"><span class="label-struct">Structure:</span> <span class="tag-struct">NidStateList</span>
+<div class="body-struct">
+    An array of element states.  Sent in response to a poll or as a 
+    requested automatic update.
+
+<div class="codeblock">typedef struct nid_state_list {
+  nid_uint32 num_states;
+  NidElementState *states;
+} NidStateList;</div></div></div>
+<p class="cdoc-item">
+<a name="struct_NidEventSink"></a><div class="start-struct"><span class="label-struct">Structure:</span> <span class="tag-struct">NidEventSink</span>
+<div class="body-struct">
+    A string representing a new place to which to deliver events.
+    See <code>nidSetEventSink()</code>.
+
+<div class="codeblock">typedef struct nid_event_sink {
+  char sink[NID_SINK_STR_SZ];
+} NidEventSink;</div></div></div>
+<p class="cdoc-item">
+<a name="struct_NidValue"></a><div class="start-struct"><span class="label-struct">Structure:</span> <span class="tag-struct">NidValue</span>
+<div class="body-struct">
+    A server-specific value.  The only currently defined value is 
+    <code>NID_VALUE_REFRESH_RATE</code> which determines the maximum
+    rate at which the server will send data.
+
+<div class="codeblock">typedef struct nid_value {</div><p class="cdoc-item">
+<div class="start-member"><span class="tag-member">id</span> - 
+      A numeric identifier for the value.
+  
+<div class="codeblock">  nid_uint32 id;</div></div>
+<p class="cdoc-item">
+<div class="start-member"><span class="tag-member">value</span> - 
+      The value itself.
+  
+<div class="codeblock">  nid_int32  value;</div></div>
+<div class="codeblock">} NidValue;</div></div></div>
+<p class="cdoc-item">
+<a name="struct_NidPacket"></a><div class="start-struct"><span class="label-struct">Structure:</span> <span class="tag-struct">NidPacket</span>
+<div class="body-struct">
+    An actual packet.  Although a packet is sent as a contiguous piece
+    of data, it is represented in the library as a header plus a pointer
+    to a payload.
+
+<div class="codeblock">typedef struct nid_packet {
+  NidHeader header;
+  void *payload;
+} NidPacket;</div></div></div>
+<p class="cdoc-item">
+<a name="sect_2"></a><h2 class="tag-section">Client Function-Specific Calls</h2>
+<p class="cdoc-item">
+<a name="function_nidOpen"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">nidOpen</span>
+<div class="body-function">
+<div class="codeblock">int nidOpen(char *host, int port);</div>    Opens a connection to a NID server and attempts a handshake.
+    
+<div class="start-param"><span class="tag-param">host</span> - 
+    The name of the host to which to connect.  This must be specified.</div>
+<div class="start-param"><span class="tag-param">port</span> - 
+    The port number to connect to on the remote host.  If this value is
+    less than or equal to 0 then the default NID port is used.</div>
+<div class="start-returns"><span class="label-returns">Returns:</span> 
+    If the connection or the handshake fails, then a value less than 0
+    is returned.  In this case, the connection is not open.
+    Otherwise a value greater than or equal to 0 is returned.  This is
+    an identifier for this particular connection and must be specified
+    as an argument to other calls to the client library.</div></div></div>
+<p class="cdoc-item">
+<a name="function_nidRegister"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">nidRegister</span>
+<div class="body-function">
+<div class="codeblock">int nidRegister(int fd);</div>    Registers a given file descriptor as a NID connection.  The effect
+    is the same as the <code>nidOpen()</code> call except that the connection
+    is established elsewhere.  This function will attempt a handshake on
+    the given connection.
+    
+<div class="start-param"><span class="tag-param">fd</span> - 
+    The file descriptor upon which to attempt a NID connection.</div>
+<div class="start-returns"><span class="label-returns">Returns:</span> 
+    If the handshake fails, then a value less than 0 is returned.
+    The given file descriptor is not closed or otherwise affected.
+    If the handshake succeeds then a value greater than or equal to 0 is
+    returned.  This is an identifier for this particular connection and
+    must be specified as an argument to other calls to the client library.</div></div></div>
+<p class="cdoc-item">
+<a name="function_nidClose"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">nidClose</span>
+<div class="body-function">
+<div class="codeblock">void nidClose(int conn);</div>    Closes an existing NID connection returned from either <code>nidOpen()</code>
+    or <code>nidRegister()</code>.
+
+<div class="start-param"><span class="tag-param">conn</span> - 
+    The identifier of the connection to close as returned from either 
+    <code>nidOpen()</code> or <code>nidRegister()</code>.</div></div></div>
+<p class="cdoc-item">
+<a name="function_nidLastError"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">nidLastError</span>
+<div class="body-function">
+<div class="codeblock">int nidLastError(int conn);</div>    Returns the last error state of a NID connection.  A value of 0 indicates 
+    that no error state has been seen, a value of -1 indicates an internal 
+    error, and any other value is a value returned as a reason in a "nak" 
+    packet.
+
+<div class="start-param"><span class="tag-param">conn</span> - 
+    The identifier of the connection as returned from either 
+    <code>nidOpen()</code> or <code>nidRegister()</code>.</div>
+<div class="start-returns"><span class="label-returns">Returns:</span> 
+    The last error state of the NID connection identified by <b>conn</b>.</div></div></div>
+<p class="cdoc-item">
+<a name="function_nidLastErrorMsg"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">nidLastErrorMsg</span>
+<div class="body-function">
+<div class="codeblock">char *nidLastErrorMsg(int conn);</div>    The text associated with the last error state (see <code>nidLastError()</code>).
+    
+<div class="start-param"><span class="tag-param">conn</span> - 
+    The identifier of the connection as returned from either 
+    <code>nidOpen()</code> or <code>nidRegister()</code>.</div>
+<div class="start-returns"><span class="label-returns">Returns:</span> 
+    The last error text.  A valid pointer to a null-terminated string is
+    always returned, although the text may not be meaningful if no error
+    state has been seen.</div></div></div>
+<p class="cdoc-item">
+<a name="function_nidEnumDevices"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">nidEnumDevices</span>
+<div class="body-function">
+<div class="codeblock">NidDeviceList *nidEnumDevices(int conn);</div>    Retrieves a list of all devices on a NID server.
+    
+<div class="start-param"><span class="tag-param">conn</span> - 
+    The identifier of the connection as returned from either 
+    <code>nidOpen()</code> or <code>nidRegister()</code>.</div>
+<div class="start-returns"><span class="label-returns">Returns:</span> 
+    An array of device identifiers as a <code>NidDeviceList</code> structure.
+    This array must be freed with <code>nidFreeDeviceList()</code> when the
+    client is done with it.</div></div></div>
+<p class="cdoc-item">
+<a name="function_nidEnumElements"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">nidEnumElements</span>
+<div class="body-function">
+<div class="codeblock">NidElementList *nidEnumElements(int conn, int dev);</div>    Retrieves a list of elements for a given device.
+
+<div class="start-param"><span class="tag-param">conn</span> - 
+    The identifier of the connection as returned from either 
+    <code>nidOpen()</code> or <code>nidRegister()</code>.</div>
+<div class="start-param"><span class="tag-param">dev</span> - 
+    The numeric identifier of the device for which to return the list of
+    elements.</div>
+<div class="start-returns"><span class="label-returns">Returns:</span> 
+    An array of element identifiers as a <code>NidElementList</code>
+    structure.  This array must be freed with <code>nidFreeElementList()</code>
+    when the client is done with it.</div></div></div>
+<p class="cdoc-item">
+<a name="function_nidQueryElements"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">nidQueryElements</span>
+<div class="body-function">
+<div class="codeblock">NidStateList *nidQueryElements(int conn, NidElementId *ids, int nids);</div>    Retrieves the state of the specified set of elements.  The elements can
+    be from different devices or the same device.
+    
+<div class="start-param"><span class="tag-param">conn</span> - 
+    The identifier of the connection as returned from either 
+    <code>nidOpen()</code> or <code>nidRegister()</code>.</div>
+<div class="start-param"><span class="tag-param">ids</span> - 
+    An array of <code>NidElementId</code> structures identifying the elements
+    which should be queried.</div>
+<div class="start-param"><span class="tag-param">nids</span> - 
+    The number of structures in the array given by <b>ids</b>.</div>
+<div class="start-returns"><span class="label-returns">Returns:</span> 
+    An array of element states as a <code>NidStateList</code> structure.
+    This array must be freed with <code>nidFreeStateList()</code> when the
+    client is done with it.</div></div></div>
+<p class="cdoc-item">
+<a name="function_nidListenElements"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">nidListenElements</span>
+<div class="body-function">
+<div class="codeblock">int nidListenElements(int conn, NidElementId *ids, int nids);</div>    Requests that the NID server automatically send updates for the given
+    elements.
+
+<div class="start-param"><span class="tag-param">conn</span> - 
+    The identifier of the connection as returned from either 
+    <code>nidOpen()</code> or <code>nidRegister()</code>.</div>
+<div class="start-param"><span class="tag-param">ids</span> - 
+    An array of <code>NidElementId</code> structures identifying the elements
+    which should be listened to.</div>
+<div class="start-param"><span class="tag-param">nids</span> - 
+    The number of structures in the array given by <b>ids</b>.</div>
+<div class="start-returns"><span class="label-returns">Returns:</span> 
+    A value of 0 on success, and a non-zero value on failure.</div></div></div>
+<p class="cdoc-item">
+<a name="function_nidIgnoreElements"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">nidIgnoreElements</span>
+<div class="body-function">
+<div class="codeblock">int nidIgnoreElements(int conn, NidElementId *ids, int nids);</div>    Requests that the NID server should stop sending automatic updates for 
+    the given elements.
+
+<div class="start-param"><span class="tag-param">conn</span> - 
+    The identifier of the connection as returned from either 
+    <code>nidOpen()</code> or <code>nidRegister()</code>.</div>
+<div class="start-param"><span class="tag-param">ids</span> - 
+    An array of <code>NidElementId</code> structures identifying the elements
+    which should be ignored.</div>
+<div class="start-param"><span class="tag-param">nids</span> - 
+    The number of structures in the array given by <b>ids</b>.</div>
+<div class="start-returns"><span class="label-returns">Returns:</span> 
+    A value of 0 on success, and a non-zero value on failure.</div></div></div>
+<p class="cdoc-item">
+<a name="function_nidFindDevice"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">nidFindDevice</span>
+<div class="body-function">
+<div class="codeblock">NidDeviceList *nidFindDevice(int conn, char *name, char *type);</div>    Attempts to locate a particular device or set of devices on the server.
+    
+<div class="start-param"><span class="tag-param">conn</span> - 
+    The identifier of the connection as returned from either 
+    <code>nidOpen()</code> or <code>nidRegister()</code>.</div>
+<div class="start-param"><span class="tag-param">name</span> - 
+    The exact name of the device or "*" to indicate any device.</div>
+<div class="start-param"><span class="tag-param">type</span> - 
+    The exact type of the device or "*" to indicate any type of device.</div>
+<div class="start-returns"><span class="label-returns">Returns:</span> 
+    An array of matching devices as a <code>NidDeviceList</code> structure.
+    This array must be freed with <code>nidFreeDeviceList()</code> when the
+    client is through with it.</div></div></div>
+<p class="cdoc-item">
+<a name="function_nidNextEvents"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">nidNextEvents</span>
+<div class="body-function">
+<div class="codeblock">NidStateList *nidNextEvents(int conn, int wait);</div>    Reads the next automatic update of events on the given connection.
+    If there are none currently available, this function will block until
+    events are available, depending upon the value of the "wait" parameter.
+
+<div class="start-param"><span class="tag-param">conn</span> - 
+    The identifier of the connection as returned from either 
+    <code>nidOpen()</code> or <code>nidRegister()</code>.
+    </div>
+<div class="start-param"><span class="tag-param">wait</span> - 
+    This parameter affects how the function behaves if there are no events
+    currently available.  If 0, then the function returns immediately.  If
+    non-zero, then the function will wait until events are available and
+    return the first packet of events.</div>
+<div class="start-returns"><span class="label-returns">Returns:</span> 
+    An array of element states as a <code>NidStateList</code> structure.
+    This array must be freed with <code>nidFreeStateList()</code> when the
+    client is done with it.  If no events are available and wait is 0, then
+    <code>NULL</code> is returned.</div></div></div>
+<p class="cdoc-item">
+<a name="function_nidSetValue"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">nidSetValue</span>
+<div class="body-function">
+<div class="codeblock">int nidSetValue(int conn, nid_uint32 id, nid_int32 val);</div>    Sets a server-specific configuration value.  Currently the only defined 
+    value is
+    <code>NID_VALUE_REFRESH_RATE</code>.  This is a value in Hz which
+    indicates the maximum rate at which updates should be automatically
+    sent to the client.  If events are generated on the server faster than
+    the refresh rate, then the events will be batched and delayed to meet
+    the refresh rate.  A higher refresh rate will reduce the latency of
+    input but increase the overhead of communication.  High refresh rates
+    may increase latency by overwhelming communication between the client
+    and server.
+
+<div class="start-param"><span class="tag-param">conn</span> - 
+    The identifier of the connection as returned from either 
+    <code>nidOpen()</code> or <code>nidRegister()</code>.</div>
+<div class="start-param"><span class="tag-param">id</span> - 
+    The numeric identifier of the value to set.  Currently the only
+    defined value is <code>NID_VALUE_REFRESH_RATE</code>.  Other servers
+    may define other values.</div>
+<div class="start-param"><span class="tag-param">val</span> - 
+    The new value.  Currently values can only be integers.
+    </div>
+<div class="start-returns"><span class="label-returns">Returns:</span> 
+    A value of 0 on success, and a non-zero value on failure.</div></div></div>
+<p class="cdoc-item">
+<a name="function_nidGetValue"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">nidGetValue</span>
+<div class="body-function">
+<div class="codeblock">int nidGetValue(int conn, nid_uint32 id, nid_int32 *val_ret);</div>    Retrieves a server-specific configuration value.  See
+    <code>nidSetValue()</code> for details of known value identifiers.
+    
+<div class="start-param"><span class="tag-param">conn</span> - 
+    The identifier of the connection as returned from either 
+    <code>nidOpen()</code> or <code>nidRegister()</code>.</div>
+<div class="start-param"><span class="tag-param">id</span> - 
+    The numeric identifier of the value to set.  Currently the only
+    defined value is <code>NID_VALUE_REFRESH_RATE</code>.  Other servers
+    may define other values.</div>
+<div class="start-param"><span class="tag-param">val_ret</span> - 
+    A pointer to an integer where the retrieved value will be stored.
+    Currently values can only be integers.    </div>
+<div class="start-returns"><span class="label-returns">Returns:</span> 
+    A value of 0 on success, and a non-zero value on failure.
+ </div></div></div>
+<p class="cdoc-item">
+<a name="function_nidTimePingPong"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">nidTimePingPong</span>
+<div class="body-function">
+<div class="codeblock">int nidTimePingPong(int conn);</div>    Called from a client, initiates a ping-pong time synchronization
+    to eliminate the offset between the server's clock and the client's
+    clock.  Note that the work "clock" in this case refers to the 
+    NID software's view of time and does not affect any actual clock in
+    the computer.  Also note that this algorithm does not attempt to
+    correct for any variance in the rate of the clocks of the two machines.
+    Once an offset has been determined, that offset is used to generate
+    a time synchronization packet that is then sent to the server.
+    <p>This function does not typically need to be called by an application
+    using the NID library as this synchronization is done automatically at
+    connection time in the 1.4 protocol and later.
+    
+<div class="start-param"><span class="tag-param">conn</span> - 
+    The identifier of the connection as returned from either 
+    <code>nidOpen()</code> or <code>nidRegister()</code>.</div>
+<div class="start-returns"><span class="label-returns">Returns:</span> 
+    A value of 0 on success, and a non-zero value on failure.</div></div></div>
+<p class="cdoc-item">
+<a name="function_nidTimeSynch"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">nidTimeSynch</span>
+<div class="body-function">
+<div class="codeblock">void nidTimeSynch(int conn, nid_uint32 ref, char *absolute);</div>    Provides a clock reference point to the NID server.  The NID server
+    should use this reference point to adjust the clock it uses to
+    generate timestamps on automatically reported events.
+    The default NID server just passes this information to its
+    instance of the veclock library.
+
+<div class="start-param"><span class="tag-param">conn</span> - 
+    The identifier of the connection as returned from either 
+    <code>nidOpen()</code> or <code>nidRegister()</code>.</div>
+<div class="start-param"><span class="tag-param">ref</span> - 
+    The reference point in clock time which the given string
+    represents.</div>
+<div class="start-param"><span class="tag-param">absolute</span> - 
+    The wall clock time to which the reference point corresponds.
+    The format of this string is the same as is used in the veclock
+    library.</div></div></div>
+<p class="cdoc-item">
+<a name="function_nidCompressEvents"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">nidCompressEvents</span>
+<div class="body-function">
+<div class="codeblock">int nidCompressEvents(int conn);</div>    Requests that any events on the server should be buffered and
+    compressed by the server.  Events are compressed by combining adjacent
+    valuator events ("adjacent" meaning that they are separated only by
+    valuator events from any device/element) into a single event.  Instead
+    of streaming events, the server will only send an <code>EVENTS_AVAIL</code>
+    packet when it has new events in its buffer.  The stored events can be
+    retrieved using a <code>DUMP_EVENTS</code> request.
+    
+<div class="start-param"><span class="tag-param">conn</span> - 
+    The identifier of the connection as returned from either 
+    <code>nidOpen()</code> or <code>nidRegister()</code>.
+    </div>
+<div class="start-returns"><span class="label-returns">Returns:</span> 
+    0 if the request is sucessful, non-zero otherwise.</div></div></div>
+<p class="cdoc-item">
+<a name="function_nidUncompressEvents"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">nidUncompressEvents</span>
+<div class="body-function">
+<div class="codeblock">int nidUncompressEvents(int conn);</div>    Requests that the server no longer compress events and return them
+    as they occur (i.e. in old-fashioned streaming mode).  See
+    <code>nidCompressEvents()</code>.
+    
+<div class="start-param"><span class="tag-param">conn</span> - 
+    The identifier of the connection as returned from either 
+    <code>nidOpen()</code> or <code>nidRegister()</code>.</div>
+<div class="start-returns"><span class="label-returns">Returns:</span> 
+    0 if the request is sucessful, non-zero otherwise.</div></div></div>
+<p class="cdoc-item">
+<a name="function_nidDumpEvents"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">nidDumpEvents</span>
+<div class="body-function">
+<div class="codeblock">NidStateList *nidDumpEvents(int conn);</div>    Requests that the server send any compressed events it may have buffered.
+    The response will be an <code>ELEMENT_STATES</code> packet.
+    
+<div class="start-param"><span class="tag-param">conn</span> - 
+    The identifier of the connection as returned from either 
+    <code>nidOpen()</code> or <code>nidRegister()</code>.</div>
+<div class="start-returns"><span class="label-returns">Returns:</span> 
+    The set of states returned, or <code>NULL</code> if there is an
+    error, or no states are available.</div></div></div>
+<p class="cdoc-item">
+<a name="function_nidSetEventSink"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">nidSetEventSink</span>
+<div class="body-function">
+<div class="codeblock">int nidSetEventSink(int conn, char *sink);</div>    Requests that the server redirect any automatically delievered events
+    to the given connection, described as a string.
+    Control remains with the original connection.  This will redirect
+    all automatic updates to the new sink.  The following strings are
+    recognized - others may be supported on specific implementations.
+    <ul>
+    <li><b>default</b> - deliver events on control connection</li>
+    <li><b>tcp</b> <i>host</i> <i>port</i> - make a new TCP connection 
+    to the given host and port</li>
+    <li><b>udp</b> <i>host</i> <i>port</i> - make a new UDP connection
+    to the given host and port</li>
+    </ul>
+
+<div class="start-param"><span class="tag-param">conn</span> - 
+    The identifier of the connection as returned from either 
+    <code>nidOpen()</code> or <code>nidRegister()</code>.
+    </div>
+<div class="start-param"><span class="tag-param">sink</span> - 
+    A string describing the new sink to which the server should send events.</div>
+<div class="start-returns"><span class="label-returns">Returns:</span> 
+    0 if the request is sucessful, non-zero otherwise.</div></div></div>
+<p class="cdoc-item">
+<a name="function_nidChangeTransport"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">nidChangeTransport</span>
+<div class="body-function">
+<div class="codeblock">int nidChangeTransport(int conn, char *tport);</div>    This is a higher-level wrapper for <code>nidSetEventSink()</code> which
+    creates the necessary network objects internally.  Most client code
+    will use this function instead of <code>nidSetEventSink()</code>.
+    
+<div class="start-param"><span class="tag-param">conn</span> - 
+    The identifier of the connection as returned from either 
+    <code>nidOpen()</code> or <code>nidRegister()</code>.</div>
+<div class="start-param"><span class="tag-param">tport</span> - 
+    One of
+    <ul>
+    <li>"default" - use the control connection</li>
+    <li>"tcp" - use a new TCP connection</li>
+    <li>"udp" - use a new UDP connection</li>
+    </ul></div>
+<div class="start-returns"><span class="label-returns">Returns:</span> 
+    0 if the request is sucessful, non-zero otherwise.</div></div></div>
+<p class="cdoc-item">
+<a name="function_nidProcessTransport"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">nidProcessTransport</span>
+<div class="body-function">
+<div class="codeblock">int nidProcessTransport(int conn, char *tport);</div>    Called on the server side to reconfigure a connection for the
+    requested event transport.  Client code should never call this.
+    
+<div class="start-param"><span class="tag-param">conn</span> - 
+    The identifier of the connection as returned from either 
+    <code>nidOpen()</code> or <code>nidRegister()</code>.</div>
+<div class="start-param"><span class="tag-param">tport</span> - 
+    The transport/sink string sent by the client in a 
+    <code>NID_PKT_SET_EVENT_SINK</code> packet.
+    </div>
+<div class="start-returns"><span class="label-returns">Returns:</span> 
+    0 if the request is sucessful, non-zero otherwise.</div></div></div>
+<p class="cdoc-item">
+<a name="function_nidFreeDeviceList"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">nidFreeDeviceList</span>
+<div class="body-function">
+<div class="codeblock">void nidFreeDeviceList(NidDeviceList *l);</div>    Frees memory associated with a NidDeviceList structure allocated by
+    the NID library.  After freeing, the passed pointer will no longer be
+    valid and should not be de-referenced.
+    
+<div class="start-param"><span class="tag-param">l</span> - 
+    The structure to free.</div></div></div>
+<p class="cdoc-item">
+<a name="function_nidFreeElementList"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">nidFreeElementList</span>
+<div class="body-function">
+<div class="codeblock">void nidFreeElementList(NidElementList *l);</div>    Frees memory associated with a NidElementList structure allocated by
+    the NID library.  After freeing, the passed pointer will no longer be
+    valid and should not be de-referenced.
+    
+<div class="start-param"><span class="tag-param">l</span> - 
+    The structure to free.</div></div></div>
+<p class="cdoc-item">
+<a name="function_nidFreeStateList"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">nidFreeStateList</span>
+<div class="body-function">
+<div class="codeblock">void nidFreeStateList(NidStateList *l);</div>    Frees memory associated with a NidStateList structure allocated by
+    the NID library.  After freeing, the passed pointer will no longer be
+    valid and should not be de-referenced.
+    
+<div class="start-param"><span class="tag-param">l</span> - 
+    The structure to free.</div></div></div>
+<p class="cdoc-item">
+<a name="function_nidFreeElementRequests"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">nidFreeElementRequests</span>
+<div class="body-function">
+<div class="codeblock">void nidFreeElementRequests(NidElementRequests *l);</div>    Frees memory associated with a NidElementRequests structure allocated by
+    the NID library.  After freeing, the passed pointer will no longer be
+    valid and should not be de-referenced.
+    
+<div class="start-param"><span class="tag-param">l</span> - 
+    The structure to free.</div></div></div>
+<p class="cdoc-item">
+<a name="function_nidFreePacket"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">nidFreePacket</span>
+<div class="body-function">
+<div class="codeblock">void nidFreePacket(NidPacket *p);</div>    Frees a NidPacket structure and any payload associated with a packet.
+    If you wish to preserve the payload of a packet, but free the packet 
+    itself, save the pointer to the payload somewhere else and set the
+    <code>payload</code> member of the packet structure to <code>NULL</code>
+    before calling this function.
+
+<div class="start-param"><span class="tag-param">p</span> - 
+    The packet to free.</div></div></div>
+<p class="cdoc-item">
+<a name="sect_3"></a><h2 class="tag-section">Low-Level Calls</h2>
+<p class="cdoc-item">
+<a name="function_nidReceivePacket"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">nidReceivePacket</span>
+<div class="body-function">
+<div class="codeblock">NidPacket *nidReceivePacket(int conn, int request);</div>    Retrieves the next packet from the given connection.  This function
+    generally only needs to be used by servers or clients that wish to
+    access the library at a lower-level.  Where possible, clients should
+    use the function-specific calls.
+
+<div class="start-param"><span class="tag-param">conn</span> - 
+    The identifier of the connection as returned from either 
+    <code>nidOpen()</code> or <code>nidRegister()</code>.</div>
+<div class="start-param"><span class="tag-param">request</span> - 
+    If this value is greater than or equal to 0, then incoming packets will
+    be discarded until one arrives with a request field in its header that
+    matches this parameter.  If this value is less than 0, then the next packet
+    that arrives is returned regardless of its request field.
+    <p>Please note that a request value of 0 is reserved for automatic
+    event updates.</div>
+<div class="start-returns"><span class="label-returns">Returns:</span> 
+    A pointer to the decoded packet.  This structure needs to be freed with
+    a call to <code>nidFreePacket</code> when the program is finished with it.</div></div></div>
+<p class="cdoc-item">
+<a name="function_nidTransmitPacket"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">nidTransmitPacket</span>
+<div class="body-function">
+<div class="codeblock">int nidTransmitPacket(int conn, NidPacket *pkt);</div>    Transmits a packet over a NID connection.  This function takes care
+    of any byte-ordering issues - the given packet should be in local
+    machine byte-order.  This function generally only needs to be called
+    by servers and clients who wish to access the library at a low-level.
+    Where possible, clients should use the function-specific calls.
+
+<div class="start-param"><span class="tag-param">conn</span> - 
+    The identifier of the connection as returned from either 
+    <code>nidOpen()</code> or <code>nidRegister()</code>.</div>
+<div class="start-param"><span class="tag-param">pkt</span> - 
+    A pointer to the packet to transmit.
+    </div>
+<div class="start-returns"><span class="label-returns">Returns:</span> 
+    0 on success, non-zero on failure.
+ </div></div></div>
+<p class="cdoc-item">
+<a name="function_nidConnectionFd"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">nidConnectionFd</span>
+<div class="body-function">
+<div class="codeblock">int nidConnectionFd(int conn);</div>    Returns the system file descriptor for the stream corresponding to the
+    given NID connection.
+
+<div class="start-param"><span class="tag-param">conn</span> - 
+    The identifier of the connection as returned from either 
+    <code>nidOpen()</code> or <code>nidRegister()</code>.</div>
+<div class="start-returns"><span class="label-returns">Returns:</span> 
+    The system file descriptor as an integer.  On UNIX-like systems this
+    should always be a value greater than or equal to zero.</div></div></div>
+<p class="cdoc-item">
+<a name="function_nidEventFd"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">nidEventFd</span>
+<div class="body-function">
+<div class="codeblock">int nidEventFd(int conn);</div>    Returns the system file descriptor for the stream corresponding to the
+    given NID connection's transport for events.  This may or may not be
+    same as the result returned by <code>nidConnectionFd()</code>.  All
+    asynchronous events should be sent via this file descriptor.
+
+<div class="start-param"><span class="tag-param">conn</span> - 
+    The identifier of the connection as returned from either 
+    <code>nidOpen()</code> or <code>nidRegister()</code>.</div>
+<div class="start-returns"><span class="label-returns">Returns:</span> 
+    The system file descriptor as an integer.  On UNIX-like systems this
+    should always be a value greater than or equal to zero.</div></div></div>
+<p class="cdoc-item">
+<a name="function_nidLogToSyslog"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">nidLogToSyslog</span>
+<div class="body-function">
+<div class="codeblock">void nidLogToSyslog(int bool);</div>    By default, NID logs any messages to the stream associated with
+    stderr.  Optionally, NID can send messages to the system
+    log (where available).
+
+<div class="start-param"><span class="tag-param">bool</span> - 
+    If non-zero, then any further messages will be sent to the system log.
+    If zero, then any further messages will be sent to stderr.</div></div></div>
+
+<h2 class="cdoc-index">Index</h2>
+<ul>
+<li><a class="link-function" href="#function_nidChangeTransport">nidChangeTransport (function)</a></li>
+<li><a class="link-function" href="#function_nidClose">nidClose (function)</a></li>
+<li><a class="link-function" href="#function_nidCompressEvents">nidCompressEvents (function)</a></li>
+<li><a class="link-function" href="#function_nidConnectionFd">nidConnectionFd (function)</a></li>
+<li><a class="link-function" href="#function_nidDumpEvents">nidDumpEvents (function)</a></li>
+<li><a class="link-function" href="#function_nidEnumDevices">nidEnumDevices (function)</a></li>
+<li><a class="link-function" href="#function_nidEnumElements">nidEnumElements (function)</a></li>
+<li><a class="link-function" href="#function_nidEventFd">nidEventFd (function)</a></li>
+<li><a class="link-function" href="#function_nidFindDevice">nidFindDevice (function)</a></li>
+<li><a class="link-function" href="#function_nidFreeDeviceList">nidFreeDeviceList (function)</a></li>
+<li><a class="link-function" href="#function_nidFreeElementList">nidFreeElementList (function)</a></li>
+<li><a class="link-function" href="#function_nidFreeElementRequests">nidFreeElementRequests (function)</a></li>
+<li><a class="link-function" href="#function_nidFreePacket">nidFreePacket (function)</a></li>
+<li><a class="link-function" href="#function_nidFreeStateList">nidFreeStateList (function)</a></li>
+<li><a class="link-function" href="#function_nidGetValue">nidGetValue (function)</a></li>
+<li><a class="link-function" href="#function_nidIgnoreElements">nidIgnoreElements (function)</a></li>
+<li><a class="link-function" href="#function_nidLastError">nidLastError (function)</a></li>
+<li><a class="link-function" href="#function_nidLastErrorMsg">nidLastErrorMsg (function)</a></li>
+<li><a class="link-function" href="#function_nidListenElements">nidListenElements (function)</a></li>
+<li><a class="link-function" href="#function_nidLogToSyslog">nidLogToSyslog (function)</a></li>
+<li><a class="link-function" href="#function_nidNextEvents">nidNextEvents (function)</a></li>
+<li><a class="link-function" href="#function_nidOpen">nidOpen (function)</a></li>
+<li><a class="link-function" href="#function_nidProcessTransport">nidProcessTransport (function)</a></li>
+<li><a class="link-function" href="#function_nidQueryElements">nidQueryElements (function)</a></li>
+<li><a class="link-function" href="#function_nidReceivePacket">nidReceivePacket (function)</a></li>
+<li><a class="link-function" href="#function_nidRegister">nidRegister (function)</a></li>
+<li><a class="link-function" href="#function_nidSetEventSink">nidSetEventSink (function)</a></li>
+<li><a class="link-function" href="#function_nidSetValue">nidSetValue (function)</a></li>
+<li><a class="link-function" href="#function_nidTimePingPong">nidTimePingPong (function)</a></li>
+<li><a class="link-function" href="#function_nidTimeSynch">nidTimeSynch (function)</a></li>
+<li><a class="link-function" href="#function_nidTransmitPacket">nidTransmitPacket (function)</a></li>
+<li><a class="link-function" href="#function_nidUncompressEvents">nidUncompressEvents (function)</a></li>
+<li><a class="link-struct" href="#struct_NidDeviceFunc">NidDeviceFunc (struct)</a></li>
+<li><a class="link-struct" href="#struct_NidDeviceInfo">NidDeviceInfo (struct)</a></li>
+<li><a class="link-struct" href="#struct_NidDeviceList">NidDeviceList (struct)</a></li>
+<li><a class="link-struct" href="#struct_NidDeviceResp">NidDeviceResp (struct)</a></li>
+<li><a class="link-struct" href="#struct_NidElementId">NidElementId (struct)</a></li>
+<li><a class="link-struct" href="#struct_NidElementInfo">NidElementInfo (struct)</a></li>
+<li><a class="link-struct" href="#struct_NidElementList">NidElementList (struct)</a></li>
+<li><a class="link-struct" href="#struct_NidElementRequests">NidElementRequests (struct)</a></li>
+<li><a class="link-struct" href="#struct_NidElementState">NidElementState (struct)</a></li>
+<li><a class="link-struct" href="#struct_NidEnumElements">NidEnumElements (struct)</a></li>
+<li><a class="link-struct" href="#struct_NidEventSink">NidEventSink (struct)</a></li>
+<li><a class="link-struct" href="#struct_NidFindDevice">NidFindDevice (struct)</a></li>
+<li><a class="link-struct" href="#struct_NidHandshake">NidHandshake (struct)</a></li>
+<li><a class="link-struct" href="#struct_NidHeader">NidHeader (struct)</a></li>
+<li><a class="link-struct" href="#struct_NidNak">NidNak (struct)</a></li>
+<li><a class="link-struct" href="#struct_NidPacket">NidPacket (struct)</a></li>
+<li><a class="link-struct" href="#struct_NidStateList">NidStateList (struct)</a></li>
+<li><a class="link-struct" href="#struct_NidTimeSynch">NidTimeSynch (struct)</a></li>
+<li><a class="link-struct" href="#struct_NidValue">NidValue (struct)</a></li>
+<li><a class="link-type" href="#type_nid_int32">nid_int32 (type)</a></li>
+<li><a class="link-type" href="#type_nid_real">nid_real (type)</a></li>
+<li><a class="link-type" href="#type_nid_uint32">nid_uint32 (type)</a></li>
+<li><a class="link-typedef" href="#typedef_struct">struct (typedef)</a></li>
+</ul>
+</body>
+</html>

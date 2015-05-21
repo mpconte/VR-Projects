@@ -1,0 +1,26 @@
+To build (on a supported system):
+
+- make
+	Builds everything.
+	Runs autocfg script if necessary.
+
+- make VEROOT=/path/to/install install
+	Installs the VE files where you want them.
+
+Quick VE 2.1 -> 2.2 porting tips:
+
+- data file formats have changed (see examples)
+- applications will need to be recompiled and ported (slightly)
+- applications will need to at least:
+
+	- remove includes of "vei_gl.h" and "vei_glx.h"
+		(no longer used)
+	- add explicit OpenGL includes (i.e. <GL/gl.h>) if not
+	  already present
+	- change "veiGlSetWindowCback" to "veRenderSetupCback"
+	- change "veiGlSetDisplayCback" to "veRenderCback"
+	- change "veiGlParseGeom" to "veParseGeom"
+	- remove any code that uses "text-mode" or VeiGl* objects
+	  (no longer present)
+		- an alternative for "text-mode" will be available
+	  	  at a later date

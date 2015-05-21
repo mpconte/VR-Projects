@@ -1,0 +1,63 @@
+<html>
+<head>
+<title>VE GLX Implementation</title>
+</head>
+<body>
+<h1>VE GLX Implementation</h1>
+<h2>Introduction</h2>
+<p>
+This library implements the VE model on top of GLX.  GLX is an interface
+between the X window system and OpenGL (thus it is also an implementation
+on top of OpenGL).  This implementation requires a platform that supports
+GLX, OpenGL, and pthreads, preferrably at the kernel level.  The X library
+must be X11R6 or later or any X library that supports thread-safe operation
+via the <code>XInitThreads()</code> call.
+</p>
+
+<h2>Environment Options</h2>
+<p>The following environment options are supported by the GLX layer:
+<dl>
+<dt><b>doublebuffer</b></dt>
+<dd>If set to a non-zero integer, then a double-buffered window will
+be created.  Otherwise a single-buffered window will be created.
+<dt><b>red</b></dt>
+<dt><b>green</b></dt>
+<dt><b>blue</b></dt>
+<dd>The number of bits of red, green and blue to request in the frame buffer.
+Default is system dependent.</dd>
+<dt><b>alpha</b></dt>
+<dd>The number of bits of alpha buffer to request.  Default is 0
+(i.e. no alpha buffer requested).  This option should generally be
+set by the application.</dd>
+<dt><b>depth</b></dt>
+<dd>The number of bits of depth buffer to request.  Default is 0
+(i.e. no depth buffer requested).  This option should generally be
+set by the application.</dd>
+<dt><b>stereo</b></dt>
+<dd>If set to non-zero then a stereo window will be created for all
+windows to which this applies.  If zero, then a mono window will be
+created for all windows to which this applies.</dd>
+<dt><b>noborder</b></dt>
+<dd>If set to a non-zero integer then VE will attempt to prevent the
+window manager from decorating the window, thus providing a window with
+no border.  For most windows being rendered onto immersive displays
+(e.g. caves, head-mounted displays) you do not want window decorations.
+This will only work with window managers that respect Motif window
+manager hints (e.g. mwm, 4Dwm).</dd>
+<dt><b>glx_no_threads</b></dt>
+<dt><b>glx_no_pipe_threads</b></dt>
+<dd>The default in the GLX layer is spawn one thread per X display (i.e.
+pipe).  These options allow the thread creation to be changed.  If the
+option "glx_no_threads" is defined and is some integer other than 0 then
+no threads will be spawned regardless of the number of pipes.  Otherwise,
+if the option "glx_no_pipe_threads" is defined and is some integer other
+than 0 then a thread will be created per window rather than per pipe.
+On many systems this is no faster than one thread per pipe and on some
+systems it may be slower due to GLX context switching.  These options
+are for debugging and should generally not need to be tweaked at the
+application level.
+</dd>
+</dl>
+
+</body>
+</html>

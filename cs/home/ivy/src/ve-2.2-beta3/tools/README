@@ -1,0 +1,19 @@
+This directory contains a number of tools that are part of VE and
+its associated libraries:
+
+nid_snoop
+- queries a nid server for all devices and returns events as they occur.
+  Useful for quick checks to see if a NID server is returning sane data.
+
+nid_server
+- a standalone NID server which requires no other libraries except for
+  libnid and libveclock.  This is useful in cases where you do not want
+  the entire VE library or you cannot have the entire VE library for
+  some reason.  Unlike the ve_nid_server, this server does not use threads
+  at all, meaning that it requires a different driver implementation for
+  devices, but it is also potentially a lighter-weight program.
+
+ve_nid_server
+- a NID server that uses VE device drivers.  This is the preferred NID
+  server as it allows a device to be supported both locally and remotely
+  using a single implementation of a device driver.

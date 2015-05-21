@@ -1,0 +1,11 @@
+OR test
+pass1
+pass2
+pass3
+pass4
+AND test
+pass1
+pass2
+pass3
+pass4
+result = ok

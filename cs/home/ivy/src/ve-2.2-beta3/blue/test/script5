@@ -1,0 +1,13 @@
+#
+#
+# The first script that does some kind of real work.
+# This is a simple version of 'wc -l' - counts lines
+# in standard input.
+#
+#
+set count 0
+while { [[stdin] readln l] } {
+    incr count
+    # set count [expr {$count + 1}]
+}
+[stdout] writeln "$count lines"

@@ -1,0 +1,126 @@
+<!-- This is a template for documentation of drivers -->
+<html>
+<head>
+<title>VE - Drivers - fastrak</title>
+</head>
+<body>
+<h1>VE - Drivers</h1>
+<h1>fastrak</h1>
+
+<h2>Overview</h2>
+
+The fastrak driver supports trackers that use the Polhemus
+Fastrak protocol for communicating over a serial line.
+This includes the InterSense IS-900 tracker.
+
+<h2>Devices</h2>
+
+<h3>fastrak</h3>
+
+<p>The fastrak device type generates the same standard pos/quat
+elements as do other head-tracker drivers.</p>
+
+<p><b>Elements</b></p>
+
+<dl>
+<dt><b>pos</b> [vector:3]</dt>
+<dd>Describes the position of the tracker in 3-dimensional
+Cartesian space (<i>x</i>,<i>y</i>,<i>z</i>).  This position
+is relative to the origin of the tracker.</dd>
+
+<dt><b>quat</b> [vector:4]</dt>
+<dd>Describes the orientation of the tracker as a quaternion.</dd>
+
+</dl>
+
+<h2>Options</h2>
+
+<dl>
+<dt><b>line</b></dt>
+<dd>The name of the serial line device.  On Unix systems, this
+is typically a name <em>beginning</em> with "/dev/tty" (e.g.
+on Linux, "/dev/ttyS0" is the first serial port).  This option
+must be specified in the device description.</dd>
+
+<dt><b>speed</b></dt>
+<dd>The speed at which the serial line should be run.  If not
+specified, this value defaults to "9600".</dd>
+
+<dt><b>flow</b></dt>
+<dd>The flow control settings that should be used in communication.
+Possible values are:
+<ul>
+<li><b>xonxoff</b> - use XON/XOFF characters for flow control.</li>
+<li><b>rtscts</b> - use hardware flow control (RTS/CTS lines).
+This will require an appropriately wired cable between the tracker
+and the serial port.</li>
+<li><b>none</b> - do not use flow control.</li>
+</ul>
+If this value is not specified then the default is "none".
+</dd>
+
+<dt><b>station</b></dt>
+<dd>The stations to activate.  Only those stations mentioned in this
+option will be enabled and reported.
+</dd>
+
+<dt><b>info</b></dt>
+<dd>If this option is present and its value is a non-zero integer,
+then version information about the tracker will be queried and displayed
+at startup.  If not specified (or if specified with the value 0) then
+no such information is displayed.  For debugging/curiosity purposes only.
+</dd>
+
+<dt><b>pos_epsilon</b></dt>
+<dd>Simple gating value for position information.  
+If specified then changes will only be
+reported once one of the dimensions of the position has changed by this
+amount.  e.g. if the value of this option is set to '0.01' then a new
+position read from the tracker will not be passed to the application unless
+there is a change of at least 0.01 in at least one its dimensions.
+If not specified the default value is 0.0 (i.e. no gating).
+</dd>
+
+<dt><b>quat_epsilon</b></dt>
+<dd>Simple gating value for quaternions.  
+If specified then changes will only be
+reported once one of the dimensions of the quaternion has changed by this
+amount.  e.g. if the value of this option is set to '0.01' then a new
+quaternion read from the tracker will not be passed to the application unless
+there is a change of at least 0.01 in at least one its dimensions.
+If not specified the default value is 0.0 (i.e. no gating).
+</dd>
+
+<dt><b>refang</b></dt>
+<dd>A set of boresight reference angles in the form:
+<blockquote>
+<i>yaw</i>,<i>pitch</i>,<i>roll</i>
+</blockquote>
+If this is specified then these will be used to boresight
+the stations.  Note currently only one set of reference angles
+may be specified which will be applied to all stations.
+</dd>
+
+<dt><b>led</b></dt>
+<dd>Allows the LEDs on an InterSense tracking unit to be
+turned on ("1") or off ("0") by the driver when it initializes.
+</dd>
+</dl>
+
+<h2>Using the Driver</h2>
+
+<p>Driver name: <code>fastrakdrv.so</code></p>
+<p>Example:
+<pre>
+    driver device fastrak fastrakdrv.so
+    device is900 fastrak {
+        line /dev/ttyS0
+        speed 115200
+        flow none
+        info 0
+        station 1
+    }
+</pre>
+
+</body>
+</html>

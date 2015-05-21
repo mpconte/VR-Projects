@@ -1,0 +1,73 @@
+use keyboard
+use gamepad {
+	optional 1
+}
+# axis01 (left stick)
+# axis34 (right stick)
+filter gamepad.axis0 { 
+	copy adjust.value_left
+	rename adjust.value_width
+}
+filter gamepad.axis1 { 
+	copy adjust.value_upper
+	rename adjust.value_height
+}
+filter gamepad.axis3 { 
+	copy adjust.value_right
+	rename adjust.value_x 
+}
+filter gamepad.axis4 { 
+	copy adjust.value_lower
+	rename adjust.value_y 
+}
+filter gamepad.button0 { rename control.cyclewin }
+filter gamepad.button3 { rename control.cyclemode }
+filter gamepad.button6 { rename control.cyclewin }
+filter gamepad.button7 { rename control.cyclemode }
+filter gamepad.button9 { rename adjust.coarser }
+filter gamepad.button10 { rename adjust.finer }
+filter gamepad.button1 { rename adjust.coarser }
+filter gamepad.button4 { rename adjust.finer }
+filter keyboard.Escape { rename control.end }
+filter keyboard.Tab { rename control.cyclewin }
+filter keyboard.1 { rename control.cyclemode }
+filter keyboard.F1 { rename control.cyclemode }
+filter keyboard.2 { rename adjust.coarser }
+filter keyboard.F2 { rename adjust.coarser }
+filter keyboard.3 { rename adjust.finer }
+filter keyboard.F3 { rename adjust.finer }
+filter keyboard.w { 
+	copy adjust.incr_upper
+	rename adjust.incr_height 
+}
+filter keyboard.x { 
+	copy adjust.incr_lower
+	rename adjust.decr_height 
+}
+filter keyboard.a { 
+	copy adjust.incr_left
+	rename adjust.decr_width 
+}
+filter keyboard.d { 
+	copy adjust.incr_right
+	rename adjust.incr_width 
+}
+filter keyboard.i { 
+	copy adjust.decr_upper
+	rename adjust.decr_y 
+}
+filter keyboard., { 
+	copy adjust.decr_lower
+	rename adjust.incr_y 
+}
+filter keyboard.j { 
+	copy adjust.decr_left
+	rename adjust.incr_x 
+}
+filter keyboard.l { 
+	copy adjust.decr_right
+	rename adjust.decr_x 
+}
+filter *.* {
+	dump
+}

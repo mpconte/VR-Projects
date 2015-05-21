@@ -1,0 +1,9 @@
+#
+# Test unknown handler
+#
+proc a {} {
+	[stdout] writeln "valid procedure"
+}
+
+a
+b

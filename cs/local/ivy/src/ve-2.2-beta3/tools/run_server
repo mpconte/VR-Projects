@@ -1,0 +1,8 @@
+#!/bin/bash
+VEROOT=/cs/home/matt/src/ve-2.1.1
+export VEROOT
+LD_LIBRARY_PATH=$VEROOT/lib
+export LD_LIBRARY_PATH
+cd /tmp
+ulimit -c unlimited
+exec $VEROOT/tools/ve_nid_server -ve_manifest nid_server

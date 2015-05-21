@@ -1,0 +1,8 @@
+include autocfg.mk
+include ../../Make.config
+
+TARGET = fastrak$(ACFG_SOEXT)
+OBJS = fastrak.o
+
+BUILD = $(TARGET)
+include ../Make.driver

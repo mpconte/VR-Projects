@@ -1,0 +1,78 @@
+#
+# This is the device and filter manifest
+# - entries can be in any order
+#
+# - declare real devices that we may use
+# - note that these only declare that the devices exist - we still need
+#   to specify somewhere that we want to use the devices
+device keyboard x11keyboard
+device mouse x11mouse
+device joystick linuxjs
+device thereminnid nid {
+    server shaft.cs.yorku.ca
+}
+device gamepad linuxjs {
+    match {[Gg]amepad}
+}
+device is900 fastrak {
+    line /dev/ttyS0
+    speed 115200
+    flow none
+    station {1 2 3 4}
+    refang -92.91,-2.88,0.85
+    led 0
+    tmstamp 1
+}
+
+filter is900.pos1 { $e rename head.pos }
+filter is900.quat1 { $e rename head.quat }
+
+#
+# Default head-tracking for VE
+#
+set ivy_pos_corr {
+    {-1.0 0.0 0.0 0.0}
+    {0.0 0.0 -1.0 0.0}
+    {0.0 -1.0 0.0 1.6097}
+    {0.0 0.0 0.0 1.0}
+}
+
+set ivy_quat_corr {
+    {-1.0 0.0 0.0 0.0}
+    {0.0 0.0 -1.0 0.0}
+    {0.0 -1.0 0.0 0.0}
+    {0.0 0.0 0.0 1.0}
+}
+
+#
+# Following are examples of using BlueScript to implement
+# head-tracking.  Requires a recent build of VE 2.2 which
+# has the "sqrt" and "abs" functions.
+#
+filter head.pos {
+    global ivy_pos_corr
+    set pos [list [$e vvalue 0] [$e vvalue 1] [$e vvalue 2]]
+    set v1 [m4multv $ivy_pos_corr $pos]
+    frame_eye loc $v1
+}
+
+filter head.quat {
+    global ivy_quat_corr
+    set quat [list [$e vvalue 0] [$e vvalue 1] [$e vvalue 2] [$e vvalue 3]]
+    set w [qind $quat w]
+    set a [expr {2*[acos $w]}]
+    set sa [sqrt [expr {1.0 - $w*$w}]]
+    if { [abs $sa] < 0.0005 } {
+	set sa 1
+    }
+    set vec [list 
+	     [expr {[qind $quat x]/$sa}]
+	     [expr {[qind $quat y]/$sa}]
+	     [expr {[qind $quat z]/$sa}]]
+    set vnew [m4multv $ivy_quat_corr $vec]
+    set zero [m4multv $ivy_quat_corr [list 0 0 0]]
+    set vec [v3sub $vnew $zero]
+    set m [m4rotate $vec [rad2deg $a]]
+    frame_eye dir [m4multv $m [list 0.0 0.0 -1.0]]
+    frame_eye up [m4multv $m [list 0.0 1.0 0.0]]
+}

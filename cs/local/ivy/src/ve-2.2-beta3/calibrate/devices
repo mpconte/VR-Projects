@@ -1,0 +1,85 @@
+use keyboard
+use gamepad {
+	optional 1
+}
+# axis01 (left stick)
+# axis34 (right stick)
+filter gamepad.axis0 { 
+	$e rename adjust.value_left
+	$e push
+	$e rename adjust.value_width
+}
+filter gamepad.axis1 { 
+	$e rename adjust.value_upper
+	$e push
+	$e rename adjust.value_height
+}
+filter gamepad.axis3 { 
+	$e rename adjust.value_right
+	$e push
+	$e rename adjust.value_x 
+}
+filter gamepad.axis4 { 
+	$e rename adjust.value_lower
+	$e push
+	$e rename adjust.value_y 
+}
+filter gamepad.button0 { $e rename control.cyclewin }
+filter gamepad.button3 { $e rename control.cyclemode }
+filter gamepad.button6 { $e rename control.cyclewin }
+filter gamepad.button7 { $e rename control.cyclemode }
+filter gamepad.button9 { $e rename adjust.coarser }
+filter gamepad.button10 { $e rename adjust.finer }
+filter gamepad.button1 { $e rename adjust.coarser }
+filter gamepad.button4 { $e rename adjust.finer }
+filter keyboard.Escape { $e rename control.end }
+filter keyboard.Tab { $e rename control.cyclewin }
+filter keyboard.1 { $e rename control.cyclemode }
+filter keyboard.F1 { $e rename control.cyclemode }
+filter keyboard.2 { $e rename adjust.coarser }
+filter keyboard.F2 { $e rename adjust.coarser }
+filter keyboard.3 { $e rename adjust.finer }
+filter keyboard.F3 { $e rename adjust.finer }
+filter keyboard.w { 
+	$e rename adjust.incr_upper
+	$e push
+	$e rename adjust.incr_height 
+}
+filter keyboard.x { 
+	$e rename adjust.incr_lower
+	$e push
+	$e rename adjust.decr_height 
+}
+filter keyboard.a { 
+	$e rename adjust.incr_left
+	$e push
+	$e rename adjust.decr_width 
+}
+filter keyboard.d { 
+	$e rename adjust.incr_right
+	$e push
+	$e rename adjust.incr_width 
+}
+filter keyboard.i { 
+	$e rename adjust.decr_upper
+	$e push
+	$e rename adjust.decr_y 
+}
+filter keyboard., { 
+	$e rename adjust.decr_lower
+	$e push
+	$e rename adjust.incr_y 
+}
+filter keyboard.j { 
+	$e rename adjust.decr_left
+	$e push
+	$e rename adjust.incr_x 
+}
+filter keyboard.l { 
+	$e rename adjust.decr_right
+	$e push
+	$e rename adjust.decr_x 
+}
+filter *.* {
+	$e dump
+}

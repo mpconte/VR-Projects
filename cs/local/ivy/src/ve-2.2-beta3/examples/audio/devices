@@ -1,0 +1,15 @@
+use keyboard
+filter keyboard.Escape { exit }
+
+#
+# Setup a default audio channel using the portaudio
+# driver.
+#
+audiodevice default portaudio {}
+audio default {
+	engine default {}
+	output default {
+		device default
+	}	
+}
+

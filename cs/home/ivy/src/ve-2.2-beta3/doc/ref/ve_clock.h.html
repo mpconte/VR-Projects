@@ -1,0 +1,181 @@
+<html>
+<head>
+<title>File: ve_clock.h</title>
+</head>
+<body>
+<h1 class="cdoc-file">File: ve_clock.h</h1>
+
+
+<p class="cdoc-item">
+<p>The ve_clock module provides an abstraction for a general high-resolution
+clock.  This clock is not guaranteed to be high-resolution.  It will be
+limited by the available APIs and actual clocks on any platform.  In general,
+the package uses <code>clock_gettime()</code> where available, and 
+<code>gettimeofday()</code> on UNIX-like platforms where it is not available.
+A single clock is provided.</p>
+<p>The value of the clock is in reference to a zero-point.  This point can
+be retrieved or set by providing a reference in a string format:
+<blockquote>
+<i>Y M D h:m:s X u</i>
+</blockquote>
+where Y is the year, M is the month, D is the day of the month, h is the
+hour (in 24-hour format), m is minutes, s is seconds, X is 1 if DST is in
+effect, 0 otherwise, and u is milliseconds.  All values are numerical, e.g.
+<blockquote>
+2001 11 4 12:23:41 0 534
+</blockquote>
+The default is for the zero point to be declared whenever the clock is
+initialized.  You should only need to change the zero point when you
+want to synchronize the clock to another.  Note that no method is
+provided for synchronizing the <i>rate</i> of the clock.  This is beyond
+the scope of this library.
+</p>
+
+<p class="cdoc-item">
+<a name="type_VeClockHR"></a><div class="start-type"><span class="label-type">Type:</span> <span class="tag-type">VeClockHR</span>
+<div class="body-type">
+    A structure describing a hi-res clock value.
+ 
+<div class="codeblock">typedef struct {
+  unsigned long secs;
+  unsigned long nsecs;
+} VeClockHR;</div></div></div>
+<p class="cdoc-item">
+<a name="function_veClockInit"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veClockInit</span>
+<div class="body-function">
+<div class="codeblock">void veClockInit();</div>    Initializes the clock.  This function must be called before any other
+    function in this module.</div></div>
+<p class="cdoc-item">
+<a name="function_veClockGetZeroRef"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veClockGetZeroRef</span>
+<div class="body-function">
+<div class="codeblock">char *veClockGetZeroRef();</div>    Returns a string describing the current zero reference point.
+    This function is thread-safe in that many threads can retrieve
+    the string (which should be treated as read-only).  However, the
+    data returned may become invalid after another thread resets the
+    zero reference point.
+
+<div class="start-returns"><span class="label-returns">Returns:</span> 
+    A pointer to a string describing the zero reference point.</div></div></div>
+<p class="cdoc-item">
+<a name="function_veClockSetRef"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veClockSetRef</span>
+<div class="body-function">
+<div class="codeblock">void veClockSetRef(long ref, char *str);</div>    Provides a reference point for the clock.  The real-world time is given
+    in the string.  The absolute clock time to which this equates should be
+    given as the first argument.  Calling this function will change the
+    zero reference point.  This function uses <code>veClockParseRef()</code>
+    to parse the reference string.
+    
+<div class="start-param"><span class="tag-param">ref</span> - 
+    The clock time to which the real-world time equates.
+    </div>
+<div class="start-param"><span class="tag-param">str</span> - 
+    The real-world time in string format.</div></div></div>
+<p class="cdoc-item">
+<a name="function_veClock"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veClock</span>
+<div class="body-function">
+<div class="codeblock">long veClock();</div>    The general function for retrieving the current value of the clock.
+
+<div class="start-returns"><span class="label-returns">Returns:</span> 
+    The current value of the clock in milliseconds since the
+    zero reference point.</div></div></div>
+<p class="cdoc-item">
+<a name="function_veClockConvUnix"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veClockConvUnix</span>
+<div class="body-function">
+<div class="codeblock">long veClockConvUnix(long);</div>    Converts a "Unix" time (seconds since Jan. 1, 1970) to veClock()
+    units.  This function is only guaranteed to work on Unix systems
+    and may generate an error on other systems when called.
+ </div></div>
+<p class="cdoc-item">
+<a name="function_veClockConvTimeval"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veClockConvTimeval</span>
+<div class="body-function">
+<div class="codeblock">long veClockConvTimeval(long tv_secs, long tv_usecs);</div>    Coverts a Unix-like timeval structure to veClock() units.  This
+    function is only guaranteed to work on Unix systems and may
+    generate an error on other systems when called.
+ </div></div>
+<p class="cdoc-item">
+<a name="function_veClockConvTimespec"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veClockConvTimespec</span>
+<div class="body-function">
+<div class="codeblock">long veClockConvTimespec(long tv_secs, long tv_nsecs);</div>    Converts a Unix-like timespec structure to veClock() units. This
+    function is only guaranteed to work on Unix systems and may
+    generate an error on other systems when called.
+ </div></div>
+<p class="cdoc-item">
+<a name="function_veClockNano"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veClockNano</span>
+<div class="body-function">
+<div class="codeblock">long veClockNano();</div>    An alternate, potentially higher-resolution function returning a clock
+    time in nanoseconds, instead of milliseconds.  The effective resolution of
+    this clock will vary from system to system.  Its value is not guaranteed
+    to be relative to the zero reference point and will not be on most
+    systems to avoid overhead in measuring the time.  Thus this clock should
+    only be used for measuring intervals, not absolute points in time.
+
+<div class="start-returns"><span class="label-returns">Returns:</span> 
+    A clock value in nanoseconds.</div></div></div>
+<p class="cdoc-item">
+<a name="function_veClockGetRef"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veClockGetRef</span>
+<div class="body-function">
+<div class="codeblock">char *veClockGetRef(long ref);</div>    Returns a string describing the reference point for an arbitrary
+    point in the clock's absolute time.  This is useful for determining
+    the wall clock time of the clock's value.  Note that this function is
+    current <i>not</i> thread-safe.  If you only need the zero reference
+    point, it is preferred to use <code>veClockGetZeroRef()</code> as it
+    is safer.
+
+<div class="start-param"><span class="tag-param">ref</span> - 
+    The point in time for which to return the real-world time.
+    </div>
+<div class="start-returns"><span class="label-returns">Returns:</span> 
+    A string describing the real-world time at clock time <i>ref</i>.</div></div></div>
+<p class="cdoc-item">
+<a name="function_veClockMakeRef"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veClockMakeRef</span>
+<div class="body-function">
+<div class="codeblock">char *veClockMakeRef(VeClockHR hr);</div>    Converts a given clock value into a reference string.  Typically
+    only used by <code>veClockGetRef()</code>.  This function is
+    platform-specific and may not be thread-safe.
+
+<div class="start-param"><span class="tag-param">hr</span> - 
+    The absolute clock value for which to generate a reference string.</div>
+<div class="start-returns"><span class="label-returns">Returns:</span> 
+    A string describing the real-world time at the given absolute clock time 
+    <i>ref</i>.</div></div></div>
+<p class="cdoc-item">
+<a name="function_veClockHires"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veClockHires</span>
+<div class="body-function">
+<div class="codeblock">VeClockHR veClockHires();</div>    Returns a high resolution clock value.  To accomodate large periods
+    of time, the clock value is returned as two parts - a "seconds" value
+    and a "nanoseconds" value.  The absolute value of this clock should
+    not be counted upon (i.e. what "0" means) but instead relative 
+    measurements between clock values should be considered.  The 
+    time value in seconds is equivelent to <code>secs + nsecs*1.0e-9</code>.
+ </div></div>
+<p class="cdoc-item">
+<a name="function_veClockParseRef"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veClockParseRef</span>
+<div class="body-function">
+<div class="codeblock">VeClockHR veClockParseRef(long refpt, char *tmstr);</div>    Parses a clock-reference string relative to a time point and
+    returns the would-be zero point as a VeClockHR object.
+
+<div class="start-param"><span class="tag-param">ref</span> - 
+    The clock time to which the real-world time equates.
+    </div>
+<div class="start-param"><span class="tag-param">str</span> - 
+    The real-world time in string format.
+ </div></div></div>
+
+<h2 class="cdoc-index">Index</h2>
+<ul>
+<li><a class="link-function" href="#function_veClock">veClock (function)</a></li>
+<li><a class="link-function" href="#function_veClockConvTimespec">veClockConvTimespec (function)</a></li>
+<li><a class="link-function" href="#function_veClockConvTimeval">veClockConvTimeval (function)</a></li>
+<li><a class="link-function" href="#function_veClockConvUnix">veClockConvUnix (function)</a></li>
+<li><a class="link-function" href="#function_veClockGetRef">veClockGetRef (function)</a></li>
+<li><a class="link-function" href="#function_veClockGetZeroRef">veClockGetZeroRef (function)</a></li>
+<li><a class="link-function" href="#function_veClockHires">veClockHires (function)</a></li>
+<li><a class="link-function" href="#function_veClockInit">veClockInit (function)</a></li>
+<li><a class="link-function" href="#function_veClockMakeRef">veClockMakeRef (function)</a></li>
+<li><a class="link-function" href="#function_veClockNano">veClockNano (function)</a></li>
+<li><a class="link-function" href="#function_veClockParseRef">veClockParseRef (function)</a></li>
+<li><a class="link-function" href="#function_veClockSetRef">veClockSetRef (function)</a></li>
+<li><a class="link-type" href="#type_VeClockHR">VeClockHR (type)</a></li>
+</ul>
+</body>
+</html>

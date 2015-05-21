@@ -1,0 +1,85 @@
+This is a simple example of how to work with the library.
+The cube.c file is fairly heavily annotated and should be able
+to act as a quick and dirty tutorial.  If you want to build cube.c
+outside of the library distribution, note the following:
+
+- It is best to work with VE under a window manager that respects
+  the "no decorations" Motif hint.  Note that "twm" is *not* such a
+  window manager.  Possible window managers are:  fvwm (available everywhere),
+  4Dwm/mwm (SGIs only).  VE works with twm, but twm will always stick a border
+  around the window which will prevent the window from lining up where you
+  want it to in the environment.
+
+- Before you start compiling or running the program, you should set
+  the "VEROOT" environment variable to point at the installed VE
+  distribution you are using.  The current "stable" version of the
+  library is located in /cs/home/ivy/ve and is compiled for bigiron.
+  You will need this environment variable to be set whenever you run the
+  program - the library uses this to locate drivers and default configuration
+  files.
+
+	setenv VEROOT /cs/home/ivy/ve
+
+- You can compile the cube example as follows:
+
+	cc -I$VEROOT/include -o cube cube.c -L$VEROOT/lib -Wl,-rpath,$VEROOT/lib -lveglx -lve -lveclock -lGL -lpthread -lm
+
+- A quick walkthrough of what is going on in that compile line:
+
+	"-I$VEROOT/include"  - points the compiler to where the VE include
+		files are installed (assuming you set VEROOT appropriately
+		as described above)
+	"-L$VEROOT/lib"  - points the compiler to where the VE libraries
+		are installed
+	"-Wl,-rpath,$VEROOT/lib"  - the VE libraries are shared objects by
+		default which means that they are loaded at run-time, not
+		at link-time.  This means that the binary program you create
+		must be able to find the shared objects at run-time.  This
+		complex little option passes the right argument to the linker
+		so that the binary knows to look in "$VEROOT/lib" for shared
+		objects when it is executed.
+	"-lveglx"  - this is the GLX (OpenGL on X11) layer for VE
+	"-lve"  - this is the main VE library
+	"-lveclock"  - the VE clock library.  The clock library is
+		separated so that all pieces which use the VE clock library
+		are assured that they are referencing the same clock code.
+	"-lGL"  - the OpenGL library
+	"-lpthread"  - VE uses pthreads for threading in the library.
+	"-lm"   - the math library.
+
+- when you run a VE program, by default it searches for "default.env",
+	"default.pro", "manifest" and "devices" in the following standard
+	areas:
+
+default.env:  [default environment file]
+	./default.env
+	$VEROOT/env/default.env
+	$VEROOT/default.env
+
+default.pro:  [default user profile]
+	./default.pro
+	$VEROOT/profile/default.pro
+	$VEROOT/default.pro
+
+manifest:   [available device manifest]
+	./manifest
+	$VEROOT/manifest/manifest
+	$VEROOT/manifest
+	
+devices:    [devices/filters to use]
+	./devices
+	$VEROOT/devices/devices
+	$VEROOT/devices
+
+If you override the name of any of these files with a command-line
+option, then a similar search is done
+so long as the given name is not an absolute path (i.e. does not
+start with "/").  For example, if you use the option "-ve_env foo.env"
+then the library will look for the following files:
+	
+	./foo.env
+	$VEROOT/env/foo.env
+	$VEROOT/foo.env
+
+using the first one it finds.
+

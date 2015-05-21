@@ -1,0 +1,47 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <title>Profile File Format</title>
+  <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+</head>
+<body>
+<h1>Profile File Format</h1>
+<p>A profile contains user-specific settings for the library.
+The structures are defined in detail in the
+<a href="../ref/ve_env.h.html">ve_env.h</a>
+module of the <a href="../ref/index.html">VE API Reference Documentation</a>.
+The basic syntax of the file is based around a list syntax described
+in the <a href="../ref/ve_tlist.h.html">ve_tlist.h</a> module.
+<p>A profile is comprised of a number of statements.
+The following statements are valid:
+<dl>
+<dt><b>name</b> <i>string</i></dt>
+<dd>Names the profile.  This should be a short unique name for the user
+without spaces.</dd>
+<dt><b>fullname</b> <i>string</i></dt>
+<dd>The user's full name for informational purposes.</dd>
+<dt><b>eyedist</b> <i>dist</i></dt>
+<dd>The interpupilary distance for this user in metres.</dd>
+<dt><b>module</b> <i>modulename</i> <b>{</b><i>moduledata ...</i><b>}</b></dt>
+<dd>A generic model for other per-user information.  Other information is
+grouped into modules.  Each driver or application would define its own module
+and look there for per-user data that is specific to that driver or 
+application.  Module data is simply a pair of a name and a value.  Values
+are stored as strings - interpretation is up to the specific driver or
+application that uses the data.  Each pair is on a separate line.</dd>
+</dl>
+
+<h2>Example</h2>
+<p>The following is a simple example:
+<pre>
+        name joe
+        fullname "Joe Somebody"
+        eyedist 0.065
+        module headtrack {
+                offset {1.0 0.2 0.0}
+                calibrated 1
+        }
+</pre>
+</body>
+</html>
+

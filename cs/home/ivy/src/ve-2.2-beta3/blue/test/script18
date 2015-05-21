@@ -1,0 +1,19 @@
+#
+# Hash test
+#
+set h [hash]
+foreach a {1 2 3 4 5 6 7 8 9 10} {
+	$h set $a [expr {$a * 2}]
+}
+foreach k [$h keys] {
+	[stdout] writeln "$k = [$h get $k]"
+}
+foreach a {1 2 3 4 5 6 7 8 9 10} {
+	[stdout] writeln "checking existence of $a"
+	if { ![$h has $a] } {
+		error "expected to see $a in hash"
+	}
+	if { [$h has [expr {$a + 20}]] } {
+		error "did ont expect to see $a in hash"
+	}	
+}

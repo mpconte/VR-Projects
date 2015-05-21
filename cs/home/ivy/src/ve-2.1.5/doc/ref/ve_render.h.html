@@ -1,0 +1,85 @@
+<html>
+<head>
+<title>File: ve_render.h</title>
+</head>
+<body>
+<h1>File: ve_render.h</h1>
+
+
+<p>
+    The ve_render module defines those interfaces that a renderer
+    implementation must provide.
+
+<p>
+<a name="function_veRenderInit"></a><p><em>Function:</em> <b>veRenderInit</b>
+<blockquote>
+<pre>
+void veRenderInit();</pre>    Provided by renderer.  Initializes the renderer.  This should not
+    open windows or outputs.
+ 
+</blockquote>
+<p>
+<a name="function_veRenderAllocMP"></a><p><em>Function:</em> <b>veRenderAllocMP</b>
+<blockquote>
+<pre>
+void veRenderAllocMP();</pre>    Gives the renderer a chance to allocate nodes/processes/threads to
+    otherwise unallocated windows in the environment.  This function is
+    not usually called by programs - it is an internal callback which the
+    MP interface uses.
+
+</blockquote>
+<p>
+<a name="function_veRenderRun"></a><p><em>Function:</em> <b>veRenderRun</b>
+<blockquote>
+<pre>
+void veRenderRun();</pre>    Signals the renderer to create windows and outputs based upon the current
+    environment (as determined by <code>veGetEnv()</code>.
+
+</blockquote>
+<p>
+<a name="function_veRender"></a><p><em>Function:</em> <b>veRender</b>
+<blockquote>
+<pre>
+void veRender();</pre>    Render a frame based upon the current orientation information.
+    Most renderers will use an implementation-dependent callback to
+    get the application to provide the actual graphic details.
+
+</blockquote>
+<p>
+<a name="function_veRenderGetWinInfo"></a><p><em>Function:</em> <b>veRenderGetWinInfo</b>
+<blockquote>
+<pre>
+void veRenderGetWinInfo(VeWindow *win, int *x, int *y, int *w, int *h);</pre>    Returns geometry information about an open window.  The window
+    must be open in order for this function to succeed.
+
+<p><b>win</b> - 
+    The window to query.
+
+<p><b>x</b> - 
+    A pointer to the variable where the x-coordinate of the window's
+    origin will be stored.
+
+<p><b>y</b> - 
+    A pointer to the variable where the y-coordinate of the window's
+    origin will be stored.
+
+<p><b>w</b> - 
+    A pointer to the variable where the width of the window will be
+    stored.
+
+<p><b>h</b> - 
+    A pointer to the variable where the height of the window will be
+    stored.
+
+</blockquote>
+
+<h2>Index</h2>
+<ul>
+<li><a href="#function_veRender">veRender (function)</a></li>
+<li><a href="#function_veRenderAllocMP">veRenderAllocMP (function)</a></li>
+<li><a href="#function_veRenderGetWinInfo">veRenderGetWinInfo (function)</a></li>
+<li><a href="#function_veRenderInit">veRenderInit (function)</a></li>
+<li><a href="#function_veRenderRun">veRenderRun (function)</a></li>
+</ul>
+</body>
+</html>

@@ -1,0 +1,52 @@
+<html>
+<head>
+<title>File: ve_audio_int.h</title>
+</head>
+<body>
+<h1>File: ve_audio_int.h</h1>
+
+
+<p>
+    This header file contains internal structures for the library.
+    In general, these structures should not be accessed by applications.
+    There are however, some macros in this header which can help in
+    tuning performance of the library.  Some platforms may choose to
+    ignore these parameters if they do not use the generic library mixers
+    (e.g. if they are using hardware mixers).
+    If these parameters are changed than the library and programs dependent
+    upon the library will need to be recompiled for them to take effect.
+    The following parameters are the important ones:
+<dl>
+<dt><b>VE_AUDIO_MAX_INST</b></dt>
+<dd>The number of instances that can be played simultaneously.  More
+instances will require more memory and more computing time to mix.
+</dd>
+<dt><b>VE_AUDIO_FREQ</b></dt>
+<dd>The frequency at which samples are played back, expressed as an integer
+in Hz.  Be careful adjusting this parameter unless you are positive that
+the value you are setting is supported on your platform.  A higher frequency
+requires more processing time and memory but provides better quality output.
+</dd>
+<dt><b>VE_AUDIO_FRAME_LENGTH</b></dt>
+<dd>The block-size that the mixer will use in sample units.  The
+playback thread tries to stay one block ahead to avoid drop-outs.  This
+means that the maximum latency of the system is roughly twice the frame
+length divided by the sample frequency.  For example, if the frame length
+is 500 samples, and the frequency is 44100 Hz, then the worst case latency
+for witnessing the effect of a change to an instance, is about 226 ms.
+Adjusting the frame length is tricky - changing the frame length does not
+generally affect the overall computing time required for the mixer (the
+same number of samples get mixed no matter what) unless you go to an
+extremely small frame length (i.e. where the overhead of a call to the
+mixer becomes significant compared to the mixer work itself).  Smaller
+frame lengths provide better latency for audio, but require more frequent
+interrupts by the thread.  Systems with other large tasks or frequent
+high-priority tasks may benefit from a larger frame length.
+</dd>
+</dl>
+<p>Some of these parameters should admittedly be adjustable at run-time
+rather than compilation-time.  This will be addressed in a future revision.
+
+
+</body>
+</html>

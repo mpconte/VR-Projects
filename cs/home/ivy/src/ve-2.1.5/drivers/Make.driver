@@ -1,0 +1,28 @@
+#
+# This is not a complete makefile for a driver.  Subdirectories should
+# have a Makefile like:
+# ---
+# include ../../Make.config
+#
+# OBJS = myobj1.o myobj2.o myobj3.o
+# XCFLAGS = -My -Own -Flags
+# XLIBS = -Lpath -llib
+# STATIC = mydriver.o
+# SHARED = mydriver.so
+#
+# include ../Make.driver
+# ---
+#
+CFLAGS += -I../../include $(XCFLAGS)
+
+all : static shared
+
+static : $(OBJS)
+	$(LD) -r -o $(STATIC) $(OBJS) $(XLIBS)
+
+shared : $(OBJS)
+	$(SHLD) -o $(SHARED) -L../../lib $(OBJS) $(XLIBS)
+	cp $(SHARED) ../../lib/drivers
+
+clean : 
+	$(RM) -f $(OBJS) $(STATIC) $(SHARED) $(JUNK)

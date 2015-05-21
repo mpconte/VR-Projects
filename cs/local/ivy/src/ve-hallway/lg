@@ -1,0 +1,73 @@
+Input conditions dump trainingset.input
+% Following this, there are 5 lines (possibly with comment lines added)
+
+% defining one condition per line. The format of each condition is
+
+%
+
+% (velocity|acceleration) (real|simulated) motion flickering? dist is-vis?
+
+% where the trial is either a constant velocity or constant acceleration
+
+% trial, runs either with input from the trike encoders or is simulated.
+
+% motion is either acceleration or velocity (in m/s/s or m/s) for simulated
+
+% conditions, flickering? is either 1 or 0 indicated that the walls flicker
+
+% (or not), dist is the distance (in m) to the target, and is-vis? is
+
+% either 1 or 0 indicating that the target always remains visible.
+
+%
+
+% as this is a demo input, is-vis is always true
+
+velocity simulated 1.0 1 10.0 1
+
+acceleration simulated 0.5 0 20.0 1
+
+velocity real 2.0 1 5.0 0
+
+acceleration real 4.0 1 0.5 1
+
+acceleration simulated 5.0 1 100.0 1
+
+Input conditions dump input.config
+% Following this, there are 5 lines (possibly with comment lines added)
+
+% defining one condition per line. The format of each condition is
+
+%
+
+% (velocity|acceleration) (real|simulated) motion flickering? dist is-vis?
+
+% where the trial is either a constant velocity or constant acceleration
+
+% trial, runs either with input from the trike encoders or is simulated.
+
+% motion is either acceleration or velocity (in m/s/s or m/s) for simulated
+
+% conditions, flickering? is either 1 or 0 indicated that the walls flicker
+
+% (or not), dist is the distance (in m) to the target, and is-vis? is
+
+% either 1 or 0 indicating that the target always remains visible.
+
+%
+
+% as this is a demo input, is-vis is always true
+
+velocity simulated 0.1 1 10.0 1
+
+acceleration simulated 0.1 0 20.0 1
+
+acceleration simulated 0.1 1 100.0 1
+
+velocity real 0.1 1 5.0 0
+
+acceleration real 0.1 1 0.5 1
+
+status: resetting
+status: resetting the platform
+status: FAULT2

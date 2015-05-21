@@ -1,0 +1,498 @@
+<html>
+<head>
+<title>File: vei_gl.h</title>
+</head>
+<body>
+<h1>File: vei_gl.h</h1>
+
+
+<p>
+    <p>
+    vei_gl is an abstract implementation of an OpenGL-based VE system.
+    All OpenGL implementations will provide the interfaces described
+    herein.  The API itself is independent of any particular implementation.
+    Applications which include the <code>vei_gl.h</code> header file do
+    not need to include the OpenGL header files.  They are included 
+    automatically.
+    <p>
+    Fair due should be given to the GLUT package (by Mark J. Kilgard) which
+    is a source of much insight and code fragments.
+
+<p>
+<a name="struct_VeiGlBitmapChar"></a><p><em>Structure:</em> <b>VeiGlBitmapChar</b>
+<blockquote>
+    A single bitmap character.  Adapted from the GLUT distribution.
+
+<pre>
+typedef struct {
+  GLsizei width;
+  GLsizei height;
+  GLfloat xorig;
+  GLfloat yorig;
+  GLfloat advance;
+  GLubyte *bitmap;
+} VeiGlBitmapChar;</pre></blockquote>
+<p>
+<a name="struct_VeiGlBitmapFont"></a><p><em>Structure:</em> <b>VeiGlBitmapFont</b>
+<blockquote>
+    A bitmap font as a collection of bitmap characters.  Adapted from
+    the GLUT distribution.
+
+<pre>
+typedef struct {
+  char *name;
+  int num_chars;
+  int first;
+  int line_height;
+  VeiGlBitmapChar **ch;
+} VeiGlBitmapFont;</pre></blockquote>
+<p>
+<a name="enum_VeiGlFontType"></a><p><em>Enumeration:</em> <b>VeiGlFontType</b>
+<blockquote>
+<p><b>VEI_GL_FONT_NONE</b> - 
+    Reserved for future use and error returns.
+
+<p><b>VEI_GL_FONT_BITMAP</b> - 
+    Indicates a bitmapped font (i.e. using VeiGlBitmapFont structures).
+ 
+<pre>
+typedef enum {
+  VEI_GL_FONT_NONE,
+  VEI_GL_FONT_BITMAP
+} VeiGlFontType;</pre></blockquote>
+<p>
+<a name="enum_VeiGlJustify"></a><p><em>Enumeration:</em> <b>VeiGlJustify</b>
+<blockquote>
+    The justification that should be applied when drawing a string.
+    See <code>veiGlDrawString()</code> for more information.
+
+<pre>
+typedef enum {
+  VEI_GL_LEFT,
+  VEI_GL_RIGHT,
+  VEI_GL_CENTER
+} VeiGlJustify;</pre></blockquote>
+<p>
+<a name="struct_VeiGlFont"></a><p><em>Structure:</em> <b>VeiGlFont</b>
+<blockquote>
+    An abstract layer for representation of fonts.  The idea is to support
+    multiple font types with the same font structure.  Currently only
+    the <code>VEI_GL_FONT_BITMAP</code> font type is supported.
+
+<pre>
+typedef struct {
+  char *name;
+  VeiGlFontType type;
+  void *font;
+} VeiGlFont;</pre></blockquote>
+<p>
+<a name="function_veiGlSetWindowCback"></a><p><em>Function:</em> <b>veiGlSetWindowCback</b>
+<blockquote>
+<pre>
+void veiGlSetWindowCback(VeiGlWindowProc winsetup);</pre>    Applications should set up a window callback.  This callback will
+    be called once for each window after it has been created.  When
+    called, the window's rendering context will be active.  This callback
+    should be used for initial setup of the OpenGL environment, loading
+    textures (if known ahead of time).  The callback has the following type:
+    <blockquote><code>void (*VeiGlWindowProc)(VeWindow *)</code></blockquote>
+    The single argument is a pointer to the window structure representing
+    the window being initialized.
+
+<p><b>winsetup</b> - 
+    The callback to set.  Only one window callback exists at a time.
+    If this value is <code>NULL</code> then any existing callback is
+    removed.
+
+</blockquote>
+<p>
+<a name="function_veiGlSetDisplayCback"></a><p><em>Function:</em> <b>veiGlSetDisplayCback</b>
+<blockquote>
+<pre>
+void veiGlSetDisplayCback(VeiGlDisplayProc dpy);</pre>    Every application should create a display callback.  This is the function
+    that is called once per window per frame to actually render data to that
+    window.  On multiple display systems, this function may be called by
+    multiple threads at the same time.  If you cannot make your rendering
+    function thread-safe, be sure to lock it as a critical section
+    appropriately (see the <code>ve_thread.h</code> module).  The display
+    callback has the following type:
+    <blockquote><code>void (*VeiGlDisplayProc)(VeWindow *w, long tm, VeWallView *wv)</code></blockquote>
+    The arguments are:
+    <ul>
+    <li><i>w</i> - a pointer to the window structure for the window being
+    rendered.
+    <li><i>tm</i> - a timestamp (relative to the clock) for the time that
+    this frame is expected to be rendered at.  This is an estimate.
+    <li><i>wv</i> - a pointer to the wall view structure indicating the
+    geometry for this window.
+    </ul>
+    <p>Rendering functions should not initialize projection or view
+    matricies (the VE library handles that) but may multiply the view
+    matrix if necessary for rendering.  Proper matrix stack handling
+    should be observed (i.e. appropriate push/pop call nesting).
+    
+<p><b>dpy</b> - 
+    The display callback to set.
+ 
+</blockquote>
+<p>
+<a name="function_veiGlSetPreDisplayCback"></a><p><em>Function:</em> <b>veiGlSetPreDisplayCback</b>
+<blockquote>
+<pre>
+void veiGlSetPreDisplayCback(VeiGlPDisplayProc cback);</pre>    An application can set a function to be called immediately before
+    all windows are displayed.  Unlike the display callback itself, this
+    function is only called once per frame (rather than once per thread).
+    See also <code>veiGlSetPostDisplayCback()</code>.  The callback must
+    have the following type:
+    <blockquote><code>typedef void (*VeiGlPDisplayProc)(void);</code></blockquote>
+
+<p><b>cback</b> - 
+    The new callback to set.  If this value is <code>NULL</code> then
+    any existing callback is cleared.
+
+</blockquote>
+<p>
+<a name="function_veiGlSetPostDisplayCback"></a><p><em>Function:</em> <b>veiGlSetPostDisplayCback</b>
+<blockquote>
+<pre>
+void veiGlSetPostDisplayCback(VeiGlPDisplayProc cback);</pre>    An application can set a function to be called immediately after
+    all windows are displayed.  Unlike the display callback itself, this
+    function is only called once per frame (rather than once per thread).
+    See also <code>veiGlSetPostDisplayCback()</code>.  The callback must
+    have the following type:
+    <blockquote><code>typedef void (*VeiGlPDisplayProc)(void);</code></blockquote>
+
+<p><b>cback</b> - 
+    The new callback to set.  If this value is <code>NULL</code> then
+    any existing callback is cleared.
+
+</blockquote>
+<p>
+<a name="function_veiGlSetupWindow"></a><p><em>Function:</em> <b>veiGlSetupWindow</b>
+<blockquote>
+<pre>
+void veiGlSetupWindow(VeWindow *w);</pre>    Indicates that a window should be setup by calling the window callback.
+    If no window callback is set then this function has no effect.
+    This function is generally not called from applications.  It is mostly
+    used by specific OpenGL implementations.
+
+<p><b>w</b> - 
+    The window to initialize.
+
+</blockquote>
+<p>
+<a name="function_veiGlDisplayWindow"></a><p><em>Function:</em> <b>veiGlDisplayWindow</b>
+<blockquote>
+<pre>
+void veiGlDisplayWindow(VeWindow *w, long tm, VeWallView *wv);</pre>    Indicates that a window should be redrawn by calling the display callback.
+    If no display callback has been set then this function has no effect.
+    The parameters are the parameters that should be sent to the callback.
+    This function is generally not called from applications.  It is mostly
+    used by specific OpenGL implementations.
+
+</blockquote>
+<p>
+<a name="function_veiGlPreDisplay"></a><p><em>Function:</em> <b>veiGlPreDisplay</b>
+<blockquote>
+<pre>
+void veiGlPreDisplay(void);</pre>    Asks the common OpenGL layer to do any pre-display processing.
+    This is only used by specific OpenGL implementations.
+
+</blockquote>
+<p>
+<a name="function_veiGlPostDisplay"></a><p><em>Function:</em> <b>veiGlPostDisplay</b>
+<blockquote>
+<pre>
+void veiGlPostDisplay(void);</pre>    Asks the common OpenGL layer to do any pre-display processing.
+    This is only used by specific OpenGL implementations.
+
+</blockquote>
+<p>
+<a name="function_veiGlGetOption"></a><p><em>Function:</em> <b>veiGlGetOption</b>
+<blockquote>
+<pre>
+char *veiGlGetOption(VeWindow *w, char *name);</pre>    Used internally to retrieve run-time options for a specific window.
+    Values are searched for in the following order, stopping at the first
+    value found:
+    <ul>
+    <li>In the given VeWindow structure</li>
+    <li>Values returned from <code>veGetOption</code>, usually specified
+    on the command-line using the "-ve_opt" option.</li>
+    <li>In the associated VeWall structure</li>
+    <li>In the associated VeEnv structure</li>
+    </ul>
+
+<p><b>name</b> - 
+    The name of the value to find.
+    
+<p><i>Returns:</i> 
+    A pointer to the value if found and <code>NULL</code> otherwise.
+    The returned value should be treated as "read-only".
+
+</blockquote>
+<p>
+<a name="function_veiGlPushTextMode"></a><p><em>Function:</em> <b>veiGlPushTextMode</b>
+<blockquote>
+<pre>
+void veiGlPushTextMode(VeWindow *w);</pre>    Sets the window up for drawing text with a 2D co-ordinate system
+    running from (0,0) to (<i>w</i>,<i>h</i>) where <i>w</i> and <i>h</i>
+    are the width and height of the window respectively.  The existing
+    view and projection matrices are saved and can be restored with
+    <code>veiGlPopTextMode()</code>.
+    
+<p><b>w</b> - 
+    The window on which we are pushing the text mode.  This should be the
+    window for which the rendering context is currently active.
+
+</blockquote>
+<p>
+<a name="function_veiGlPopTextMode"></a><p><em>Function:</em> <b>veiGlPopTextMode</b>
+<blockquote>
+<pre>
+void veiGlPopTextMode();</pre>    Resets the viewing and projection matrices after having previously
+    entered text mode.
+
+</blockquote>
+<p>
+<a name="function_veiGlGetFont"></a><p><em>Function:</em> <b>veiGlGetFont</b>
+<blockquote>
+<pre>
+VeiGlFont *veiGlGetFont(char *name);</pre>    Looks up an internally defined font.  This function is only used to
+    access fonts that are internal to the library.  Currently the following
+    fonts are defined:
+    <ul>
+    <li>6x10
+    <li>7x13
+    <li>8x13
+    <li>9x15
+    </ul>
+    A utility is included with the VE library (capturexfont) for generating
+    VeiGlFont structures from X fonts in the "utils" directory of the
+    distribution.  This program was directly ported from the GLUT distribution.
+
+<p><b>name</b> - 
+    The name of the font you are looking for.  Currently, only the above
+    names are recognized.
+
+</blockquote>
+<p>
+<a name="function_veiGlStringHeight"></a><p><em>Function:</em> <b>veiGlStringHeight</b>
+<blockquote>
+<pre>
+int veiGlStringHeight(VeiGlFont *font, char *string);</pre>    Calculates the height of a string in pixels as it would be rendered
+    with the given font.  This string is not actually rendered on screen.
+    
+<p><b>font</b> - 
+    The font the string would be rendered with.
+
+<p><b>string</b> - 
+    The string that would be rendered.
+
+<p><i>Returns:</i> 
+    The height of the rendered string in pixels.
+ 
+</blockquote>
+<p>
+<a name="function_veiGlStringWidth"></a><p><em>Function:</em> <b>veiGlStringWidth</b>
+<blockquote>
+<pre>
+int veiGlStringWidth(VeiGlFont *font, char *string);</pre>    Calculates the width of a string in pixels as it would be rendered
+    with the given font.  This string is not actually rendered on screen.
+    
+<p><b>font</b> - 
+    The font the string would be rendered with.
+
+<p><b>string</b> - 
+    The string that would be rendered.
+
+<p><i>Returns:</i> 
+    The width of the rendered string in pixels.
+ 
+</blockquote>
+<p>
+<a name="function_veiGlDrawChar"></a><p><em>Function:</em> <b>veiGlDrawChar</b>
+<blockquote>
+<pre>
+void veiGlDrawChar(VeiGlFont *font, int c);</pre>    Draws a single character, advancing the horizontal raster position.
+    The character will be drawn at the current OpenGL raster position.
+    
+<p><b>font</b> - 
+    The font to render with.
+
+<p><b>c</b> - 
+    The character to render.
+
+</blockquote>
+<p>
+<a name="function_veiGlDrawString"></a><p><em>Function:</em> <b>veiGlDrawString</b>
+<blockquote>
+<pre>
+void veiGlDrawString(VeiGlFont *font, char *string, VeiGlJustify justify);</pre>    Draws a string at the current raster position.  The baseline of
+    the string will be located at the current vertical raster position.
+    The string will be aligned horizontally according to the <i>justify</i>
+    parameter.  If this value is <code>VEI_GL_LEFT</code> then the
+    horizontal raster position is the left side of the string.  If the value
+    is <code>VEI_GL_RIGHT</code> then the horizontal raster position is the
+    right side of the string.  If the value is <code>VEI_GL_CENTER</code>
+    then the horizontal raster position is the center of the string.
+    After drawing the string, the horizontal raster position will be located
+    at the right of the string.  Vertical positioning characters
+    (newlines, carriage returns, vertical tabs, etc.) do not change the
+    vertical raster position and should be excluded from strings passed
+    to this function.
+    
+<p><b>font</b> - 
+    The font to draw with.
+
+<p><b>string</b> - 
+    The string to draw.
+    
+<p><b>justify</b> - 
+    Where, horizontally, to draw the string relative to the current
+    raster position.
+
+</blockquote>
+<p>
+<a name="function_veiGlDrawStatistics"></a><p><em>Function:</em> <b>veiGlDrawStatistics</b>
+<blockquote>
+<pre>
+void veiGlDrawStatistics(VeiGlFont *font, int max);</pre>    A convenience function to draw all currently known statistics 
+    (up to <i>max</i> statistics) using the given font.  Useful for
+    debugging and profiling.  The strings will be drawn left-justified
+    in the lower-left corner of the current window.
+
+<p><b>font</b> - 
+    The font to draw with.
+
+<p><b>max</b> - 
+    The maximum number of statistics to draw.  If this value is less
+    than or equal to 0 then every available statistic is drawn.
+
+</blockquote>
+<p>
+<a name="function_veiGlRenderMonoWindow"></a><p><em>Function:</em> <b>veiGlRenderMonoWindow</b>
+<blockquote>
+<pre>
+void veiGlRenderMonoWindow(VeWindow *w, long tm, VeFrame *eye);</pre>    Does the actual rendering of a window for a given eye.
+    Calls the application's display callback as necessary.
+    This function should not be called by an application - it is meant
+    for use by specific OpenGL implementations.
+    
+<p><b>w</b> - 
+    The window to be rendered.
+
+<p><b>tm</b> - 
+    An estimate of the time at which this window will be displayed.
+    
+<p><b>eye</b> - 
+    The eye for which this window is being rendered.
+
+</blockquote>
+<p>
+<a name="function_veiGlRenderWindow"></a><p><em>Function:</em> <b>veiGlRenderWindow</b>
+<blockquote>
+<pre>
+void veiGlRenderWindow(VeWindow *w);</pre>    Renders a window using veiGlRenderMonoWindow for the actual work.
+    Determines how many buffers need to be rendered in the current window
+    (e.g. two for stereo), and which eye (mono, left, right) applies to
+    these buffers.  Assumes that the appropriate platform-dependent
+    context is appropriately set.  This function should not be called by
+    an application - it is meant for use by specific OpenGL implementations.
+
+</blockquote>
+<p>
+<a name="function_veiGlParseGeom"></a><p><em>Function:</em> <b>veiGlParseGeom</b>
+<blockquote>
+<pre>
+void veiGlParseGeom(char *geom, int *x, int *y, int *w, int *h);</pre>    Parses a "geometry" string which describes the width and height and
+    optionally the location of a window.  The string must have one of 
+    two formats: <code><i>w</i>x<i>h</i></code> or <code><i>w</i>x<i>h</i>[+-]<i>x</i>[+-]<i>y</i></code>.  In the former case, x and y are set to 0.
+    <p>If there is a parsing error, a fatal error is generated.</p>
+
+<p><b>geom</b> - 
+    The geometry string to parse.
+
+<p><b>w,h,x,y</b> - 
+    Pointers to the variables where the geometry values will be stored.
+    All pointers must be non-NULL.
+
+</blockquote>
+<p>
+<a name="function_veGlUpdateFrameRate"></a><p><em>Function:</em> <b>veGlUpdateFrameRate</b>
+<blockquote>
+<pre>
+void veiGlUpdateFrameRate(void);</pre>    To be called by OpenGL implementations when they have finished rendering
+    a frame to allow the built-in frame-rate statistic to be updated.
+    Applications should not call this function.
+
+</blockquote>
+<p>
+<a name="function_veiGlRenderRun"></a><p><em>Function:</em> <b>veiGlRenderRun</b>
+<blockquote>
+<pre>
+void veiGlRenderRun(void);</pre>    This function should be called by the implementation-specific
+    render activation routine (e.g. the GLX implementation of veRenderRun)
+    in order to initialize common OpenGL pieces of the library.  Applications
+    should not call this function.
+
+</blockquote>
+<p>
+<a name="function_veiGlIsMaster"></a><p><em>Function:</em> <b>veiGlIsMaster</b>
+<blockquote>
+<pre>
+int veiGlIsMaster(void);</pre>    On systems where shared contexts are available this function allows
+    the detection of masters vs. shared contexts.  Textures and display
+    lists should only be initialized in master contexts for best performance.
+    Once initialized in a master context, the same ids can be used in shared
+    contexts.
+    
+<p><i>Returns:</i> 
+    1 if this is a master context, 0 if this is a shared context.
+
+</blockquote>
+<p>
+<a name="function_veiGlInit"></a><p><em>Function:</em> <b>veiGlInit</b>
+<blockquote>
+<pre>
+void veiGlInit(void);</pre>    This function should be called by the implementation-specific
+    initialization routine (e.g. the GLX initialization routine) in
+    order to initialize common OpenGL pieces of the library.  Applications
+    should not call this function.
+
+</blockquote>
+
+<h2>Index</h2>
+<ul>
+<li><a href="#enum_VeiGlFontType">VeiGlFontType (enum)</a></li>
+<li><a href="#enum_VeiGlJustify">VeiGlJustify (enum)</a></li>
+<li><a href="#function_veGlUpdateFrameRate">veGlUpdateFrameRate (function)</a></li>
+<li><a href="#function_veiGlDisplayWindow">veiGlDisplayWindow (function)</a></li>
+<li><a href="#function_veiGlDrawChar">veiGlDrawChar (function)</a></li>
+<li><a href="#function_veiGlDrawStatistics">veiGlDrawStatistics (function)</a></li>
+<li><a href="#function_veiGlDrawString">veiGlDrawString (function)</a></li>
+<li><a href="#function_veiGlGetFont">veiGlGetFont (function)</a></li>
+<li><a href="#function_veiGlGetOption">veiGlGetOption (function)</a></li>
+<li><a href="#function_veiGlInit">veiGlInit (function)</a></li>
+<li><a href="#function_veiGlIsMaster">veiGlIsMaster (function)</a></li>
+<li><a href="#function_veiGlParseGeom">veiGlParseGeom (function)</a></li>
+<li><a href="#function_veiGlPopTextMode">veiGlPopTextMode (function)</a></li>
+<li><a href="#function_veiGlPostDisplay">veiGlPostDisplay (function)</a></li>
+<li><a href="#function_veiGlPreDisplay">veiGlPreDisplay (function)</a></li>
+<li><a href="#function_veiGlPushTextMode">veiGlPushTextMode (function)</a></li>
+<li><a href="#function_veiGlRenderMonoWindow">veiGlRenderMonoWindow (function)</a></li>
+<li><a href="#function_veiGlRenderRun">veiGlRenderRun (function)</a></li>
+<li><a href="#function_veiGlRenderWindow">veiGlRenderWindow (function)</a></li>
+<li><a href="#function_veiGlSetDisplayCback">veiGlSetDisplayCback (function)</a></li>
+<li><a href="#function_veiGlSetPostDisplayCback">veiGlSetPostDisplayCback (function)</a></li>
+<li><a href="#function_veiGlSetPreDisplayCback">veiGlSetPreDisplayCback (function)</a></li>
+<li><a href="#function_veiGlSetupWindow">veiGlSetupWindow (function)</a></li>
+<li><a href="#function_veiGlSetWindowCback">veiGlSetWindowCback (function)</a></li>
+<li><a href="#function_veiGlStringHeight">veiGlStringHeight (function)</a></li>
+<li><a href="#function_veiGlStringWidth">veiGlStringWidth (function)</a></li>
+<li><a href="#struct_VeiGlBitmapChar">VeiGlBitmapChar (struct)</a></li>
+<li><a href="#struct_VeiGlBitmapFont">VeiGlBitmapFont (struct)</a></li>
+<li><a href="#struct_VeiGlFont">VeiGlFont (struct)</a></li>
+<li><a href="#value_VEI_GL_FONT_BITMAP">VEI_GL_FONT_BITMAP (value)</a></li>
+<li><a href="#value_VEI_GL_FONT_NONE">VEI_GL_FONT_NONE (value)</a></li>
+</ul>
+</body>
+</html>

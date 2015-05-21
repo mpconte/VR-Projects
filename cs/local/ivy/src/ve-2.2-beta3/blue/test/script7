@@ -1,0 +1,9 @@
+#
+# Test constant parsing
+#
+number zero
+number five
+number nine
+number one
+number eight
+number foobar

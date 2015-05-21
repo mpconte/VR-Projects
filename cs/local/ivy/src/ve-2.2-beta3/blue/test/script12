@@ -1,0 +1,13 @@
+#
+# Check functions in expressions
+#
+set x [expr int(0)]
+[stdout] writeln $x
+set x [expr int(12.2)]
+[stdout] writeln $x
+set x [expr int(4.8)]
+[stdout] writeln $x
+set x [expr 5/2]
+[stdout] writeln $x
+set x [expr float(5)/2]
+[stdout] writeln $x

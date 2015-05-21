@@ -1,0 +1,18 @@
+use keyboard
+filter keyboard { dump }
+filter keyboard.Return {
+	rename keyboard.stop
+	dump
+}	
+filter keyboard.Escape { 
+	rename exit 
+	dump
+}
+#use fobtrack {
+#	optional 1
+#}
+#filter fobtrack.quat {
+#        headtrack format=quat {dircorr.dir=1.0 0.0 0.0} {dircorr.up=0.0 0.0 -1.0} {dirbase.dir=1.0 0.0 0.0} {dirbase.up=0.0 0.0 -1.0}
+#}
+#use fobtrack2
+use flock

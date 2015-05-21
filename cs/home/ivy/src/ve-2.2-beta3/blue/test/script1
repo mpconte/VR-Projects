@@ -1,0 +1,4 @@
+#
+# My first BlueScript
+#
+[stdout] writeln "Hello World!"

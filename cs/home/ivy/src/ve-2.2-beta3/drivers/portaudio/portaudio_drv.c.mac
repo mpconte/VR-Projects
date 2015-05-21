@@ -1,0 +1,208 @@
+/* Audio devices using the PortAudio library */
+#include <assert.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include <portaudio.h>
+
+#include <ve.h>
+
+#define MODULE "driver:portaudio"
+
+/* The API needs work and will thus change */
+#define BUFFER_DEPTH 3
+#define MAX_OUTPUTS 16
+struct ve_pa_priv {
+  PortAudioStream *stream;
+  float *bufs[MAX_OUTPUTS][BUFFER_DEPTH];
+  int bufSize; /* in bytes */
+  /* head - next frame to be sent out */
+  /* tail - next frame to be filled in */
+  int head[MAX_OUTPUTS], tail[MAX_OUTPUTS];
+  int flush;
+  int numOutputChannels;
+  VeThrMutex *mutex;
+  VeThrCond *bufNotFull;
+};
+
+static int ve_pa_cback(void *inputBuffer, void *outputBuffer,
+		       unsigned long framesPerBuffer,
+		       PaTimestamp outTime, void *userData) {
+  struct ve_pa_priv *p = (struct ve_pa_priv *)userData;
+  int j, k;
+  if (p->flush) {
+    for (j = 0; j < p->numOutputChannels; j++)
+      p->head[j] = p->tail[j] = 0; /* reset buffers */
+    p->flush = 0;
+  }
+  for (j = 0; j < p->numOutputChannels; j++) {
+    float *x = ((float *)outputBuffer)+j;
+    if (p->head[j] == p->tail[j]) {
+      /* buffer is empty - play silence */
+      for (k = 0; k < framesPerBuffer; k++, x += p->numOutputChannels)
+	*x = 0.0;
+    } else {
+      for (k = 0; k < framesPerBuffer; k++, x += p->numOutputChannels)
+ 	*x = p->bufs[j][p->head[j]][k];	
+      if (p->tail[j] == -1)
+        p->tail[j] = p->head[j];
+      p->head[j] = ((p->head[j] + 1) % BUFFER_DEPTH);
+    }
+  }
+  veThrCondBcast(p->bufNotFull);
+  return 0;
+}
+
+static VeAudioDevice *ve_pa_inst(VeAudioDriver *drv, VeOption *options) {
+  VeAudioDevice *d;
+  PaDeviceInfo *devinfo;
+  PaError err;
+  static int init = 0;
+  int fsize = veAudioGetFrameSize(), k, j;
+  struct ve_pa_priv *p = veAllocObj(struct ve_pa_priv);
+
+  if (!init) {
+    if ((err = Pa_Initialize()) != paNoError) {
+      /* failed */
+      veError(MODULE,"failed to initialize portaudio library: %s",
+	      Pa_GetErrorText(err));
+      veFree(p);
+      return NULL;
+    }
+    init = 1;
+  }
+
+  if (!(devinfo = Pa_GetDeviceInfo(Pa_GetDefaultOutputDeviceID()))) {
+    veError(MODULE,"failed to query default output device: %s",
+	Pa_GetErrorText(err));
+    veFree(p);
+    return NULL;
+  }
+
+  assert(devinfo->maxOutputChannels > 0 && devinfo->maxOutputChannels <= MAX_OUTPUTS);
+
+  err = Pa_OpenStream(&p->stream,paNoDevice,0,paFloat32,
+		      NULL,Pa_GetDefaultOutputDeviceID(),
+		      devinfo->maxOutputChannels,paFloat32,NULL,veAudioGetSampFreq(),
+		      veAudioGetFrameSize(),0,paClipOff,
+		      ve_pa_cback,(void *)p);
+  if (err != paNoError) {
+    veError(MODULE,"failed to open portaudio stream: %s",
+	    Pa_GetErrorText(err));
+    veFree(p);
+    return NULL;
+  }
+  
+  /* create audio buffers */
+  p->numOutputChannels = devinfo->maxOutputChannels;
+  p->bufSize = fsize*sizeof(float);
+  for (j = 0; j < p->numOutputChannels; j++) {
+    for (k = 0; k < BUFFER_DEPTH; k++)
+      p->bufs[j][k] = veAlloc(p->bufSize,0);
+    p->head[j] = p->tail[j] = 0;
+  }
+  p->flush = 0;
+  p->mutex = veThrMutexCreate();
+  p->bufNotFull = veThrCondCreate();
+
+  d = veAllocObj(VeAudioDevice);
+  d->driver = drv;
+  d->options = options;
+  d->devpriv = p;
+
+  Pa_StartStream(p->stream);
+  
+  return d;
+}
+
+static void ve_pa_deinst(VeAudioDevice *d) {
+  struct ve_pa_priv *p = (struct ve_pa_priv *)(d->devpriv);
+  int j, k = 0;
+
+  Pa_StopStream(p->stream);
+  Pa_CloseStream(p->stream);
+  for (j = 0; j < p->numOutputChannels; j++) 
+    for (k = 0; k < BUFFER_DEPTH; k++)
+      veFree(p->bufs[k]);
+  veThrCondDestroy(p->bufNotFull);
+  veThrMutexDestroy(p->mutex);
+  veFree(p);
+  
+  veOptionFreeList(d->options);
+  veFree(d->name);
+  veFree(d);
+}
+
+static int ve_pa_getsub(VeAudioDevice *d, char *name) {
+  struct ve_pa_priv *p = (struct ve_pa_priv *)(d->devpriv);
+  int x;
+  if (sscanf(name,"%d",&x) != 1 || x < 0 || x >= p->numOutputChannels)
+    return -1;
+  return x;
+}
+
+static int ve_pa_buffer(VeAudioDevice *d, int sub, float *data, int dlen) {
+  struct ve_pa_priv *p = (struct ve_pa_priv *)(d->devpriv);
+  if (sub == -1)
+    sub = 0; 
+  if (sub < 0 || sub >= p->numOutputChannels) {
+    veError(MODULE,"%s (portaudio): trying to buffer output on non-existent sub-channel %d",
+	    d->name, sub);
+    return -1;
+  }
+  veThrMutexLock(p->mutex);
+  if (p->tail[sub] == -1) {
+    veError(MODULE,"%s (portaudio): Did I say you could buffer data? Did I?");
+    veFatalError(MODULE,"%s (portaudio): If I did, then I lied");
+  }
+  memset(p->bufs[sub][p->tail[sub]],0,p->bufSize);
+  memcpy(p->bufs[sub][p->tail[sub]],data,dlen*sizeof(float));
+  p->tail[sub] = (p->tail[sub]+1)%BUFFER_DEPTH;
+  if (p->tail[sub] == p->head[sub])
+    p->tail[sub] = -1; /* just filled */
+  veThrMutexUnlock(p->mutex);
+  return 0;
+}
+
+static void ve_pa_flush(VeAudioDevice *d, int sub) {
+  struct ve_pa_priv *p = (struct ve_pa_priv *)(d->devpriv);
+  veThrMutexLock(p->mutex);
+  p->flush = 1;
+  veThrMutexUnlock(p->mutex);
+}
+
+static int buffers_ready(struct ve_pa_priv *p) {
+  int j;
+  for (j = 0; j < p->numOutputChannels; j++)
+    if (p->tail[j] == -1)
+      return 0; 
+  return 1;
+}
+ 
+static int ve_pa_wait(VeAudioDevice *d) {
+  struct ve_pa_priv *p = (struct ve_pa_priv *)(d->devpriv);
+  veThrMutexLock(p->mutex);
+  while (!buffers_ready(p))
+    veThrCondWait(p->bufNotFull,p->mutex);
+  veThrMutexUnlock(p->mutex);
+}
+
+static VeAudioDriver VE_PA_Driver = {
+  "portaudio",
+  ve_pa_inst,
+  ve_pa_deinst,
+  ve_pa_getsub,
+  ve_pa_buffer,
+  ve_pa_flush,
+  ve_pa_wait
+};
+
+void VE_DRIVER_INIT(portaudio)(void) {
+  veAudioDriverAdd("portaudio",&VE_PA_Driver);
+}
+
+void VE_DRIVER_PROBE(portaudio)(void *phdl) {
+  veDriverProvide(phdl,"audio","portaudio");
+}
+

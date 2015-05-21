@@ -1,0 +1,156 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title>VE BlueScript Reference</title>
+    <link rel="stylesheet" type="text/css" href="ve.css">
+  </head>
+
+  <body>
+    <h1>VE BlueScript Reference</h1>
+    <hr />
+
+      <p><i><a href="index.html">Back to the index</a></i></p>
+
+      <p>
+	This document describes the set of procedures and methods
+	that VE implements.  Note that the procedures in 
+	<a href="bscore.html">Standard BlueScript</a> are also
+	available, as well as the optional stdio and fopen functions.
+	This documents describes those procedures and methods that are
+	in addition to the standard ones - i.e. those that are VE-specific.
+      </p>
+
+      <ul>
+	<li><a href="#General">General Procedures</a></li>
+	<li><a href="#Vector">Vector Procedures</a></li>
+	<li><a href="#Quat">Quaternion Procedures</a></li>
+	<li><a href="#Matrix">Matrix Procedures</a></li>
+	<li><a href="#Math">Math Procedures</a></li>
+	<li><a href="#Event">Event Procedures</a></li>
+	<li><a href="#Frame">Frame Procedures</a></li>
+	<li><a href="#Config">Configuration Procedures</a></li>
+      </ul>
+
+      <a name="General"></a>
+      <h2>General Procedures</h2>
+      <p>These procedures provide general functionality.</p>
+      
+      <ul>
+	<li><a href="#echo">echo</a></li>
+	<li><a href="#exit">exit</a></li>
+	<li><a href="#include">include</a></li>
+      </ul>
+
+      <a name="Vector"></a>
+      <h2>Vector Procedures</h2>
+      <p>These procedures provide the capability to work with
+	<code>VeVector3</code>-like objects.</p>
+      
+      <ul>
+	<li><a href="#v3add">v3add</a></li>
+	<li><a href="#v3cross">v3cross</a></li>
+	<li><a href="#v3dot">v3dot</a></li>
+	<li><a href="#v3ind">v3ind</a></li>
+	<li><a href="#v3mag">v3mag</a></li>
+	<li><a href="#v3norm">v3norm</a></li>
+	<li><a href="#v3scale">v3scale</a></li>
+	<li><a href="#v3sub">v3sub</a></li>
+      </ul>
+
+      <a name="Quat"></a>
+      <h2>Quaternion Procedures</h2>
+      <p>These procedures provide the capability to work with
+	<code>VeQuat</code>-like objects.</p>
+
+      <ul>
+	<li><a href="#qang">qang</a></li>
+	<li><a href="#qarb">qarb</a></li>
+	<li><a href="#qaxis">qaxis</a></li>
+	<li><a href="#qind">qind</a></li>
+	<li><a href="#qmult">qmult</a></li>
+	<li><a href="#qnorm">qnorm</a></li>
+      </ul>
+      
+      <a name="Matrix"></a>
+      <h2>Matrix Procedures</h2>
+      <p>These procedures provide the capability to work with
+	<code>VeMatrix4</code>-like objects.</p>
+      
+      <ul>
+	<li><a href="#m4ident">m4ident</a></li>
+	<li><a href="#m4ind">m4ind</a></li>
+	<li><a href="#m4invert">m4invert</a></li>
+	<li><a href="#m4mult">m4mult</a></li>
+	<li><a href="#m4multv">m4multv</a></li>
+	<li><a href="#m4rotate">m4rotate</a></li>
+	<li><a href="#m4trans">m4trans</a></li>
+      </ul>
+      
+      <a name="Math"></a>
+      <h2>Math Procedures</h2>
+      <p>These procedures provide some basic math functionality.</p>
+      
+      <ul>
+	<li><a href="#acos">acos</a></li>
+	<li><a href="#asin">asin</a></li>
+	<li><a href="#atan">atan</a></li>
+	<li><a href="#cos">cos</a></li>
+	<li><a href="#deg2rad">deg2rad</a></li>
+	<li><a href="#rad2deg">rad2deg</a></li>
+	<li><a href="#sin">sin</a></li>
+	<li><a href="#tan">tan</a></li>
+      </ul>
+
+      <a name="Event"></a>
+      <h2>Event Procedures</h2>
+      <p>These procedures provide the ability to create event objects
+	as well as methods to manipulate event objects.</p>
+
+      <ul>
+	<li><a href="#event">event</a></li>
+	<li><a href="#ev_device"><i>event</i> device</a></li>
+	<li><a href="#ev_elem"><i>event</i> elem</a></li>
+	<li><a href="#ev_index"><i>event</i> index</a></li>
+	<li><a href="#ev_key"><i>event</i> key</a></li>
+	<li><a href="#ev_max"><i>event</i> max</a></li>
+	<li><a href="#ev_min"><i>event</i> min</a></li>
+	<li><a href="#ev_state"><i>event</i> state</a></li>
+	<li><a href="#ev_timestamp"><i>event</i> timestamp</a></li>
+	<li><a href="#ev_type"><i>event</i> type</a></li>
+	<li><a href="#ev_value"><i>event</i> copy</a></li>
+	<li><a href="#ev_value"><i>event</i> dump</a></li>
+	<li><a href="#ev_value"><i>event</i> push</a></li>
+	<li><a href="#ev_value"><i>event</i> rename</a></li>
+	<li><a href="#ev_value"><i>event</i> value</a></li>
+	<li><a href="#ev_value"><i>event</i> vmax</a></li>
+	<li><a href="#ev_value"><i>event</i> vmin</a></li>
+	<li><a href="#ev_value"><i>event</i> vvalue</a></li>
+      </ul>
+
+      <a name="Frame"></a>
+      <h2>Frame Procedures</h2>
+      <p>These procedures provide access to VE's frames of reference
+	as well as the means to modify them.</p>
+      
+      <ul>
+	<li><a href="#frame_eye">frame_eye</a></li>
+	<li><a href="#frame_origin">frame_origin</a></li>
+      </ul>
+
+      <a name="Config"></a>
+      <h2>Configuration Procedures</h2>
+      <p>These procedures take over the work that was done by
+	configuration files in earlier versions of VE (VE 2.1.x and
+	earlier).  Changing configuration files over to use these new
+	procedures will require some syntactic changes but few major
+	changes.</p>
+
+      <ul>
+	<li><a href="#device">device</a></li>
+	<li><a href="#env">env</a></li>
+	<li><a href="#filter">filter</a></li>
+	<li><a href="#profile">profile</a></li>
+	<li><a href="#use">use</a></li>
+      </ul>
+  </body>
+</html>

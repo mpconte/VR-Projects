@@ -1,0 +1,15 @@
+# Common make steps for drivers
+CFLAGS += -I../../include
+OSLIBS = -L../../lib -lve
+
+all : $(BUILD)
+
+$(TARGET) : $(OBJS) $(XOBJS)
+	$(MODLD) $(CFLAGS) -o $(TARGET) $(OBJS) $(XOBJS) $(LIBS) $(OSLIBS)
+	[ -d ../../lib/ve ] || mkdir ../../lib/ve
+	[ -d ../../lib/ve/drivers ] || mkdir ../../lib/ve/drivers
+	cp $(TARGET) ../../lib/ve/drivers/$(TARGET)
+	if [ "$(XLIBS)" ]; then cp $(XLIBS) ../../lib; fi
+
+clean : xclean
+	$(RM) $(OBJS) $(TARGET) $(TARGET).so $(TARGET).bundle $(JUNK)

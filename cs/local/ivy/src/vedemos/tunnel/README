@@ -1,0 +1,26 @@
+Requirements/Controllers:  None
+
+An updated version of a demo I wrote long ago under IRIS GL.  The program
+builds a random tunnel and flies the user down the center along a spline.
+Nicknamed the "Psychedelic Intestine".  A neat (if disgusting) project
+would be to get flesh-like textures for the walls.  The tunnel is very
+long, but finite, so the demo should eventually end.  I've never sat
+through it long enough to see the end (nothing special happens there
+anyways).
+
+Command-line options:
+-ve_opt texture <ppmfile>
+	Specifies an alternate ppm (P6) file to use as the texture.
+-ve_opt draw_stats (0|1)
+	If the argument is 1 then statistics will be drawn in the
+	lower-left of every window.
+-ve_opt draw_axes (0|1)
+	If the argument is 1, then the axes at each node of the tunnel
+	will be drawn.  More for debugging than visual interest.
+-ve_opt fog (0|1)
+	If 1, then black fog will be used to obscure the distant end of
+	the tunnel.  This is more effective in the long straight-aways
+	as you can't see the new sections being added on to the tunnel.
+
+
+

@@ -1,0 +1,478 @@
+<html>
+<head>
+<title>File: ve_core.h</title>
+</head>
+<body>
+<h1>File: ve_core.h</h1>
+
+
+<p>
+    The ve_core module provides both the general math setup for view and
+    projection matrices for each wall, as well as a central point for
+    referencing the current structures (environment, profile) that describe
+    the layout of the current setup.  The current point-of-view is also
+    housed in this module.
+
+<p>
+<a name="struct_VeWallView"></a><p><em>Structure:</em> <b>VeWallView</b>
+<blockquote>
+    Describes the current view and projection values for the
+    scene that is currently being rendered.  The structure
+    describes one particular view, and is usually associated with
+    a particular VeWindow structure.
+
+<pre>
+typedef struct ve_wallview {</pre><p>
+<p><b>camera</b> - 
+    The location and orientation of the camera or viewpoint from
+    which the scene is viewed.  The direction is typically perpendicular
+    to the wall which is being viewed; it may not be looking directly
+    at the centre of the wall.
+    
+<pre>
+  VeFrame camera;</pre><pre></pre><p>
+<p><b>near far left right top bottom</b> - 
+    These values define the viewing frustum.  The corners are defined
+    by left and right (in X), top and bottom (in Y) with all values in
+    the near clipping plane (in Z).  The far value indicates the far 
+    clipping plane.
+    
+<pre>
+  float near, far, left, right, top, bottom;</pre><pre></pre><p>
+<p><b>view</b> - 
+    The view matrix.  This is the transformation from world co-ordinates to
+    the camera's frame.
+    
+<pre>
+  VeMatrix4 view;</pre><pre></pre><p>
+<p><b>iview</b> - 
+    The inverse view matrix.  This is the transformation from the camera's
+    frame to world co-ordinates.  As implied by its name, it is the inverse
+    of the view member.
+    
+<pre>
+  VeMatrix4 iview;</pre><pre></pre><p>
+<p><b>proj</b> - 
+    The projection matrix.  This matrix converts co-ordinates in the camera's
+    frame to screen co-ordinates.
+    
+<pre>
+  VeMatrix4 proj;</pre><pre>
+} VeWallView;</pre></blockquote>
+<p>
+<a name="function_veCoreInit"></a><p><em>Function:</em> <b>veCoreInit</b>
+<blockquote>
+<pre>
+void veCoreInit();</pre>    Initializes the ve_core module.  This is generally called from 
+    <code>veInit()</code>.  Applications which use <code>veInit()</code>
+    to initialize the library do not need to call this function.
+ 
+</blockquote>
+<p>
+<a name="function_veGetOrigin"></a><p><em>Function:</em> <b>veGetOrigin</b>
+<blockquote>
+<pre>
+VeFrame *veGetOrigin();</pre>  Returns a pointer to the frame for the origin of the space.  This pointer
+  is live - the origin itself can be modified by modifying the structured
+  pointed to by the result.
+  
+<p><i>Returns:</i> 
+  A pointer to the origin's VeFrame structure.  Applications can safely
+  assume that this function always returns a valid pointer.
+  
+</blockquote>
+<p>
+<a name="function_veSetOrigin"></a><p><em>Function:</em> <b>veSetOrigin</b>
+<blockquote>
+<pre>
+void veSetOrigin(VeFrame *frame);</pre>  Replaces the current origin of the environment with the data pointed to
+  by <i>frame</i>.  After calling this function, the caller need not
+  preserve the data pointed to by <i>frame</i> - the library makes a copy
+  of the data and does not preserve any reference to <i>frame</i>.
+
+<p><b>frame</b> - 
+  A pointer to the frame data to replace the origin with.
+  
+</blockquote>
+<p>
+<a name="function_veGetDefaultEye"></a><p><em>Function:</em> <b>veGetDefaultEye</b>
+<blockquote>
+<pre>
+VeFrame *veGetDefaultEye();</pre>  Returns a poitner to the frame for the default eye of the space.
+  The default eye corresponds to the main user's location and orientation
+  in the physical space of the environment.  The frame is defined in
+  coordinates relative to the origin of the space (see veGetOrigin).
+  <p>This pointer
+  is live - the eye itself can be modified by modifying the structured
+  pointed to by the result.
+    
+<p><i>Returns:</i> 
+  A pointer to the default eye's VeFrame structure.  Applications can
+  safely assume that this function always returns a valid pointer.
+ 
+</blockquote>
+<p>
+<a name="function_veSetDefaultEye"></a><p><em>Function:</em> <b>veSetDefaultEye</b>
+<blockquote>
+<pre>
+void veSetDefaultEye(VeFrame *frame);</pre>  Replaces the current default eye of the environment with the data
+  pointed to by <i>frame</i>.  After calling this function, the caller
+  need not preserve the data pointed to by <i>frame</i> - the library
+  makes a copy of the data and does not preserve any reference to
+  <i>frame</i>.
+
+<p><b>frame</b> - 
+  A pointer to the frame data to replace the default eye with.
+ 
+</blockquote>
+<p>
+<a name="function_veSetOrigin"></a><p><em>Function:</em> <b>veSetOrigin</b>
+<blockquote>
+<pre>
+void veSetOrigin(VeFrame *frame);</pre>  Replaces the current origin of the environment with the data pointed to
+  by <i>frame</i>.  After calling this function, the caller need not
+  preserve the data pointed to by <i>frame</i> - the library makes a copy
+  of the data and does not preserve any reference to <i>frame</i>.
+
+<p><b>frame</b> - 
+  A pointer to the frame data to replace the origin with.
+  
+</blockquote>
+<p>
+<a name="function_veSetEnv"></a><p><em>Function:</em> <b>veSetEnv</b>
+<blockquote>
+<pre>
+void veSetEnv(VeEnv *env);</pre>  Sets the active environment.  This is the environment object that will
+  be used for all other core functionality.  There can only be a
+  single active environment at a time.  This object should not be
+  deallocated until another object has been set as the active environment.
+
+<p><b>env</b> - 
+  A pointer to the environment object to be used.
+ 
+</blockquote>
+<p>
+<a name="function_veGetEnv"></a><p><em>Function:</em> <b>veGetEnv</b>
+<blockquote>
+<pre>
+VeEnv *veGetEnv();</pre>  Retrieves the current active environment.  This only returns a
+  reference to the environment - it does not change the current environment
+  at all.
+
+<p><i>Returns:</i> 
+  A pointer to the current active environment.  This function may
+  return NULL if no environment has been setup.
+ 
+</blockquote>
+<p>
+<a name="function_veSetProfile"></a><p><em>Function:</em> <b>veSetProfile</b>
+<blockquote>
+<pre>
+void veSetProfile(VeProfile *prof);</pre>  Sets the active user profile.  This is the profile object that will
+  be used by the system when it requires user-specific parameters while
+  working.  This object should not be deallocated until another object
+  has been set as the active profile.
+
+<p><b>prof</b> - 
+  A pointer to the user profile object to be used.
+ 
+</blockquote>
+<p>
+<a name="function_veGetProfile"></a><p><em>Function:</em> <b>veGetProfile</b>
+<blockquote>
+<pre>
+VeProfile *veGetProfile();</pre>  Retrieves the current active user profile.  This only returns a
+  reference to the profile - it does not change the current environment
+  at all.
+  
+<p><i>Returns:</i> 
+  A pointer to the current active user profile.  This function may return
+  NULL if no profile has been setup.
+ 
+</blockquote>
+<p>
+<a name="function_veCalcStereoEye"></a><p><em>Function:</em> <b>veCalcStereoEye</b>
+<blockquote>
+<pre>
+void veCalcStereoEye(VeFrame *eye_in, VeFrame *out,
+		     VeProfile *pro, int which);</pre>  Given the frame for an eye and a user profile, builds a new frame
+  representing either the left or right eye.
+
+<p><b>eye_in</b> - 
+  The frame representing the centre point between the eyes.
+  
+<p><b>out</b> - 
+  The generated frame.  This should not be the same structure as referenced
+  by <i>eye_in</i>.
+
+<p><b>pro</b> - 
+  The user profile to use for user-specific values.  Right now, only the
+  <i>eyedist</i> value of the <i>stereo</i> compononent of the user profile
+  is used.  This value is the separation between the user's eyes.
+
+<p><b>which</b> - 
+  Which eye to generate the view for.  Should be one of two constants:
+  <code>VE_EYE_LEFT</code> or <code>VE_EYE_RIGHT</code>.
+ 
+</blockquote>
+<p>
+<a name="function_veGetUnmapMatrix"></a><p><em>Function:</em> <b>veGetUnmapMatrix</b>
+<blockquote>
+<pre>
+void veGetUnmapMatrix(VeMatrix4 *m, VeFrame *f);</pre>    Constructs a matrix which converts from a frame's space to world space.
+    
+<p><b>m</b> - 
+    A pointer to the matrix where the result will be stored.
+    
+<p><b>f</b> - 
+    The frame from whose space we are converting.
+ 
+</blockquote>
+<p>
+<a name="function_veGetMapMatrix"></a><p><em>Function:</em> <b>veGetMapMatrix</b>
+<blockquote>
+<pre>
+void veGetMapMatrix(VeMatrix4 *m, VeFrame *f);</pre>    Constructs a matrix which converts from world space to a frame's
+    space.
+
+<p><b>m</b> - 
+    A pointer to the matrix where the result will be stored.
+    
+<p><b>f</b> - 
+    The frame to whose space we are converting.
+ 
+</blockquote>
+<p>
+<a name="function_veGetWindowView"></a><p><em>Function:</em> <b>veGetWindowView</b>
+<blockquote>
+<pre>
+void veGetWindowView(VeWindow *w, VeFrame *default_eye, 
+		     VeFrame *eye, VeWallView *wv);</pre>    Given a window and a frame (representing an eye or camera) build the
+    corresponding wall-view structure containing the related matrices.
+
+<p><b>w</b> - 
+  The window for which to build the matrices.
+
+<p><b>default_eye</b> - 
+  The user's default eye (needed for windows on walls with a base of "eye").
+  If <code>NULL</code>, then the system's default eye is used. 
+  
+<p><b>eye</b> - 
+  The camera's position and orientation.  If <code>NULL</code>, then the
+  the value of <i>default_eye</i> is used.
+  
+<p><b>wv</b> - 
+  The structure in which the matrices will be returned.
+ 
+</blockquote>
+<p>
+<a name="function_veSetZClip"></a><p><em>Function:</em> <b>veSetZClip</b>
+<blockquote>
+<pre>
+void veSetZClip(float near, float far);</pre>    Sets the global Z clip planes.  These are used for generating
+    projection matrices.  There is currently only one set of Z clip planes
+    for all windows.
+  
+<p><b>near</b> - 
+  The new value for the near Z clip plane.
+
+<p><b>far</b> - 
+  The new value for the far Z clip plane.
+ 
+</blockquote>
+<p>
+<a name="function_veFrameIdentity"></a><p><em>Function:</em> <b>veFrameIdentity</b>
+<blockquote>
+<pre>
+void veFrameIdentity(VeFrame *frame);</pre>    Fills in the given frame with our base reference.  Our base is a
+    frame, positioned at the origin (i.e. <code>(0,0,0)</code>) looking
+    along the negative Z-axis (specifically looking at point 
+    <code>(0,0,-1)</code>) with up pointing along the positive Y-axis
+    (i.e. along <code>(0,1,0)</code>).
+
+<p><b>frame</b> - 
+  The structure in which to return the generated frame.
+ 
+</blockquote>
+<p>
+<a name="function_veMultFrame"></a><p><em>Function:</em> <b>veMultFrame</b>
+<blockquote>
+<pre>
+void veMultFrame(VeMatrix4 *m, VeFrame *f, VeFrame *fp);</pre>    Multiplies a frame through an arbitrary matrix.  Given matrix <i>M</i>
+    and frame <i>F</i>, the resulting frame <i>F<sup>'</sup></i> would be:
+    <blockquote><i>F<sup>'</sup></i> = <i>MF</i></blockquote>
+    
+<p><b>m</b> - 
+    The matrix to multiply the frame by.
+
+<p><b>f</b> - 
+    The frame to multiply.
+    
+<p><b>fp</b> - 
+    A pointer to the frame where the resulting value is stored.
+
+</blockquote>
+<p>
+<a name="function_veMapFrame"></a><p><em>Function:</em> <b>veMapFrame</b>
+<blockquote>
+<pre>
+void veMapFrame(VeFrame *ref, VeFrame *f, VeFrame *fp);</pre>    Given one frame of reference, converts a second frame 
+    from the global co-ordinate system to the one
+    represented by the frame of reference
+    (i.e. where the origin is represented by the frame of reference's
+     origin, and the bases are represented by the frame of reference's
+     orientation).  The global co-ordinate system is the one with
+     the origin at (0,0,0) and without rotation.
+     <p>This function is effectively the inverse of <code>veMapFrame()</code>.
+
+<p><b>ref</b> - 
+  The frame of reference.
+  
+<p><b>f</b> - 
+  The frame to convert.
+  
+<p><b>fp</b> - 
+  The structure which will be filled in with the converted frame.
+ 
+</blockquote>
+<p>
+<a name="function_veUnmapFrame"></a><p><em>Function:</em> <b>veUnmapFrame</b>
+<blockquote>
+<pre>
+void veUnmapFrame(VeFrame *ref, VeFrame *f, VeFrame *fp);</pre>    Given one frame of reference, converts a second frame 
+    from the co-ordinate system represented by the frame of reference
+    (i.e. where the origin is represented by the frame of reference's
+     origin, and the bases are represented by the frame of reference's
+     orientation) to the global co-ordinate system (i.e. the one in
+     which the values of the original frame of reference are expressed).
+     <p>This function is effectively the inverse of <code>veMapFrame()</code>.
+
+<p><b>ref</b> - 
+  The frame of reference.
+  
+<p><b>f</b> - 
+  The frame to convert.
+  
+<p><b>fp</b> - 
+  The structure which will be filled in with the converted frame.
+ 
+</blockquote>
+<p>
+<a name="function_veLockCallbacks"></a><p><em>Function:</em> <b>veLockCallbacks</b>
+<blockquote>
+<pre>
+void veLockCallbacks(void);</pre>    Prevents callbacks from being processed until unlocked.  It is used
+    internally to ensure that only one callback is processed at a time.
+    Applications can use this function to prevent callbacks from being
+    called.  Note that it should not be called from a callback itself -
+    this will cause the library to terminate the application to avoid
+    a deadlock.  Applications should also be careful that while they
+    have callbacks locked out that they do not wait for action from
+    a callback.
+    <p>Generally this function is not required by applications, but may
+    be required by some drivers and extensions to the library.  The
+    internal modules of the library use this to ensure that only one
+    thread is ever running in the application code (except for display
+    callbacks which may be multi-threaded).
+
+</blockquote>
+<p>
+<a name="function_veDeviceUnlockCallbacks"></a><p><em>Function:</em> <b>veDeviceUnlockCallbacks</b>
+<blockquote>
+<pre>
+void veUnlockCallbacks(void);</pre>    Removes a previous lock on callbacks.  This should only be called if
+    callbacks were previously locked out.  See 
+    <code>veLockCallbacks()</code>.
+
+</blockquote>
+<p>
+<a name="function_veCallbacksAreLocked"></a><p><em>Function:</em> <b>veCallbacksAreLocked</b>
+<blockquote>
+<pre>
+int veCallbacksAreLocked(void);</pre>    A predicate function - checks to see if there is currently a lock
+    on callbacks.
+    
+<p><i>Returns:</i> 
+    1 if callbacks are currently locked by any thread, and 0 if
+    callbacks are not currently locked by any thread.
+
+</blockquote>
+<p>
+    The <code>veLockFrame()</code>, <code>veUnlockFrame()</code>,
+    <code>veLockFrameExcl()</code>, <code>veUnlockFrameExcl()</code>,
+    implement a task-specific synchronization device designed to allow all
+    event callbacks which are ready to run, to run before the renderer
+    starts drawing the next frame.  At the same time, it prevents the
+    handlers which call these callbacks from starving the renderer.  Once
+    the renderer decides to render a frame, only callbacks that try to lock
+    the frame before it will get a chance to run before it renders.
+
+<p>
+<a name="function_veLockFrame"></a><p><em>Function:</em> <b>veLockFrame</b>
+<blockquote>
+<pre>
+void veLockFrame(void);</pre>    Gets a non-exclusive lock on the current frame.  Threads which call
+    callbacks should call this before locking off callbacks.  See the
+    discussion above.
+ 
+</blockquote>
+<p>
+<a name="function_veUnlockFrame"></a><p><em>Function:</em> <b>veUnlockFrame</b>
+<blockquote>
+<pre>
+void veUnlockFrame(void);</pre>    Releases a non-exclusive lock on the current frame.  Threads which
+    call callbacks should call this after locking off callbacks.  See the
+    discussion above.
+
+</blockquote>
+<p>
+<a name="function_veLockFrameExcl"></a><p><em>Function:</em> <b>veLockFrameExcl</b>
+<blockquote>
+<pre>
+void veLockFrameExcl(void);</pre>    Gets an exclusive lock on the current frame.  This should only be called
+    by the renderer thread.  If you are unsure, don't call this.
+    See the discussion above.
+ 
+</blockquote>
+<p>
+<a name="function_veUnlockFrameExcl"></a><p><em>Function:</em> <b>veUnlockFrameExcl</b>
+<blockquote>
+<pre>
+void veUnlockFrameExcl(void);</pre>    Releases a exclusive lock on the current frame.  This should only be
+    called by the renderer thread.  If you are unsure, don't call this.
+    See the discussion above.
+
+</blockquote>
+
+<h2>Index</h2>
+<ul>
+<li><a href="#function_veCalcStereoEye">veCalcStereoEye (function)</a></li>
+<li><a href="#function_veCallbacksAreLocked">veCallbacksAreLocked (function)</a></li>
+<li><a href="#function_veCoreInit">veCoreInit (function)</a></li>
+<li><a href="#function_veDeviceUnlockCallbacks">veDeviceUnlockCallbacks (function)</a></li>
+<li><a href="#function_veFrameIdentity">veFrameIdentity (function)</a></li>
+<li><a href="#function_veGetDefaultEye">veGetDefaultEye (function)</a></li>
+<li><a href="#function_veGetEnv">veGetEnv (function)</a></li>
+<li><a href="#function_veGetMapMatrix">veGetMapMatrix (function)</a></li>
+<li><a href="#function_veGetOrigin">veGetOrigin (function)</a></li>
+<li><a href="#function_veGetProfile">veGetProfile (function)</a></li>
+<li><a href="#function_veGetUnmapMatrix">veGetUnmapMatrix (function)</a></li>
+<li><a href="#function_veGetWindowView">veGetWindowView (function)</a></li>
+<li><a href="#function_veLockCallbacks">veLockCallbacks (function)</a></li>
+<li><a href="#function_veLockFrame">veLockFrame (function)</a></li>
+<li><a href="#function_veLockFrameExcl">veLockFrameExcl (function)</a></li>
+<li><a href="#function_veMapFrame">veMapFrame (function)</a></li>
+<li><a href="#function_veMultFrame">veMultFrame (function)</a></li>
+<li><a href="#function_veSetDefaultEye">veSetDefaultEye (function)</a></li>
+<li><a href="#function_veSetEnv">veSetEnv (function)</a></li>
+<li><a href="#function_veSetOrigin">veSetOrigin (function)</a></li>
+<li><a href="#function_veSetOrigin">veSetOrigin (function)</a></li>
+<li><a href="#function_veSetProfile">veSetProfile (function)</a></li>
+<li><a href="#function_veSetZClip">veSetZClip (function)</a></li>
+<li><a href="#function_veUnlockFrame">veUnlockFrame (function)</a></li>
+<li><a href="#function_veUnlockFrameExcl">veUnlockFrameExcl (function)</a></li>
+<li><a href="#function_veUnmapFrame">veUnmapFrame (function)</a></li>
+<li><a href="#struct_VeWallView">VeWallView (struct)</a></li>
+</ul>
+</body>
+</html>

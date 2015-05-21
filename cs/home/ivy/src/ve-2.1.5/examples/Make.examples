@@ -1,0 +1,9 @@
+include ../../Make.config
+
+INCDIR=../../include
+LIBDIR=../../lib
+VELIB=ve
+VELIBS=../../lib/lib$(VEGLLIB).a ../../lib/lib$(VELIB).a
+
+CFLAGS += -I$(INCDIR)
+LDFLAGS = $(CFLAGS) -L$(LIBDIR)

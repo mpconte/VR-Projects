@@ -1,0 +1,84 @@
+a:hover {  color: #CC0000; font-family: Arial, Helvetica, sans-serif}
+a {  color: #CC0000; font-family: Arial, Helvetica, sans-serif}
+td {  font-family: Arial, Helvetica, sans-serif; font-size: 12px}
+.smallbodytext {  font-family: Arial, Helvetica, sans-serif; font-size: 11px}
+li {  font-family: Arial, Helvetica, sans-serif; font-size: 12px}
+ol {  font-family: Arial, Helvetica, sans-serif; font-size: 12px}
+ul {  font-family: Arial, Helvetica, sans-serif; font-size: 12px}
+tr {  font-family: Arial, Helvetica, sans-serif; font-size: 12px}
+table {  font-family: Arial, Helvetica, sans-serif; font-size: 12px}
+p {  font-family: Arial, Helvetica, sans-serif; font-size: 12px}
+body {  font-family: Arial, Helvetica, sans-serif; font-size: 12px}
+b {  font-family: Arial, Helvetica, sans-serif; font-weight: bold}
+a:link {  font-family: Arial, Helvetica, sans-serif; color: #CC0000}
+a:active {  font-family: Arial, Helvetica, sans-serif; color: #CC0000}
+a:visited {  font-family: Arial, Helvetica, sans-serif; color: #CC0000}
+.subheading {  font-family: Arial, Helvetica, sans-serif; font-size: 14px; font-weight: bold}
+.heading {  font-family: Arial, Helvetica, sans-serif; font-size: 16px; font-weight: bold}
+ol ol {  font-family: Arial, Helvetica, sans-serif; font-size: 12px}
+ul ul {  font-family: Arial, Helvetica, sans-serif; font-size: 12px}
+ol ul {  font-family: Arial, Helvetica, sans-serif; font-size: 12px}
+ul ol {  font-family: Arial, Helvetica, sans-serif; font-size: 12px}
+.bodytext { font-family: Arial, Helvetica, sans-serif; font-size: 12px }
+
+h2 { 
+  padding-top: 1em;
+  border-top: solid thin black;
+  text-decoration: underline 
+}
+
+/* special cases for preformatted sections */
+pre { font-famliy: monospace}
+pre a:hover {  color: #CC0000; font-family: monospace}
+pre a {  color: #CC0000; font-family: monospace}
+pre a:link {  font-family: monospace; color: #CC0000}
+pre a:active {  font-family: monospace; color: #CC0000}
+pre a:visited {  font-family: monospace; color: #CC0000}
+pre b {  font-family: monospace; font-weight: bold}
+
+table.realtable { border: black thin solid; }
+
+
+/* example blocks */
+.eg { 
+  font-family: monospace; 
+  padding: 0.4em 0.4em; 
+  margin: 0.6em 2.6em; 
+  background-color: #e0e0e0; 
+}
+.egspan { 
+  font-family: monospace; 
+  background-color: #e0e0e0; 
+  padding: 0.4em 0.4em; 
+}
+div.example { 
+  padding: 0.4em 0.4em;
+  margin-top: 0.4em;
+  margin-bottom: 0.4em;
+  margin-left: 0.6em;
+  border: black thin solid;
+}
+div.result { 
+  padding: 0.4em 0.4em;
+  margin: 0.6em 2.6em;
+}
+
+div.proc { border-top: black thin solid; padding: 0.4em }
+div.procname { font-size: 200%; }
+div.procsyn {
+  padding: 0.4em 0.4em;
+  margin: 0.6em 2.6em;
+  background-color: #e0e0e0;
+  border: black thin solid;
+}
+div.procdesc {
+}
+
+div.proctitle { padding-top: 2.6em; padding-bottom: 0.4em; font-weight: bold; font-size: larger; text-decoration: underline; }
+div.label { padding-top: 0.4em; font-weight: bold }
+div.text { margin-left: 1em; }
+div.usage { 
+  background-color: #e0e0e0; 
+  padding: 0.4em 0.4em; 
+  margin: 0.6em 2.6em;
+}

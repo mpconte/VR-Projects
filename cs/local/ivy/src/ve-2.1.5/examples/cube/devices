@@ -1,0 +1,99 @@
+# "devices" file for the "cube" example program.  If this file is
+# called "devices" and is located in the current directory, it will
+# be loaded automatically at run-time.  It can also be overridden or
+# loaded explicitly with the "-ve_devices" command-line option.
+
+# This file list devices that are used at run-time.  The specifics
+# of the devices (type, how to connect to them, etc.) are located in
+# the manifest file.  The model is that there is typically a single
+# manifest for an installation and then a devices file for each particular
+# program describing what devices to use and how to use them.
+
+# We'll use the "keyboard" device for input.
+use keyboard
+
+# We'll use "joystick" as well, but the "joystick" device may or may
+# not be defined, or available, so we'll mark it as an optional device.
+# If an optional device is not available at run-time, then the program
+# will not use, but otherwise continue.  If a device is not marked as
+# optional then the program will exit if it cannot find the device.
+
+use joystick {
+	optional 1
+}
+
+# Events are identified by names which have two parts - a "device"
+# and an "element" (an "element" is a part of a device).  For example,
+# a joystick may be a device with several buttons, each one an element.
+#
+# Now our meaningful event names are "axis.x", "axis.y", and "axis.z"
+# But this is not the names that "keyboard" will generate.  We use
+# filters to modify incoming events.  Filters are put together in chains
+# guarded by a specification.  During processing, an incoming event is
+# compared to the specification at the beginning of each chain.  If it
+# matches, then the event is passed through all the filters in the chain.
+
+# Apply a filter to the "x" key so that it toggles the x axis.
+# The built-in filter "rename" allows us to change the name of an event.
+filter keyboard.x {
+	rename axis.x
+}
+
+# Similary for y and z
+filter keyboard.y {
+	rename axis.y
+}
+
+filter keyboard.z {
+	rename axis.z
+}
+
+# Note that if we wanted to, we could achieve all of the above with
+# just:
+#
+# filter keyboard { rename axis }
+#
+# which would rename the "device" part of an events.  However,
+# this would rename all incoming keyboard events to "axis" events,
+# which would make the following filter useless.
+
+# Setup a key to allow us to exit the program.
+# "exit" is not a filter, but a reserved keyword which will exit
+# the program.  Other reserved keywords are:
+#
+#   "discard" - throw away this event (abort all processing)
+#   "deliver" - stop processing this event and deliver it to the application
+#               (i.e. call the callback if there is one)
+filter keyboard.Escape { exit }
+
+# We can also generate new events, in this case, using "copy".  "copy"
+# has the same semantics as "rename", but pushes the new event into
+# the event queue for processing leaving the original event untouched.
+# In this case, we'll use it for a key 'a' that will toggle all axes at
+# once.
+filter keyboard.a {
+	copy axis.x
+	copy axis.y
+	# Notice that our last step is a rename rather than a copy.
+	# If we don't do this then we should discard this event or
+	# otherwise be prepared for it to be processed as "keyboard.a"
+	rename axis.z
+}
+
+# Sometimes we want to change the type of an event to match our
+# specs.  For example, the built-in filter "to_switch" allows us
+# to convert any incoming event to a "switch" event.  Various
+# options exist to help us specify the conditions of the conversion.
+# In this case, assuming that the joystick has an "axis0" that runs
+# from -1.0 to 1.0, we'll mimic a switch down event when the value is
+# greater "0.5".
+filter joystick.axis0 {
+	to_switch threshold=0.5
+}
+
+# A handy built-in filter is "dump" which will print out any event
+# that is passed to it.  It is handy for determining what events are
+# really being delivered to your program.
+filter *.* {
+	dump
+}

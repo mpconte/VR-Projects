@@ -1,0 +1,14 @@
+Requirements/Controllers:  None
+
+A port of the OpenGL Atlantis demo.  The difference here is that
+after about 30 seconds, the sharks begin to swarm towards the user.
+This was a quick hack and lots of things can be fixed.
+
+ESC exits.
+
+To do:
+- head-tracker support is missing
+- whales and dolphin appear to be having spasms
+- bad clipping when sharks get close.  It would be good to have
+  them swim around a larger radius surrounding the user (but not
+  actually running into the user)

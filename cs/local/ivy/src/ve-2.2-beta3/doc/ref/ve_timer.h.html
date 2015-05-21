@@ -1,0 +1,80 @@
+<html>
+<head>
+<title>File: ve_timer.h</title>
+</head>
+<body>
+<h1 class="cdoc-file">File: ve_timer.h</h1>
+
+
+<p class="cdoc-item">
+    The ve_timer module provides a simple timer callback model based upon
+    ve_clock library.  It allows timer callbacks to be called at particular
+    points in the future.  Timer callbacks have the following type:
+    <blockquote><code>void (*VeTimerProc)(void *arg)</code></blockquote>
+    The argument is provided as a hoook for the application to pass its
+    own data to the timer callback.  The system using this library
+    must provide a thread to process the events.  The thread should look
+    something like:
+<pre>
+        while (1) {
+                while (!veTimerEventsPending())
+                        veTimerWaitForEvents();
+                while (veTimerEventsPending())
+                        veTimerProcEvent();
+        }
+</pre>
+    The main VE library provides such a thread if you are using the
+    <code>veInit()</code> and <code>veRun()</code> or <code>veEventLoop()</code>
+    calls.
+
+<p class="cdoc-item">
+<a name="function_veTimerInit"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veTimerInit</span>
+<div class="body-function">
+<div class="codeblock">void veTimerInit();</div>    Must be called to initialize the timer callback mechanism before
+    calling any other timer functions.  Programs that use <code>veInit()</code>
+    do not need to call this function.</div></div>
+<p class="cdoc-item">
+<a name="function_veAddTimerProc"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veAddTimerProc</span>
+<div class="body-function">
+<div class="codeblock">void veAddTimerProc(long msecs, VeTimerProc proc, void *arg);</div>    Adds a timer callback.  Note that after adding a timer callback, the
+    reference point of the clock should not be changed.
+
+<div class="start-param"><span class="tag-param">msecs</span> - 
+    The time that must elapse before the timer is called, in milliseconds.
+    </div>
+<div class="start-param"><span class="tag-param">proc</span> - 
+    The procedure to call after <i>time</i> milliseconds pass.</div>
+<div class="start-param"><span class="tag-param">arg</span> - 
+    An argument to pass to the callback when it is called.</div></div></div>
+<p class="cdoc-item">
+<a name="function_veTimerEventsPending"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veTimerEventsPending</span>
+<div class="body-function">
+<div class="codeblock">int veTimerEventsPending();</div>    Checks to see if there are any timer callbacks that are ready to
+    be serviced.
+    
+<div class="start-returns"><span class="label-returns">Returns:</span> 
+    1 if there are timer callbacks which should be processed now
+    and 0 otherwise.</div></div></div>
+<p class="cdoc-item">
+<a name="function_veTimerProcEvent"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veTimerProcEvent</span>
+<div class="body-function">
+<div class="codeblock">int veTimerProcEvent();</div>    Processes a single timer callback if there are any to process.
+
+<div class="start-returns"><span class="label-returns">Returns:</span> 
+    0 if successful, non-zero otherwise.</div></div></div>
+<p class="cdoc-item">
+<a name="function_veTimerWaitForEvents"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veTimerWaitForEvents</span>
+<div class="body-function">
+<div class="codeblock">void veTimerWaitForEvents();</div>    Puts the current thread to sleep until there are timer events to
+    be processed.</div></div>
+
+<h2 class="cdoc-index">Index</h2>
+<ul>
+<li><a class="link-function" href="#function_veAddTimerProc">veAddTimerProc (function)</a></li>
+<li><a class="link-function" href="#function_veTimerEventsPending">veTimerEventsPending (function)</a></li>
+<li><a class="link-function" href="#function_veTimerInit">veTimerInit (function)</a></li>
+<li><a class="link-function" href="#function_veTimerProcEvent">veTimerProcEvent (function)</a></li>
+<li><a class="link-function" href="#function_veTimerWaitForEvents">veTimerWaitForEvents (function)</a></li>
+</ul>
+</body>
+</html>

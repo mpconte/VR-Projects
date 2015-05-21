@@ -1,0 +1,6 @@
+ltrim test passed
+rtrim test passed
+trim test passed
+empty string trim test passed
+arbitrary trim test passed
+result = ok

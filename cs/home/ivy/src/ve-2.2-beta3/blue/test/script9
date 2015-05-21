@@ -1,0 +1,28 @@
+#
+# testing shift/unshift/pop/unpop
+#
+
+set l1a {a b c d e f g h i j k l m n o p q r s t u v w x y z}
+set l1b $l1a
+
+set l2a {}
+set l2b {}
+
+while { ![lempty $l1a] } {
+	set x [lpop l1a]
+	lpush l2a $x
+	lunshift l2b $x
+}
+[stdout] writeln "l2a is $l2a"
+[stdout] writeln "l2b is $l2b"
+
+set l3a {}
+set l3b {}
+
+while { ![lempty $l1b] } {
+	set x [lshift l1b]
+	lpush l3a $x
+	lunshift l3b $x
+}
+[stdout] writeln "l3a is $l3a"
+[stdout] writeln "l3b is $l3b"

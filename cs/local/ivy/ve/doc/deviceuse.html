@@ -1,0 +1,51 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+  <title>Device Usage File Format</title>
+  <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+</head>
+<body>
+<h1>Device Usage File Format</h1>
+<p>This device usage file allows devices and filters to be specified
+at run-time.  Devices are used via a "use" statement which has the
+following format:</p>
+<blockquote><b>use</b> <i>name</i> [<b>optional</b>]</blockquote>
+The <i>name</i> value is the name of the device to use (the name
+must exist in the device manifest).  If a device is not available
+then the program will exit.  If you want a program to ignore a device
+if it does not exist, then use the word "optional" at the end to
+indicate that use of this device is optional.  If the program
+can find the device, it will use it.  Otherwise, it will ignore it.
+<p>Filters are specified as described in <a href="ref/ve_device.h.html#function_veDeviceParseFTableEntry">veDeviceParseFTableEntry()</a> except
+that the word "filter" must be specified.
+<h2>Example</h2>
+<p>The following is a simple example:
+<pre>
+        #
+        # This file list devices that are used at run-time, plus
+        # filters
+        #
+        use keyboard
+        use sidewinder
+        use whoozit optional
+        filter sidewinder.axis0 {
+                # use this event for both x and y
+                copy location.x
+                rename location.y
+        }
+        filter sidewinder.button0 { rename exit }
+        filter keyboard.Escape    { discard }
+        filter keyboard.F1        { rename exit }
+        filter sidewinder.button2 {
+                # fake a valuator
+                to_valuator expr=1.0*x min=0.0 max=1.0
+                rename location.x
+        }
+        filter sidewinder.button3 {
+                # fake a valuator
+                to_valuator expr=1.0*x min=0.0 max=1.0
+                rename location.y
+        }
+</pre>
+</body>
+</html>

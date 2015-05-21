@@ -1,0 +1,48 @@
+#!/bin/sh
+#
+# Startup X on slaves
+# - X server has started
+# - run clients
+# - this script is run as user "ivy"
+HOME=/cs/home/ivy
+export HOME
+PATH=/usr/X11R6/bin:/cs/local/bin:/bin:/sbin:/usr/bin:/usr/sbin
+export PATH
+
+DISPLAY=:0
+export DISPLAY
+
+# Disable screen saver
+xset s reset
+xset s off
+
+src=/cs/home/ivy/cluster
+settings=
+
+# Load appropriate frame-lock settings
+host=`hostname`
+case "$host" in
+*1)
+	# first slave - use as sync master
+	settings=$src/settings.syncmaster
+	;;
+*)
+	# some other slave - use as sync slave
+	settings=$src/settings.syncslave
+	;;
+esac
+
+if [ "$settings" ] && [ -f "$settings" ]; then
+	# load settings
+	if [ ! -x /usr/bin/nvidia-settings ]; then
+		echo >&2 "missing nvidia-settings"
+		exit 1
+	fi
+	/usr/bin/nvidia-settings --config=$settings --load-config-only
+fi
+
+# Run the window manager -- since we run under xinit, this
+# script needs to keep running to keep the X server alive
+# At this point in time, VE needs a window manager anyways
+fvwm
+exit 0

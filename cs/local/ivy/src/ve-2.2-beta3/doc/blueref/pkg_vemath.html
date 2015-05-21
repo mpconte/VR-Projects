@@ -1,0 +1,371 @@
+<html>
+<head>
+<title>BlueScript: VE Math Procedures</title>
+<link rel="stylesheet" href="bluescript.css" type="text/css" />
+</head>
+<body>
+<h1>BlueScript: VE Math Procedures</h1>
+<h2>Contents</h2>
+<ul>
+<li><a href="#objs">Objects</a>
+<ul>
+<li><a href="#obj_VeMatrix4">VeMatrix4</a>
+</li>
+<li><a href="#obj_VeQuat">VeQuat</a>
+</li>
+<li><a href="#obj_VeVector3">VeVector3</a>
+</li>
+</ul>
+<li><a href="#procs">Procedures</a>
+<ul>
+<li><a href="#proc_acos">acos</a></li>
+<li><a href="#proc_asin">asin</a></li>
+<li><a href="#proc_atan">atan</a></li>
+<li><a href="#proc_cos">cos</a></li>
+<li><a href="#proc_deg2rad">deg2rad</a></li>
+<li><a href="#proc_m4ident">m4ident</a></li>
+<li><a href="#proc_m4ind">m4ind</a></li>
+<li><a href="#proc_m4invert">m4invert</a></li>
+<li><a href="#proc_m4mult">m4mult</a></li>
+<li><a href="#proc_m4multv">m4multv</a></li>
+<li><a href="#proc_m4rotate">m4rotate</a></li>
+<li><a href="#proc_m4trans">m4trans</a></li>
+<li><a href="#proc_qang">qang</a></li>
+<li><a href="#proc_qarb">qarb</a></li>
+<li><a href="#proc_qaxis">qaxis</a></li>
+<li><a href="#proc_qind">qind</a></li>
+<li><a href="#proc_qmult">qmult</a></li>
+<li><a href="#proc_qnorm">qnorm</a></li>
+<li><a href="#proc_rad2deg">rad2deg</a></li>
+<li><a href="#proc_sin">sin</a></li>
+<li><a href="#proc_tan">tan</a></li>
+<li><a href="#proc_v3add">v3add</a></li>
+<li><a href="#proc_v3cross">v3cross</a></li>
+<li><a href="#proc_v3dot">v3dot</a></li>
+<li><a href="#proc_v3ind">v3ind</a></li>
+<li><a href="#proc_v3mag">v3mag</a></li>
+<li><a href="#proc_v3norm">v3norm</a></li>
+<li><a href="#proc_v3scale">v3scale</a></li>
+<li><a href="#proc_v3sub">v3sub</a></li>
+</ul>
+</ul>
+<h2>Description</h2>
+An interface to vectors, quaternions, matrices, etc.
+<h2>Documentation</h2>
+
+	The following objects and procedures are only available to
+	scripts running under the VE library.
+    
+<a name="objs"></a>
+<h2>Objects</h2>
+<ul>
+<li><a href="#obj_VeMatrix4">VeMatrix4</a></li>
+<li><a href="#obj_VeQuat">VeQuat</a></li>
+<li><a href="#obj_VeVector3">VeVector3</a></li>
+</ul>
+<a name="obj_VeMatrix4"></a>
+<h3>VeMatrix4</h3>
+
+	An analogue to the <code>VeMatrix4</code> type in VE.
+    
+<a name="obj_VeQuat"></a>
+<h3>VeQuat</h3>
+
+	An analogue to the <code>VeQuat</code> type in VE.
+    
+<a name="obj_VeVector3"></a>
+<h3>VeVector3</h3>
+
+	This object represents the same data as <code>VeVector3</code>
+	object in VE.  VeVector3 objects are required for some math
+	functions.  Lists of 3 floats will be automatically converted
+	to VeVector3 objects as needed.
+    
+
+	An analogue to the <code>VeVector3</code> type in VE.
+    
+<a name="procs"></a>
+<h2>Procedures</h2>
+<ul>
+<li><a href="#proc_acos">acos</a></li>
+<li><a href="#proc_asin">asin</a></li>
+<li><a href="#proc_atan">atan</a></li>
+<li><a href="#proc_cos">cos</a></li>
+<li><a href="#proc_deg2rad">deg2rad</a></li>
+<li><a href="#proc_m4ident">m4ident</a></li>
+<li><a href="#proc_m4ind">m4ind</a></li>
+<li><a href="#proc_m4invert">m4invert</a></li>
+<li><a href="#proc_m4mult">m4mult</a></li>
+<li><a href="#proc_m4multv">m4multv</a></li>
+<li><a href="#proc_m4rotate">m4rotate</a></li>
+<li><a href="#proc_m4trans">m4trans</a></li>
+<li><a href="#proc_qang">qang</a></li>
+<li><a href="#proc_qarb">qarb</a></li>
+<li><a href="#proc_qaxis">qaxis</a></li>
+<li><a href="#proc_qind">qind</a></li>
+<li><a href="#proc_qmult">qmult</a></li>
+<li><a href="#proc_qnorm">qnorm</a></li>
+<li><a href="#proc_rad2deg">rad2deg</a></li>
+<li><a href="#proc_sin">sin</a></li>
+<li><a href="#proc_tan">tan</a></li>
+<li><a href="#proc_v3add">v3add</a></li>
+<li><a href="#proc_v3cross">v3cross</a></li>
+<li><a href="#proc_v3dot">v3dot</a></li>
+<li><a href="#proc_v3ind">v3ind</a></li>
+<li><a href="#proc_v3mag">v3mag</a></li>
+<li><a href="#proc_v3norm">v3norm</a></li>
+<li><a href="#proc_v3scale">v3scale</a></li>
+<li><a href="#proc_v3sub">v3sub</a></li>
+</ul>
+<a name="proc_acos"></a>
+<div class="proctitle">acos</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>acos </b><i>a</i><b></b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">The arc coasine of <i>a</i> in radians.  If <i>a</i> is out
+	of the range -1..1 then an error will be generated.</div>
+<a name="proc_asin"></a>
+<div class="proctitle">asin</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>asin </b><i>a</i><b></b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">The arc sine of <i>a</i> in radians.  If <i>a</i> is out
+	of the range -1..1 then an error will be generated.</div>
+<a name="proc_atan"></a>
+<div class="proctitle">atan</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>atan </b><i>a</i><b></b><br />
+&nbsp; &nbsp; <i>or</i><br />
+<b>atan </b><i>y</i><b> </b><i>x</i><b></b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">The arc tangent of its arguments.</div>
+<div class="label"></div>
+
+	If only one argument is specified, then the arc tangent of
+	that value is returned.  If two arguments are specified then
+	the arc tangent of <i>y/x</i> is returned - additionally, the
+	signs of <i>y</i> and <i>x</i> are used to determine correct
+	quadrant for the result.
+    
+<a name="proc_cos"></a>
+<div class="proctitle">cos</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>cos </b><i>a</i><b></b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">The cosine of the angle <i>a</i>.  The angle must be given in radians.</div>
+<a name="proc_deg2rad"></a>
+<div class="proctitle">deg2rad</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>deg2rad </b><i>a</i><b></b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">Converts a value in degrees to a value in radians.</div>
+<a name="proc_m4ident"></a>
+<div class="proctitle">m4ident</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>m4ident</b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">An identity matrix.</div>
+<a name="proc_m4ind"></a>
+<div class="proctitle">m4ind</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>m4ind </b><i>m</i><b> </b>(<b>0</b>|<b>1</b>|<b>2</b>|<b>3</b>)<b> </b>(<b>0</b>|<b>1</b>|<b>2</b>|<b>3</b>)<b></b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">The given element of the matrix.</div>
+<a name="proc_m4invert"></a>
+<div class="proctitle">m4invert</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>m4invert </b><i>m</i><b></b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">The inverse of matrix <i>m</i>.  If the matrix cannot be
+	inverted then an error is generated.</div>
+<a name="proc_m4mult"></a>
+<div class="proctitle">m4mult</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>m4mult </b><i>m1</i><b> </b><i>m2</i><b></b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">The product of the two matrices.</div>
+<a name="proc_m4multv"></a>
+<div class="proctitle">m4multv</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>m4multv </b><i>m</i><b> </b><i>v</i><b></b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">The transformation of vector <i>v</i> by matrix <i>m</i>.</div>
+<a name="proc_m4rotate"></a>
+<div class="proctitle">m4rotate</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>m4rotate </b><i>v</i><b> </b><i>ang</i><b></b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">A matrix representing a rotation of <i>ang</i> degrees
+	around an arbitrary axis given by VeVector3 <i>v</i>.</div>
+<a name="proc_m4trans"></a>
+<div class="proctitle">m4trans</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>m4trans </b><i>v</i><b></b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">A matrix representing a translation given
+	by VeVector3 <i>v</i>.</div>
+<a name="proc_qang"></a>
+<div class="proctitle">qang</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>qang </b><i>q</i><b></b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">The angle of rotation in degrees corresponding to this quaternion.</div>
+<a name="proc_qarb"></a>
+<div class="proctitle">qarb</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>qarb </b><i>v</i><b> </b><i>ang</i><b></b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">A quaternion corresponding to a rotation of <i>ang</i>
+	degrees around an arbitrary axis represented by VeVector3 <i>v</i>.</div>
+<a name="proc_qaxis"></a>
+<div class="proctitle">qaxis</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>qaxis </b><i>q</i><b></b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">The axis of rotation corresponding to this quaternion.</div>
+<a name="proc_qind"></a>
+<div class="proctitle">qind</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>qind </b><i>q</i><b> </b>(<b>0</b>|<b>1</b>|<b>2</b>|<b>3</b>|<b>x</b>|<b>y</b>|<b>z</b>|<b>w</b>)<b></b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">The specified element of the quaternion.</div>
+<a name="proc_qmult"></a>
+<div class="proctitle">qmult</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>qmult </b><i>q1</i><b> </b><i>q2</i><b></b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">The product of the two quaternions (which is itself a quaternion).</div>
+<a name="proc_qnorm"></a>
+<div class="proctitle">qnorm</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>qnorm </b><i>q</i><b></b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">A normalized quaternion.</div>
+<a name="proc_rad2deg"></a>
+<div class="proctitle">rad2deg</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>rad2deg </b><i>a</i><b></b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">Converts a value in radians to a value in degrees.</div>
+<a name="proc_sin"></a>
+<div class="proctitle">sin</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>sin </b><i>a</i><b></b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">The sine of the angle <i>a</i>.  The angle must be given in radians.</div>
+<a name="proc_tan"></a>
+<div class="proctitle">tan</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>tan </b><i>a</i><b></b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">The tangent of the angle <i>a</i>.  The angle must be given in radians.</div>
+<a name="proc_v3add"></a>
+<div class="proctitle">v3add</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>v3add </b><i>v1</i><b> </b><i>v2</i><b></b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">A VeVector3 object corresponding to <i>v1 + v2</i>.</div>
+<a name="proc_v3cross"></a>
+<div class="proctitle">v3cross</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>v3cross </b><i>v1</i><b> </b><i>v2</i><b></b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">A VeVector3 object which is the cross-product of vectors
+	<i>v1</i> and <i>v2</i>.</div>
+<a name="proc_v3dot"></a>
+<div class="proctitle">v3dot</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>v3dot </b><i>v1</i><b> </b><i>v2</i><b></b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">The dot-product (or inner-product) of vectors <i>v1</i>
+	and <i>v2</i>.</div>
+<a name="proc_v3ind"></a>
+<div class="proctitle">v3ind</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>v3ind </b><i>v</i><b> </b>(<b>0</b>|<b>1</b>|<b>2</b>|<b>x</b>|<b>y</b>|<b>z</b>)<b></b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">The specified component of vector <i>v</i>.</div>
+<a name="proc_v3mag"></a>
+<div class="proctitle">v3mag</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>v3mag </b><i>v</i><b></b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">The magnitude of vector <i>v</i>.</div>
+<a name="proc_v3norm"></a>
+<div class="proctitle">v3norm</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>v3norm </b><i>v</i><b></b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">A copy of vector <i>v</i> whose magnitude has been
+	normalized to 1.</div>
+<a name="proc_v3scale"></a>
+<div class="proctitle">v3scale</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>v3scale </b><i>v</i><b> </b><i>f</i><b></b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">A VeVector3 object which is vector <i>v</i> scaled by
+	floating-point factor <i>f</i>.</div>
+<a name="proc_v3sub"></a>
+<div class="proctitle">v3sub</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>v3sub </b><i>v1</i><b> </b><i>v2</i><b></b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">A VeVector3 object corresponding to <i>v1 - v2</i>.</div>

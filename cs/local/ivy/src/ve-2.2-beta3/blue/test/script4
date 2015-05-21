@@ -1,0 +1,7 @@
+#
+# Fourth script - testing sub-calls
+#
+proc firstproc {} {
+    return "Hello World!"
+}
+[stdout] writeln [firstproc]

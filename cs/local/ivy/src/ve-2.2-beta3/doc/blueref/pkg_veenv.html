@@ -1,0 +1,523 @@
+<html>
+<head>
+<title>BlueScript: VE Environment</title>
+<link rel="stylesheet" href="bluescript.css" type="text/css" />
+</head>
+<body>
+<h1>BlueScript: VE Environment</h1>
+<h2>Contents</h2>
+<ul>
+<li><a href="#procs">Procedures</a>
+<ul>
+<li><a href="#proc_audio">audio</a></li>
+<li><a href="#proc_audio...engine">audio...engine</a></li>
+<li><a href="#proc_audiodevice">audiodevice</a></li>
+<li><a href="#proc_env">env</a></li>
+<li><a href="#proc_env...desc">env...desc</a></li>
+<li><a href="#proc_option">option</a></li>
+<li><a href="#proc_output">output</a></li>
+<li><a href="#proc_output...device">output...device</a></li>
+<li><a href="#proc_output...dir">output...dir</a></li>
+<li><a href="#proc_output...loc">output...loc</a></li>
+<li><a href="#proc_output...up">output...up</a></li>
+<li><a href="#proc_profile">profile</a></li>
+<li><a href="#proc_profile...eyedist">profile...eyedist</a></li>
+<li><a href="#proc_profile...fullname">profile...fullname</a></li>
+<li><a href="#proc_profile...module">profile...module</a></li>
+<li><a href="#proc_wall">wall</a></li>
+<li><a href="#proc_wall...base">wall...base</a></li>
+<li><a href="#proc_wall...desc">wall...desc</a></li>
+<li><a href="#proc_wall...dir">wall...dir</a></li>
+<li><a href="#proc_wall...loc">wall...loc</a></li>
+<li><a href="#proc_wall...size">wall...size</a></li>
+<li><a href="#proc_wall...up">wall...up</a></li>
+<li><a href="#proc_window">window</a></li>
+<li><a href="#proc_window...async">window...async</a></li>
+<li><a href="#proc_window...display">window...display</a></li>
+<li><a href="#proc_window...distort">window...distort</a></li>
+<li><a href="#proc_window...err">window...err</a></li>
+<li><a href="#proc_window...eye">window...eye</a></li>
+<li><a href="#proc_window...geometry">window...geometry</a></li>
+<li><a href="#proc_window...offset">window...offset</a></li>
+<li><a href="#proc_window...slave">window...slave</a></li>
+<li><a href="#proc_window...sync">window...sync</a></li>
+<li><a href="#proc_window...viewport">window...viewport</a></li>
+</ul>
+</ul>
+<h2>Description</h2>
+Procedures for generating environments, audio setups, user profiles.
+<h2>Documentation</h2>
+
+	The following objects and procedures are only available to
+	scripts running under the VE library.
+	<p>Note that many of the following procedures may be available
+	only within specific contexts (e.g. the <code>wall</code>
+				       procedure is only available
+				       when called from within the
+				       body of an <code>env</code> command).
+    
+<a name="procs"></a>
+<h2>Procedures</h2>
+<ul>
+<li><a href="#proc_audio">audio</a></li>
+<li><a href="#proc_audio...engine">audio...engine</a></li>
+<li><a href="#proc_audiodevice">audiodevice</a></li>
+<li><a href="#proc_env">env</a></li>
+<li><a href="#proc_env...desc">env...desc</a></li>
+<li><a href="#proc_option">option</a></li>
+<li><a href="#proc_output">output</a></li>
+<li><a href="#proc_output...device">output...device</a></li>
+<li><a href="#proc_output...dir">output...dir</a></li>
+<li><a href="#proc_output...loc">output...loc</a></li>
+<li><a href="#proc_output...up">output...up</a></li>
+<li><a href="#proc_profile">profile</a></li>
+<li><a href="#proc_profile...eyedist">profile...eyedist</a></li>
+<li><a href="#proc_profile...fullname">profile...fullname</a></li>
+<li><a href="#proc_profile...module">profile...module</a></li>
+<li><a href="#proc_wall">wall</a></li>
+<li><a href="#proc_wall...base">wall...base</a></li>
+<li><a href="#proc_wall...desc">wall...desc</a></li>
+<li><a href="#proc_wall...dir">wall...dir</a></li>
+<li><a href="#proc_wall...loc">wall...loc</a></li>
+<li><a href="#proc_wall...size">wall...size</a></li>
+<li><a href="#proc_wall...up">wall...up</a></li>
+<li><a href="#proc_window">window</a></li>
+<li><a href="#proc_window...async">window...async</a></li>
+<li><a href="#proc_window...display">window...display</a></li>
+<li><a href="#proc_window...distort">window...distort</a></li>
+<li><a href="#proc_window...err">window...err</a></li>
+<li><a href="#proc_window...eye">window...eye</a></li>
+<li><a href="#proc_window...geometry">window...geometry</a></li>
+<li><a href="#proc_window...offset">window...offset</a></li>
+<li><a href="#proc_window...slave">window...slave</a></li>
+<li><a href="#proc_window...sync">window...sync</a></li>
+<li><a href="#proc_window...viewport">window...viewport</a></li>
+</ul>
+<a name="proc_audio"></a>
+<div class="proctitle">audio</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>audio </b><i>name</i><b> </b><i>body</i><b></b><br />
+</div>
+<div class="label">Description</div>
+<div class="text">Specifies an audio channel.</div>
+<div class="label">Examples</div>
+<div class="example">1. A simple audio channel
+<div class="eg">audio default {<br />
+	&nbsp; &nbsp; engine mix {}<br />
+	&nbsp; &nbsp; output o0 {<br />
+	    &nbsp; &nbsp; &nbsp; &nbsp; device default 0<br />
+	    &nbsp; &nbsp; }<br />
+	&nbsp; &nbsp; output o1 {<br />
+	    &nbsp; &nbsp; &nbsp; &nbsp; device default 1<br />
+	    &nbsp; &nbsp; }<br />
+    }</div>
+<div class="result">Result: <i>none</i></div>
+</div>
+<a name="proc_audio...engine"></a>
+<div class="proctitle">audio...engine</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>engine </b><i>driver</i><b> </b><i>body</i><b></b><br />
+</div>
+<div class="label">Description</div>
+<div class="text">Specifies an audio engine to use to render a particular
+	audio channel.</div>
+<div class="label"></div>
+<p><i>Valid in: audio</i></p>
+<a name="proc_audiodevice"></a>
+<div class="proctitle">audiodevice</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>audiodevice </b><i>name</i><b> </b><i>driver</i><b> </b>[<b></b><i>options</i><b></b>]<b></b><br />
+</div>
+<div class="label">Description</div>
+<div class="text">Specifies a platform audio device to initialize and use.</div>
+<a name="proc_env"></a>
+<div class="proctitle">env</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>env </b><i>name</i><b> </b><i>body</i><b></b><br />
+</div>
+<div class="label">Description</div>
+<div class="text">Defines the environment.</div>
+<a name="proc_env...desc"></a>
+<div class="proctitle">env...desc</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>desc </b><i>string</i><b></b><br />
+</div>
+<div class="label">Description</div>
+<div class="text">Specifies a human-readable description of this environment.</div>
+<div class="label"></div>
+<p><i>Valid in: env</i></p>
+<a name="proc_option"></a>
+<div class="proctitle">option</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>option </b><i>name</i><b> </b><i>value</i><b></b><br />
+</div>
+<div class="label">Description</div>
+<div class="text">Sets a generic option for an object.</div>
+<div class="label"></div>
+
+	<p><i>Valid in: audio, env, output, wall, window</i></p>
+    
+<a name="proc_output"></a>
+<div class="proctitle">output</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>output </b><i>name</i><b> </b><i>body</i><b></b><br />
+</div>
+<div class="label">Description</div>
+<div class="text">Specifies an output of an audio channel.</div>
+<div class="label"></div>
+<p><i>Valid in: audio</i></p>
+<div class="label">Examples</div>
+<div class="example">1. A simple output
+<div class="eg">output eg {<br />
+	&nbsp; &nbsp; device default 0<br />
+	&nbsp; &nbsp; loc 0.0 0.0 -3.0<br />
+	&nbsp; &nbsp; dir 0.0 0.0 1.0<br />
+	&nbsp; &nbsp; up 0.0 1.0 0.0<br />
+    }</div>
+<div class="result">Result: <i>none</i></div>
+</div>
+<a name="proc_output...device"></a>
+<div class="proctitle">output...device</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>device </b><i>name</i><b> </b>[<b></b><i>output</i><b></b>]<b></b><br />
+</div>
+<div class="label">Description</div>
+<div class="text">Specifies the audio device to use for this output.</div>
+<div class="label"></div>
+<p><i>Valid in: output</i></p>
+<a name="proc_output...dir"></a>
+<div class="proctitle">output...dir</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>dir </b><i>x</i><b> </b><i>y</i><b> </b><i>z</i><b></b><br />
+</div>
+<div class="label">Description</div>
+<div class="text">Specifies the direction in which the audio output faces.</div>
+<div class="label"></div>
+<p><i>Valid in: output</i></p>
+<a name="proc_output...loc"></a>
+<div class="proctitle">output...loc</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>loc </b><i>x</i><b> </b><i>y</i><b> </b><i>z</i><b></b><br />
+</div>
+<div class="label">Description</div>
+<div class="text">Specifies the centre of the audio output.</div>
+<div class="label"></div>
+<p><i>Valid in: output</i></p>
+<a name="proc_output...up"></a>
+<div class="proctitle">output...up</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>up </b><i>x</i><b> </b><i>y</i><b> </b><i>z</i><b></b><br />
+</div>
+<div class="label">Description</div>
+<div class="text">Specifies the orientation of the audio output by providing a
+	vector in the "up" direction.</div>
+<div class="label"></div>
+<p><i>Valid in: output</i></p>
+<a name="proc_profile"></a>
+<div class="proctitle">profile</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>profile </b><i>name</i><b> </b><i>body</i><b></b><br />
+</div>
+<div class="label">Description</div>
+<div class="text">Specifies the user profile.</div>
+<div class="label">Examples</div>
+<div class="example">1. A simple profile
+<div class="eg">
+	profile joe {<br />
+	    &nbsp; &nbsp; fullname "Joe Blough"<br />
+	    &nbsp; &nbsp; eyedist 0.04<br />
+	    &nbsp; &nbsp; module experiment1 {<br />
+		&nbsp; &nbsp; &nbsp; &nbsp; correction 0.0 1.0 -2.04<br />
+	    &nbsp; &nbsp; }<br />
+	}
+    </div>
+<div class="result">Result: <i>none</i></div>
+</div>
+<a name="proc_profile...eyedist"></a>
+<div class="proctitle">profile...eyedist</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>eyedist </b><i>d</i><b></b><br />
+</div>
+<div class="label">Description</div>
+<div class="text">
+	Specifies the eye separation in physical units.
+    </div>
+<div class="label"></div>
+<p><i>Valid in: profile</i></p>
+<a name="proc_profile...fullname"></a>
+<div class="proctitle">profile...fullname</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>fullname </b><i>string</i><b></b><br />
+</div>
+<div class="label">Description</div>
+<div class="text">Specifies the user's full name.</div>
+<div class="label"></div>
+<p><i>Valid in: profile</i></p>
+<a name="proc_profile...module"></a>
+<div class="proctitle">profile...module</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>module </b><i>name</i><b> </b><i>options</i><b></b><br />
+</div>
+<div class="label">Description</div>
+<div class="text">Specifies a module of options for the user profile.</div>
+<div class="label"></div>
+<p><i>Valid in: profile</i></p>
+	A module is simply a way of grouping user profile options.  
+	The anticipated model is that if a particular program requires
+	user-specific settings, it defines a new module and searches
+	in that module for the settings it needs.
+	The options contained in a module are specific to whatever
+	uses that module - there are no pre-defined names or values.
+    
+<div class="label">Examples</div>
+<div class="example">1. A simple profile module
+<div class="eg">
+	module eg {<br />
+	    &nbsp; &nbsp; file /tmp/eg<br />
+	    &nbsp; &nbsp; config 0 11 32<br />
+	}
+    </div>
+<div class="result">Result: <i>none</i></div>
+</div>
+<a name="proc_wall"></a>
+<div class="proctitle">wall</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>wall </b><i>name</i><b> </b><i>body</i><b></b><br />
+</div>
+<div class="label">Description</div>
+<div class="text">Describes a wall in the environment.</div>
+<div class="label"></div>
+<p><i>Valid in: env</i></p>
+<div class="label">Examples</div>
+<div class="example">1. A simple wall
+<div class="eg">wall {<br />
+	&nbsp; &nbsp; desc "A simple wall"<br />
+	&nbsp; &nbsp; size 1.0 1.0<br />
+	&nbsp; &nbsp; base origin<br />
+	&nbsp; &nbsp; loc 0.0 0.0 -3.0<br />
+	&nbsp; &nbsp; dir 0.0 0.0 1.0<br />
+	&nbsp; &nbsp; up 0.0 1.0 0.0<br />
+    }</div>
+<div class="result">Result: <i>none</i></div>
+</div>
+<a name="proc_wall...base"></a>
+<div class="proctitle">wall...base</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>base </b>(<b>origin</b>|<b>eye</b>)<b></b><br />
+</div>
+<div class="label">Description</div>
+<div class="text">Specifies the space in which the wall is described.</div>
+<div class="label"></div>
+<p><i>Valid in: env</i></p>
+	Walls are defined either to the origin of the physical space
+	or they are defined relative to the eye.  For example, a fixed
+	screen is defined relative to the origin.  A head-mounted
+	display would be defined relative to the eye.
+<a name="proc_wall...desc"></a>
+<div class="proctitle">wall...desc</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>desc </b><i>string</i><b></b><br />
+</div>
+<div class="label">Description</div>
+<div class="text">Specifies a human-readable description of this wall.</div>
+<div class="label"></div>
+<p><i>Valid in: wall</i></p>
+<a name="proc_wall...dir"></a>
+<div class="proctitle">wall...dir</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>dir </b><i>x</i><b> </b><i>y</i><b> </b><i>z</i><b></b><br />
+</div>
+<div class="label">Description</div>
+<div class="text">Specifies the direction in which the wall faces.</div>
+<div class="label"></div>
+<p><i>Valid in: wall</i></p>
+<a name="proc_wall...loc"></a>
+<div class="proctitle">wall...loc</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>loc </b><i>x</i><b> </b><i>y</i><b> </b><i>z</i><b></b><br />
+</div>
+<div class="label">Description</div>
+<div class="text">Specifies the centre of the wall.</div>
+<div class="label"></div>
+<p><i>Valid in: wall</i></p>
+<a name="proc_wall...size"></a>
+<div class="proctitle">wall...size</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>size </b><i>width</i><b> </b><i>height</i><b></b><br />
+</div>
+<div class="label">Description</div>
+<div class="text">Specifies the size of a wall in physical units.</div>
+<div class="label"></div>
+<p><i>Valid in: env</i></p>
+<a name="proc_wall...up"></a>
+<div class="proctitle">wall...up</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>up </b><i>x</i><b> </b><i>y</i><b> </b><i>z</i><b></b><br />
+</div>
+<div class="label">Description</div>
+<div class="text">Specifies the orientation of the wall by providing a vector
+	in the "up" direction.</div>
+<div class="label"></div>
+<p><i>Valid in: wall</i></p>
+<a name="proc_window"></a>
+<div class="proctitle">window</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>window </b><i>name</i><b> </b><i>body</i><b></b><br />
+</div>
+<div class="label">Description</div>
+<div class="text">Describes a window.</div>
+<div class="label"></div>
+<p><i>Valid in: wall</i></p>
+<div class="label">Examples</div>
+<div class="example">1. A simple window
+<div class="eg">window eg {<br />
+	&nbsp; &nbsp; display :0<br />
+	&nbsp; &nbsp; geometry 640x480+0+0<br />
+	&nbsp; &nbsp; err 0.0 0.0<br />
+	&nbsp; &nbsp; offset 0.0 0.0<br />
+	&nbsp; &nbsp; slave auto auto auto<br />
+	&nbsp; &nbsp; viewport 0 0 640 480<br />
+	&nbsp; &nbsp; distort [m4ident]<br />
+	&nbsp; &nbsp; sync<br />
+	&nbsp; &nbsp; eye mono<br />
+	&nbsp; &nbsp; option noborder 1<br />
+    }</div>
+<div class="result">Result: <i>none</i></div>
+</div>
+<a name="proc_window...async"></a>
+<div class="proctitle">window...async</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>async</b><br />
+</div>
+<div class="label">Description</div>
+<div class="text">Marks this window as being asynchronously rendered.  That
+	is, the rendering engine will not wait for this window to
+	finish drawing before proceeding to the next frame.</div>
+<div class="label"></div>
+<p><i>Valid in: window</i></p>
+<a name="proc_window...display"></a>
+<div class="proctitle">window...display</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>display </b><i>value</i><b></b><br />
+</div>
+<div class="label">Description</div>
+<div class="text">Specifies the destination display for a window.</div>
+<div class="label"></div>
+<p><i>Valid in: window</i></p>
+<a name="proc_window...distort"></a>
+<div class="proctitle">window...distort</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>distort </b><i>m</i><b></b><br />
+&nbsp; &nbsp; <i>or</i><br />
+<b>distort {</b><i>m11</i><b> </b><i>m12</i><b> </b><i>m13</i><b> </b><i>m14</i><b>} {</b><i>m21</i><b> </b><i>m22</i><b> </b><i>m23</i><b> </b><i>m24</i><b>} {</b><i>m31</i><b> </b><i>m32</i><b> </b><i>m33</i><b>
+	</b><i>m34</i><b>} {</b><i>m41</i><b> </b><i>m42</i><b> </b><i>m43</i><b> </b><i>m44</i><b>}</b><br />
+</div>
+<div class="label">Description</div>
+<div class="text">Specifies an arbitrary distortion matrix for this window.</div>
+<div class="label"></div>
+
+	<p><i>Valid in: window</i></p>
+	If a single argument is offered, it is treated as a VeMatrix4
+	object.  The other syntax is preserved for
+	backwards-compatibility; its future use is strongly discouraged.
+    
+<a name="proc_window...err"></a>
+<div class="proctitle">window...err</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>err </b><i>x</i><b> </b><i>y</i><b></b><br />
+</div>
+<div class="label">Description</div>
+<div class="text">Sets the width and height correction values for a window.</div>
+<div class="label"></div>
+<p><i>Valid in: window</i></p>
+<a name="proc_window...eye"></a>
+<div class="proctitle">window...eye</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>eye </b>(<b>mono</b>|<b>left</b>|<b>right</b>|<b>stereo</b>)<b></b><br />
+</div>
+<div class="label">Description</div>
+<div class="text">Specifies how the view from this window is to be drawn.</div>
+<div class="label"></div>
+<p><i>Valid in: window</i></p>
+	If a window does not have an "eye" command associated with it,
+	then it will be a "mono" window by default.
+    
+<a name="proc_window...geometry"></a>
+<div class="proctitle">window...geometry</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>geometry </b><i>width</i><b>x</b><i>height</i><b></b>[<b></b>(<b>+</b>|<b>-</b>)<b></b><i>x</i><b></b>(<b>+</b>|<b>-</b>)<b></b><i>y</i><b></b>]<b></b><br />
+</div>
+<div class="label">Description</div>
+<div class="text">Specifies the location and size of a window on a display.</div>
+<div class="label"></div>
+<p><i>Valid in: window</i></p>
+<a name="proc_window...offset"></a>
+<div class="proctitle">window...offset</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>offset </b><i>x</i><b> </b><i>y</i><b></b><br />
+</div>
+<div class="label">Description</div>
+<div class="text">Sets the location correction values for a window.</div>
+<div class="label"></div>
+<p><i>Valid in: window</i></p>
+<a name="proc_window...slave"></a>
+<div class="proctitle">window...slave</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>slave </b>[<b></b><i>node</i><b> </b>[<b></b><i>process</i><b> </b>[<b></b><i>thread</i><b></b>]<b></b>]<b></b>]<b></b><br />
+</div>
+<div class="label">Description</div>
+<div class="text">Determines where in a multi-processing environment,
+	rendering for a particular window should take place.</div>
+<div class="label"></div>
+<p><i>Valid in: window</i></p>
+<a name="proc_window...sync"></a>
+<div class="proctitle">window...sync</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>sync</b><br />
+</div>
+<div class="label">Description</div>
+<div class="text">Marks this window as being synchronously rendered (the default).</div>
+<div class="label"></div>
+<p><i>Valid in: window</i></p>
+<a name="proc_window...viewport"></a>
+<div class="proctitle">window...viewport</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>viewport </b><i>x</i><b> </b><i>y</i><b> </b><i>width</i><b> </b><i>height</i><b></b><br />
+</div>
+<div class="label">Description</div>
+<div class="text">Sets the viewport for the a specific window.</div>
+<div class="label"></div>
+<p><i>Valid in: window</i></p>

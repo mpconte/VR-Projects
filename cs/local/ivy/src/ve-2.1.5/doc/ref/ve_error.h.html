@@ -1,0 +1,164 @@
+<html>
+<head>
+<title>File: ve_error.h</title>
+</head>
+<body>
+<h1>File: ve_error.h</h1>
+
+
+<p>
+      <p>The ve_error module is a general method for reporting internal
+      errors to the application and/or user.  Its API is also available
+      for applications to use for application errors if the author
+      chooses.</p>
+      <p>Errors are loosely grouped into the following categories:
+      notices, warning, errors, and fatal errors (a.k.a. "fatals").
+      Notices are information messages which relate information about
+      the state of the library, detected or default settings, but which
+      do not indicate a problem.  Warnings are detected problems from
+      which the library believes it can recover with little impact
+      on the functioning of the system.  Errors are problems from which
+      the library can recover but which may significantly impact 
+      operations.  Fatals are errors from which the library cannot
+      (or should not) recover.</p>
+      <p>Of these, notices and warnings are the only optional messages.
+      That is, the application may choose to disregard notices and
+      warnings.  By default notices are not shown, and warnings are
+      shown.</p>
+  
+<p>
+<a name="function_veShowNotices"></a><p><em>Function:</em> <b>veShowNotices</b>
+<blockquote>
+<pre>
+void veShowNotices(int i);</pre>      <p>Sets the library's disposition to notices - if non-zero then
+      notices will be passed to the error handler.  If zero then notices
+      will not be passed to the error handler.  By default, notices are
+      not passed to the error handler.</p>
+
+<p><b>i</b> - 
+      If non-zero, notices are passed on.  If zero, notices are discarded.
+  
+</blockquote>
+<p>
+<a name="function_veShowWarnings"></a><p><em>Function:</em> <b>veShowWarnings</b>
+<blockquote>
+<pre>
+void veShowWarnings(int i);</pre>      <p>Sets the library's disposition to warnings - if non-zero then
+      warnings will be passed to the error handler.  If zero then warnings
+      will not be passed to the error handler.  By default, warnings are
+      passed to the error handler.</p>
+
+<p><b>i</b> - 
+      If non-zero, warnings are passed on.  If zero, warnings are discarded.
+  
+</blockquote>
+<p>
+<a name="function_veNotice"></a><p><em>Function:</em> <b>veNotice</b>
+<blockquote>
+<pre>
+void veNotice(char *module, char *fmt, ...);</pre>      <p>Generates a notice.  The message is passed in <code>printf()</code>
+      style.</p>
+      
+<p><b>module</b> - 
+      The name of the module from which the notice originates.  All
+      VE library messages have modules which begin with "ve_" or "vei_".
+      Applications should avoid these prefixes.
+      
+<p><b>fmt</b> - 
+      The format string of the message, in <code>printf()</code>-style.
+  
+</blockquote>
+<p>
+<a name="function_veWarning"></a><p><em>Function:</em> <b>veWarning</b>
+<blockquote>
+<pre>
+void veWarning(char *module, char *fmt, ...);</pre>      <p>Generates a warning.  The message is passed in <code>printf()</code>
+      style.</p>
+      
+<p><b>module</b> - 
+      The name of the module from which the notice originates.  All
+      VE library messages have modules which begin with "ve_" or "vei_".
+      Applications should avoid these prefixes.
+      
+<p><b>fmt</b> - 
+      The format string of the message, in <code>printf()</code>-style.
+  
+</blockquote>
+<p>
+<a name="function_veError"></a><p><em>Function:</em> <b>veError</b>
+<blockquote>
+<pre>
+void veError(char *module, char *fmt, ...);</pre>      <p>Generates an error.  The message is passed in <code>printf()</code>
+      style.</p>
+      
+<p><b>module</b> - 
+      The name of the module from which the notice originates.  All
+      VE library messages have modules which begin with "ve_" or "vei_".
+      Applications should avoid these prefixes.
+      
+<p><b>fmt</b> - 
+      The format string of the message, in <code>printf()</code>-style.
+  
+</blockquote>
+<p>
+<a name="function_veFatalError"></a><p><em>Function:</em> <b>veFatalError</b>
+<blockquote>
+<pre>
+void veFatalError(char *module, char *fmt, ...);</pre>      <p>Generates an error.  The message is passed in <code>printf()</code>
+      style.  After delivering the message to the error handler, the
+      program will be terminated.</p>
+      
+<p><b>module</b> - 
+      The name of the module from which the notice originates.  All
+      VE library messages have modules which begin with "ve_" or "vei_".
+      Applications should avoid these prefixes.
+      
+<p><b>fmt</b> - 
+      The format string of the message, in <code>printf()</code>-style.
+  
+</blockquote>
+<p>
+<a name="function_veSetErrorHandler"></a><p><em>Function:</em> <b>veSetErrorHandler</b>
+<blockquote>
+<pre>
+void veSetErrorHandler(VeErrorHandler handler);</pre>      <p>There is a single global error handler through which all messages
+      pass.  It is the job of this handler to report the message to the
+      user or application.  The default error handler directs all messages
+      to <code>stderr</code>.<p>
+      <p>An error handler is defined as:
+<pre>
+        void (*VeErrorHandler)(int type, char *module, char *msg)
+</pre>
+      The <code>type</code> argument is one of the following constants,
+      each representing the corresponding type of the error being passed to
+      the handler:  <code>VE_ERR_NOTICE</code>, <code>VE_ERR_WARNING</code>,
+      <code>VE_ERR_ERROR</code>, <code>VE_ERR_FATAL</code>.
+      The <code>module</code> argument is the name of the VE module from
+      which the message originated (as passed to the appropriate error
+      function) and the <code>msg</code> argument is the error message.
+      Error handlers should relate both pieces of information to the
+      user.</p>
+      <p>When writing error handlers, you should also beware when
+      handling fatals.  A fatal will terminate the program as soon as the
+      error handler returns, so relying on an asynchronous event to deliver
+      the message may result in the message never reaching the user.
+      </p>
+
+<p><b>handler</b> - 
+      The new error handler to install.  If this is <code>NULL</code> then
+      the default error handler is installed.
+   
+</blockquote>
+
+<h2>Index</h2>
+<ul>
+<li><a href="#function_veError">veError (function)</a></li>
+<li><a href="#function_veFatalError">veFatalError (function)</a></li>
+<li><a href="#function_veNotice">veNotice (function)</a></li>
+<li><a href="#function_veSetErrorHandler">veSetErrorHandler (function)</a></li>
+<li><a href="#function_veShowNotices">veShowNotices (function)</a></li>
+<li><a href="#function_veShowWarnings">veShowWarnings (function)</a></li>
+<li><a href="#function_veWarning">veWarning (function)</a></li>
+</ul>
+</body>
+</html>

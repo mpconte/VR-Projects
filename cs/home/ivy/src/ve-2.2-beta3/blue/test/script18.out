@@ -1,0 +1,21 @@
+1 = 2
+3 = 6
+2 = 4
+5 = 10
+4 = 8
+7 = 14
+6 = 12
+9 = 18
+8 = 16
+10 = 20
+checking existence of 1
+checking existence of 2
+checking existence of 3
+checking existence of 4
+checking existence of 5
+checking existence of 6
+checking existence of 7
+checking existence of 8
+checking existence of 9
+checking existence of 10
+result = ok

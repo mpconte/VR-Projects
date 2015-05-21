@@ -1,0 +1,139 @@
+use keyboard
+use gamepad gamepad {
+  optional 1
+}
+use joystick joystick {
+  optional 1
+}
+filter joystick.* {
+$e 	rename gamepad
+}
+
+filter gamepad.axis1 {
+  $e  rename tilt
+}
+
+filter gamepad.axis0 {
+$e    rename pan
+}
+
+#filter gamepad.axis3 {
+#   rename twist
+#}
+
+filter gamepad.axis4 {
+$e    rename move
+}
+
+filter gamepad.button0 {
+$e    rename backward
+}
+filter gamepad.button1 {
+   
+   $e rename pan_dec
+}
+filter gamepad.button2 {
+   
+   $e rename tilt_inc
+}
+filter gamepad.button3 {
+   $e rename forward
+}
+filter gamepad.button4 {
+   
+   $e rename pan_inc
+}
+filter gamepad.button5 {
+   
+   $e rename pan_dec
+}
+filter gamepad.button8 {
+   exit
+}
+filter keyboard.b {
+   
+   $e rename toggle_boundary
+}
+filter keyboard.f {
+   
+   $e rename toggle_flymode
+}
+filter keyboard.x {
+   $e rename txm
+}
+filter keyboard.X {
+   $e rename txp
+}
+filter keyboard.h {
+   $e rename hitme
+}
+filter keyboard.Y {
+   $e rename typ
+}
+filter keyboard.z {
+   $e rename tzm
+}
+filter keyboard.Z {
+   $e rename tzp
+}
+filter keyboard.p {
+   $e rename rxm
+}
+filter keyboard.P {
+   $e rename rxp
+}
+filter keyboard.q {
+   $e rename rym
+}
+filter keyboard.Q {
+   $e rename ryp
+}
+filter keyboard.r {
+   $e rename rzm
+}
+filter keyboard.R {
+   $e rename rzp
+}
+filter keyboard.s {
+   $e rename sm
+}
+filter keyboard.S {
+   $e rename sp
+}
+filter keyboard.0 {
+   $e rename reset
+}
+filter keyboard.8 {
+   $e rename tilt_inc}
+filter keyboard.2 { 
+   $e rename tilt_dec}
+filter keyboard.6 { 
+   $e rename pan_dec}
+filter keyboard.4 { 
+   $e rename pan_inc}
+filter keyboard.Right { 
+   $e rename pan_dec}
+filter keyboard.Left { 
+   $e rename pan_inc}
+filter keyboard.5 { 
+   $e rename reset}
+filter keyboard.d { 
+   $e rename forward}
+filter keyboard.a { 
+   $e rename backward}
+filter keyboard.Up { 
+   $e rename forward}
+filter keyboard.Down { 
+   $e rename backward}
+filter keyboard.7 { 
+   $e rename twist_inc}
+filter keyboard.9 { 
+   $e rename twist_dec}
+filter keyboard.l { 
+   $e ename toggle_logging}
+filter keyboard.Escape { exit }
+
+filter *.* {
+  $e dump
+}
+

@@ -1,0 +1,10 @@
+digraph G {
+	new -> used [label="nrefs == 1"];
+	new -> volatile [label="nlinks == 1"];
+	used -> volatile [label="nrefs == 0 &&\nnlinks > 0"];
+	volatile -> used [label="nrefs > 0"];
+	used -> garbage [label="nrefs == 0 &&\nnlinks == 0"];
+	volatile -> garbage [label="nlinks == 0 ||\nisolated"];
+	new [shape=box];
+	garbage [shape=box];
+}

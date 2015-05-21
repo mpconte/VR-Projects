@@ -1,0 +1,890 @@
+-------------------------------------------------------------------------
+SpeedShop profile listing generated Fri Sep  6 15:24:01 2002
+   prof -b ./skyfly.gi_hwctime.m55486
+                  skyfly (n32): Target program
+                    gi_hwctime: Experiment name
+  hwct,15,1000003,0,SIGPROF:cu: Marching orders
+               R12000 / R12010: CPU / FPU
+                            16: Number of CPUs
+                            44: Clock frequency (MHz.)
+  Experiment notes--
+	  From file ./skyfly.gi_hwctime.m55486:
+	Caliper point 0 at target begin, PID 55486
+			./skyfly
+	Caliper point 1 at exit(0)
+-------------------------------------------------------------------------
+Summary of perf. counter overflow callstack sampling data (gi_hwctime)--
+                          1962: Total Samples
+                             0: Samples with incomplete traceback
+   Graduated instructions (15): Counter name (number)
+                       1000003: Counter overflow value
+                    1962005886: Total counts
+
+                    Cycles (0): Aggregate counter name (number)
+                 2963966282298: Total aggregate counts
+
+-------------------------------------------------------------------------
+Function list, in descending order by exclusive counts
+-------------------------------------------------------------------------
+ [index]  excl.ovfls excl.%   cum.%  incl.ovfls incl.%  function  (dso: file, line)
+
+     [3]         255  13.0%   13.0%        1583  80.7%  veTimerWaitForEvents (libve.so: ve_timer.c, 165)
+     [9]         161   8.2%   21.2%         260  13.3%  ptctl (libpthread.so: libcthread.c, 208)
+    [16]         152   7.7%   29.0%         152   7.7%  erode_terrain (skyfly: database.c, 249)
+    [15]          99   5.0%   34.0%         168   8.6%  pthread_mutex_unlock (libpthread.so: mtx.c, 657)
+     [7]          97   4.9%   38.9%         283  14.4%  veThrMutexLock (libve.so: ve_thread_posix.c, 179)
+    [22]          96   4.9%   43.8%          96   4.9%  veGetDebugLevel (libve.so: ve_debug.c, 25)
+     [6]          90   4.6%   48.4%         297  15.1%  veThrMutexUnlock (libve.so: ve_thread_posix.c, 188)
+    [10]          90   4.6%   53.0%         223  11.4%  get_the_time (libveclock.so: ve_clock_unix.c, 54)
+    [17]          79   4.0%   57.0%         133   6.8%  _clock_gettime (libc.so.1: clock_gettime.c, 39)
+     [5]          75   3.8%   60.9%         381  19.4%  _usleep (libc.so.1: usleep.c, 29)
+    [23]          69   3.5%   64.4%          69   3.5%  _SGIPT_cmp_and_swap (libpthread.so: asm.s, 290)
+    [18]          64   3.3%   67.6%         129   6.6%  pthread_mutex_lock (libpthread.so: mtx.c, 298)
+    [26]          64   3.3%   70.9%          64   3.3%  _SGIPT_cmp0_and_swap (libpthread.so: asm.s, 320)
+    [21]          57   2.9%   73.8%          97   4.9%  _SGIPT_libc_cncl_test (libpthread.so: intr.c, 326)
+     [4]          55   2.8%   76.6%         436  22.2%  veMicroSleep (libve.so: ve_util.c, 330)
+    [27]          54   2.8%   79.4%          54   2.8%  _BSD_getime (libc.so.1: BSD_getime.s, 12)
+     [8]          53   2.7%   82.1%         276  14.1%  veClock (libveclock.so: ve_clock_unix.c, 117)
+    [29]          49   2.5%   84.6%          49   2.5%  _mtlib_libc_cncl (libc.so.1: libcthread.c, 413)
+    [30]          47   2.4%   87.0%          47   2.4%  peekNextTime (libve.so: ve_timer.c, 126)
+    [33]          40   2.0%   89.0%          40   2.0%  pthread_testcancel (libpthread.so: cncl.c, 233)
+    [25]          38   1.9%   90.9%          65   3.3%  fly_paper_planes (skyfly: fly.c, 361)
+    [34]          36   1.8%   92.8%          36   1.8%  veMatrixMult (libve.so: ve_math.c, 75)
+    [43]          16   0.8%   93.6%          16   0.8%  terrain_height (skyfly: fly.c, 447)
+    [47]          11   0.6%   94.1%          11   0.6%  __read (libc.so.1: read.s, 20)
+    [52]           9   0.5%   94.6%           9   0.5%  __sin (libm.so: sin.c, 194)
+    [40]           8   0.4%   95.0%          31   1.6%  drawperfobj (skyfly: perfdraw.c, 35)
+    [50]           7   0.4%   95.4%          10   0.5%  create_terrain (skyfly: database.c, 188)
+    [59]           6   0.3%   95.7%           6   0.3%  color_terrain (skyfly: database.c, 354)
+    [53]           6   0.3%   96.0%           8   0.4%  init_cells (skyfly: database.c, 428)
+    [60]           6   0.3%   96.3%           6   0.3%  __cos (libm.so: cos.c, 194)
+    [44]           5   0.3%   96.5%          16   0.8%  drawlitmesh_11 (skyfly: perfdraw.c, 206)
+    [62]           5   0.3%   96.8%           5   0.3%  glNormal3fv (libGLcore.so: g_api.s, 569)
+    [71]           3   0.2%   96.9%           3   0.2%  init_texture_and_lighting (skyfly: skyfly.c, 602)
+    [41]           3   0.2%   97.1%          30   1.5%  enter_in_ring (skyfly: skyfly.c, 414)
+    [72]           3   0.2%   97.2%           3   0.2%  glVertex3fv (libGLcore.so: g_api.s, 1341)
+    [73]           3   0.2%   97.4%           3   0.2%  veMatrixIdentity (libve.so: ve_math.c, 10)
+    [81]           2   0.1%   97.5%           2   0.1%  _ksigprocmask (libssrt.so: ksigprocmask.s, 20)
+    [42]           2   0.1%   97.6%          24   1.2%  nid_uncompressed_thread (niddrv.so: venid.c, 847)
+    [54]           2   0.1%   97.7%           8   0.4%  __glXMakeContextCurrent (libGL.so: glx_ext.c, 1839)
+    [61]           2   0.1%   97.8%           6   0.3%  MakeCurrentRead (libGLcore.so: kon_context.c, 459)
+    [82]           2   0.1%   97.9%           2   0.1%  libc_lock_lock (libpthread.so: libcthread.c, 465)
+    [83]           2   0.1%   98.0%           2   0.1%  __glkonim_Normal3fv (libGLcore.so: kon_sfuncs.s, 140)
+    [84]           2   0.1%   98.1%           2   0.1%  __glkonim_Begin (libGLcore.so: kon_modes.c, 23)
+    [85]           2   0.1%   98.2%           2   0.1%  insertHeap (libve.so: ve_timer.c, 102)
+    [74]           2   0.1%   98.3%           3   0.2%  veDeviceMatchSpec (libve.so: ve_dev_spec.c, 87)
+    [51]           1   0.1%   98.4%          10   0.5%  push_nid_event (niddrv.so: venid.c, 753)
+    [57]           1   0.1%   98.4%           7   0.4%  _doProcessEvent (libve.so: ve_dev_event.c, 275)
+   [109]           1   0.1%   98.5%           1   0.1%  memset (libc.so.1: bzero.s, 98)
+    [86]           1   0.1%   98.5%           2   0.1%  put_cell (skyfly: database.c, 499)
+   [110]           1   0.1%   98.6%           1   0.1%  putv3fdata (skyfly: perfdraw.c, 376)
+   [111]           1   0.1%   98.6%           1   0.1%  XGetVisualInfo (libX11.so.1: VisUtil.c, 60)
+    [36]           1   0.1%   98.7%          35   1.8%  cull_proc (skyfly: skyfly.c, 291)
+   [112]           1   0.1%   98.7%           1   0.1%  __glkonlc_Vertex3fv (libGLcore.so: kon_cdlfuncs.c, 879)
+   [113]           1   0.1%   98.8%           1   0.1%  __glkonlc_Color3fv (libGLcore.so: kon_cdlfuncs.c, 47)
+   [114]           1   0.1%   98.8%           1   0.1%  glTexCoord2fv (libGLcore.so: g_api.s, 1021)
+    [63]           1   0.1%   98.9%           5   0.3%  veTimerEventsPending (libve.so: ve_timer.c, 144)
+    [35]           1   0.1%   98.9%          36   1.8%  update_view_pos (skyfly: skyfly.c, 260)
+    [64]           1   0.1%   99.0%           5   0.3%  render_ctrl_handler (libveglx.so: vei_glx.c, 460)
+    [66]           1   0.1%   99.0%           4   0.2%  __glXBindHWContextToWindow (libGL.so: glx_direct.c, 630)
+    [75]           1   0.1%   99.1%           3   0.2%  ___libc_lockmalloc (libc.so.1: libcthread.c, 285)
+    [76]           1   0.1%   99.1%           3   0.2%  veAddTimerProc (libve.so: ve_timer.c, 135)
+   [115]           1   0.1%   99.2%           1   0.1%  veThrCondBcast (libve.so: ve_thread_posix.c, 256)
+   [116]           1   0.1%   99.2%           1   0.1%  track_shots (skyfly: fly.c, 258)
+   [117]           1   0.1%   99.3%           1   0.1%  glDisable (libGLcore.so: g_api.s, 1927)
+   [118]           1   0.1%   99.3%           1   0.1%  veMatrixFrustum (libve.so: ve_math.c, 210)
+   [119]           1   0.1%   99.4%           1   0.1%  glRotatef (libGLcore.so: g_api.s, 2538)
+    [87]           1   0.1%   99.4%           2   0.1%  fly_stick (skyfly: fly.c, 180)
+   [120]           1   0.1%   99.5%           1   0.1%  __glkonim_Rotatef (libGLcore.so: kon_cfuncs.c, 924)
+   [121]           1   0.1%   99.5%           1   0.1%  update_sounds (skyfly: gm_main.c, 124)
+   [122]           1   0.1%   99.6%           1   0.1%  mtx_slow_lock (libpthread.so: mtx.c, 413)
+   [123]           1   0.1%   99.6%           1   0.1%  __ioctl (libc.so.1: ioctl.s, 20)
+    [88]           1   0.1%   99.7%           2   0.1%  veMP_OSSend (libve.so: ve_mp_posix.c, 646)
+   [124]           1   0.1%   99.7%           1   0.1%  veVectorCross (libve.so: ve_math.c, 102)
+   [125]           1   0.1%   99.8%           1   0.1%  __writev (libc.so.1: writev.s, 20)
+   [126]           1   0.1%   99.8%           1   0.1%  strlen (libc.so.1: strlen.s, 58)
+   [127]           1   0.1%   99.9%           1   0.1%  hashString (libve.so: ve_util.c, 122)
+   [128]           1   0.1%   99.9%           1   0.1%  etype_to_str (libve.so: ve_dev_spec.c, 75)
+   [129]           1   0.1%  100.0%           1   0.1%  Ioctl (libGL.so: glx_direct.c, 472)
+    [11]           0   0.0%  100.0%         180   9.2%  __start (skyfly: crt1text.s, 103)
+    [12]           0   0.0%  100.0%         180   9.2%  main (skyfly: gm_main.c, 368)
+    [89]           0   0.0%  100.0%           2   0.1%  veInit (libve.so: ve_main.c, 292)
+    [90]           0   0.0%  100.0%           2   0.1%  process_options (libve.so: ve_main.c, 195)
+    [91]           0   0.0%  100.0%           2   0.1%  veReadDevices (libve.so: ve_main.c, 75)
+    [92]           0   0.0%  100.0%           2   0.1%  veDeviceUse (libve.so: ve_device.c, 74)
+    [93]           0   0.0%  100.0%           2   0.1%  veDeviceUseByDesc (libve.so: ve_device.c, 42)
+    [94]           0   0.0%  100.0%           2   0.1%  veDeviceFindDriver (libve.so: ve_dev_driver.c, 24)
+    [95]           0   0.0%  100.0%           2   0.1%  veRegDynamicDriver (libve.so: ve_driver.c, 128)
+    [96]           0   0.0%  100.0%           2   0.1%  _dlopen (libc.so.1: libdl.c, 43)
+    [97]           0   0.0%  100.0%           2   0.1%  __tp_dlinsert_post (libss.so: sswrap.c, 123)
+    [98]           0   0.0%  100.0%           2   0.1%  libss_dlinsert_post (libssrt.so: sslibc.c, 1224)
+    [99]           0   0.0%  100.0%           2   0.1%  libss_update_objlist (libssrt.so: ssbase.c, 932)
+   [100]           0   0.0%  100.0%           2   0.1%  libss_scan_addresses_from_rld (libssrt.so: ssbase.c, 243)
+   [101]           0   0.0%  100.0%           2   0.1%  __malloc (libssrt.so: ssmem.c, 536)
+   [102]           0   0.0%  100.0%           2   0.1%  _sigprocmask (libssrt.so: sigprocmask.c, 45)
+     [1]           0   0.0%  100.0%        1782  90.8%  _SGIPT_pt_start (libpthread.so: pt.c, 791)
+    [55]           0   0.0%  100.0%           8   0.4%  veDeviceInsertEvent (libve.so: ve_dev_event.c, 426)
+   [130]           0   0.0%  100.0%           1   0.1%  veDeviceRunFilterChain (libve.so: ve_dev_filter.c, 328)
+   [131]           0   0.0%  100.0%           1   0.1%  convert_to_valuator_proc (libve.so: ve_dev_intf.c, 641)
+   [132]           0   0.0%  100.0%           1   0.1%  veDeviceEContentCreate (libve.so: ve_dev_model.c, 44)
+   [133]           0   0.0%  100.0%           1   0.1%  fzeromalloc (libve.so: ve_dev_model.c, 12)
+    [13]           0   0.0%  100.0%         177   9.0%  init_skyfly (skyfly: skyfly.c, 140)
+   [134]           0   0.0%  100.0%           1   0.1%  init_shmem (skyfly: skyfly.c, 480)
+   [103]           0   0.0%  100.0%           2   0.1%  _calloc (libc.so.1: calloc.c, 27)
+     [2]           0   0.0%  100.0%        1702  86.7%  timer_thread (libve.so: ve_main.c, 405)
+    [19]           0   0.0%  100.0%         114   5.8%  veTimerProcEvent (libve.so: ve_timer.c, 189)
+    [20]           0   0.0%  100.0%         109   5.6%  gameLogic (skyfly: gm_main.c, 247)
+    [24]           0   0.0%  100.0%          68   3.5%  sim_singlechannel (skyfly: skyfly.c, 158)
+    [14]           0   0.0%  100.0%         176   9.0%  init_terrain (skyfly: database.c, 147)
+    [28]           0   0.0%  100.0%          51   2.6%  render_thread (libveglx.so: vei_glx.c, 394)
+    [67]           0   0.0%  100.0%           4   0.2%  open_window (libveglx.so: vei_glx.c, 177)
+   [135]           0   0.0%  100.0%           1   0.1%  glXQueryExtensionsString (libGL.so: glx_cmds.c, 1867)
+   [136]           0   0.0%  100.0%           1   0.1%  __glXInitialize (libGL.so: glx_ext.c, 1377)
+   [137]           0   0.0%  100.0%           1   0.1%  AllocAndFetchScreenConfigs (libGL.so: glx_ext.c, 1210)
+   [138]           0   0.0%  100.0%           1   0.1%  GetFBConfigs (libGL.so: glx_ext.c, 935)
+   [139]           0   0.0%  100.0%           1   0.1%  __glXOverrideVisualGetVisualInfo (libGL.so: glx_ext.c, 111)
+    [77]           0   0.0%  100.0%           3   0.2%  veiGlSetupWindow (libveglx.so: vei_gl.c, 86)
+    [78]           0   0.0%  100.0%           3   0.2%  init_gl (skyfly: skyfly.c, 566)
+    [31]           0   0.0%  100.0%          42   2.1%  veiGlRenderWindow (libveglx.so: vei_gl.c, 163)
+    [32]           0   0.0%  100.0%          42   2.1%  veiGlRenderMonoWindow (libveglx.so: vei_gl.c, 134)
+    [37]           0   0.0%  100.0%          35   1.8%  veiGlDisplayWindow (libveglx.so: vei_gl.c, 103)
+    [38]           0   0.0%  100.0%          35   1.8%  draw (skyfly: gm_main.c, 272)
+    [39]           0   0.0%  100.0%          35   1.8%  handle_draw (skyfly: skyfly.c, 403)
+    [68]           0   0.0%  100.0%           4   0.2%  init_terrain_list (skyfly: skyfly.c, 213)
+    [69]           0   0.0%  100.0%           4   0.2%  drawcolrtexmesh_10 (skyfly: perfdraw.c, 247)
+   [104]           0   0.0%  100.0%           2   0.1%  vePostRedisplay (libve.so: ve_main.c, 320)
+   [105]           0   0.0%  100.0%           2   0.1%  veDeviceHandleCallback (libve.so: ve_dev_event.c, 123)
+   [140]           0   0.0%  100.0%           1   0.1%  veLockCallbacks (libve.so: ve_core.c, 23)
+    [58]           0   0.0%  100.0%           7   0.4%  veGetWindowView (libve.so: ve_core.c, 108)
+    [79]           0   0.0%  100.0%           3   0.2%  veUnmapFrame (libve.so: ve_core.c, 215)
+    [70]           0   0.0%  100.0%           4   0.2%  veMatrixInvLookAt (libve.so: ve_math.c, 171)
+    [65]           0   0.0%  100.0%           5   0.3%  msg_thread (libve.so: ve_mp.c, 79)
+    [56]           0   0.0%  100.0%           8   0.4%  glXMakeCurrent (libGL.so: glx_ext.c, 2334)
+   [106]           0   0.0%  100.0%           2   0.1%  _ioctl (libc.so.1: ioctlSCI.c, 26)
+   [141]           0   0.0%  100.0%           1   0.1%  veDeviceEventDestroy (libve.so: ve_dev_event.c, 69)
+   [142]           0   0.0%  100.0%           1   0.1%  _free (libc.so.1: malloc.c, 903)
+    [45]           0   0.0%  100.0%          12   0.6%  nidNextEvents (libnid.so: nid.c, 1060)
+    [46]           0   0.0%  100.0%          12   0.6%  nidReceiveRawPacket (libnid.so: nid.c, 181)
+   [107]           0   0.0%  100.0%           2   0.1%  _malloc (libc.so.1: malloc.c, 183)
+    [48]           0   0.0%  100.0%          11   0.6%  nidOsNextPacket (libnid.so: nid_unix.c, 68)
+    [49]           0   0.0%  100.0%          11   0.6%  _read (libc.so.1: readSCI.c, 27)
+    [80]           0   0.0%  100.0%           3   0.2%  veMatrixRotate (libve.so: ve_math.c, 20)
+   [143]           0   0.0%  100.0%           1   0.1%  veMPRespond (libve.so: ve_mp.c, 484)
+   [144]           0   0.0%  100.0%           1   0.1%  veRun (libve.so: ve_main.c, 458)
+   [145]           0   0.0%  100.0%           1   0.1%  veEventLoop (libve.so: ve_main.c, 446)
+   [146]           0   0.0%  100.0%           1   0.1%  render_thread (libve.so: ve_main.c, 349)
+   [147]           0   0.0%  100.0%           1   0.1%  veRender (libveglx.so: vei_glx.c, 620)
+   [148]           0   0.0%  100.0%           1   0.1%  veMPSendCtrl (libve.so: ve_mp.c, 476)
+   [149]           0   0.0%  100.0%           1   0.1%  veMPIntPush (libve.so: ve_mp.c, 429)
+   [150]           0   0.0%  100.0%           1   0.1%  veMatrixLookAt (libve.so: ve_math.c, 147)
+   [108]           0   0.0%  100.0%           2   0.1%  veDeviceFTableFind (libve.so: ve_dev_filter.c, 276)
+   [151]           0   0.0%  100.0%           1   0.1%  _writev (libc.so.1: writevSCI.c, 27)
+   [152]           0   0.0%  100.0%           1   0.1%  veDupString (libve.so: ve_util.c, 28)
+   [153]           0   0.0%  100.0%           1   0.1%  veDeviceApplyEvent (libve.so: ve_dev_event.c, 450)
+   [154]           0   0.0%  100.0%           1   0.1%  veDeviceFind (libve.so: ve_device.c, 85)
+   [155]           0   0.0%  100.0%           1   0.1%  veStrMapLookup (libve.so: ve_util.c, 165)
+
+-------------------------------------------------------------------------
+Butterfly function list, in descending order by inclusive counts
+-------------------------------------------------------------------------
+         attrib.% attrib.ovfs                         incl.ovfs  caller (callsite) [index]
+ [index]   incl.%   incl.ovfs    self%   self-ovfs       function [index]
+                              attrib.% attrib.ovfs    incl.ovfs  callee (callsite) [index]
+-------------------------------------------------------------------------
+     [1]    90.8%        1782     0.0%           0         _SGIPT_pt_start [1]
+                                 86.7%        1702         1702  timer_thread (@0x0c21bd3c; libpthread.so: pt.c, 797) [2]
+                                  2.6%          51           51  render_thread (@0x0c21bd3c; libpthread.so: pt.c, 797) [28]
+                                  1.2%          24           24  nid_uncompressed_thread (@0x0c21bd3c; libpthread.so: pt.c, 797) [42]
+                                  0.3%           5            5  msg_thread (@0x0c21bd3c; libpthread.so: pt.c, 797) [65]
+-------------------------------------------------------------------------
+            86.7%        1702                              1782  _SGIPT_pt_start (@0x0c21bd3c; libpthread.so: pt.c, 797) [1]
+     [2]    86.7%        1702     0.0%           0         timer_thread [2]
+                                 80.7%        1583         1583  veTimerWaitForEvents (@0x5ffa8f74; libve.so: ve_main.c, 408) [3]
+                                  5.8%         114          114  veTimerProcEvent (@0x5ffa8fbc; libve.so: ve_main.c, 411) [19]
+                                  0.2%           4            5  veTimerEventsPending (@0x5ffa8f5c; libve.so: ve_main.c, 407) [63]
+                                  0.1%           1            5  veTimerEventsPending (@0x5ffa8ff8; libve.so: ve_main.c, 409) [63]
+-------------------------------------------------------------------------
+            80.7%        1583                              1702  timer_thread (@0x5ffa8f74; libve.so: ve_main.c, 408) [2]
+     [3]    80.7%        1583    13.0%         255         veTimerWaitForEvents [3]
+                                 22.2%         436          436  veMicroSleep (@0x5fface50; libve.so: ve_timer.c, 176) [4]
+                                 15.0%         295          297  veThrMutexUnlock (@0x5fface40; libve.so: ve_timer.c, 175) [6]
+                                 14.2%         279          283  veThrMutexLock (@0x5fface64; libve.so: ve_timer.c, 177) [7]
+                                 13.8%         270          276  veClock (@0x5fface70; libve.so: ve_timer.c, 174) [8]
+                                  2.4%          47           47  peekNextTime (@0x5fface84; libve.so: ve_timer.c, 174) [30]
+                                  0.1%           1          283  veThrMutexLock (@0x5ffacd44; libve.so: ve_timer.c, 167) [7]
+-------------------------------------------------------------------------
+            22.2%         436                              1583  veTimerWaitForEvents (@0x5fface50; libve.so: ve_timer.c, 176) [3]
+     [4]    22.2%         436     2.8%          55         veMicroSleep [4]
+                                 19.4%         381          381  _usleep (@0x5ffaf270; libve.so: ve_util.c, 337) [5]
+-------------------------------------------------------------------------
+            19.4%         381                               436  veMicroSleep (@0x5ffaf270; libve.so: ve_util.c, 337) [4]
+     [5]    19.4%         381     3.8%          75         _usleep [5]
+                                 13.1%         257          260  ptctl (@0x0faee780; libc.so.1: usleep.c, 35) [9]
+                                  2.5%          49           49  _mtlib_libc_cncl (@0x0faee76c; libc.so.1: usleep.c, 35) [29]
+-------------------------------------------------------------------------
+             0.1%           1                                 2  vePostRedisplay (@0x5ffa8ac8; libve.so: ve_main.c, 324) [104]
+             0.1%           1                                 5  veTimerEventsPending (@0x5ffaccfc; libve.so: ve_timer.c, 148) [63]
+            15.0%         295                              1583  veTimerWaitForEvents (@0x5fface40; libve.so: ve_timer.c, 175) [3]
+     [6]    15.1%         297     4.6%          90         veThrMutexUnlock [6]
+                                  8.6%         168          168  pthread_mutex_unlock (@0x5ffb201c; libve.so: ve_thread_posix.c, 191) [15]
+                                  2.0%          39           96  veGetDebugLevel (@0x5ffb1fd0; libve.so: ve_thread_posix.c, 189) [22]
+-------------------------------------------------------------------------
+             0.1%           1                                 1  veLockCallbacks (@0x5ff96284; libve.so: ve_core.c, 25) [140]
+             0.1%           1                              1583  veTimerWaitForEvents (@0x5ffacd44; libve.so: ve_timer.c, 167) [3]
+             0.1%           2                                 5  veTimerEventsPending (@0x5ffacc84; libve.so: ve_timer.c, 146) [63]
+            14.2%         279                              1583  veTimerWaitForEvents (@0x5fface64; libve.so: ve_timer.c, 177) [3]
+     [7]    14.4%         283     4.9%          97         veThrMutexLock [7]
+                                  6.6%         129          129  pthread_mutex_lock (@0x5ffb1efc; libve.so: ve_thread_posix.c, 182) [18]
+                                  1.8%          35           96  veGetDebugLevel (@0x5ffb1eb0; libve.so: ve_thread_posix.c, 180) [22]
+                                  1.1%          22           96  veGetDebugLevel (@0x5ffb1f54; libve.so: ve_thread_posix.c, 184) [22]
+-------------------------------------------------------------------------
+             0.1%           1                                 5  veTimerEventsPending (@0x5ffacca8; libve.so: ve_timer.c, 147) [63]
+             0.3%           5                               114  veTimerProcEvent (@0x5ffacf5c; libve.so: ve_timer.c, 193) [19]
+            13.8%         270                              1583  veTimerWaitForEvents (@0x5fface70; libve.so: ve_timer.c, 174) [3]
+     [8]    14.1%         276     2.7%          53         veClock [8]
+                                 11.4%         223          223  get_the_time (@0x5ffe0e08; libveclock.so: ve_clock_unix.c, 120) [10]
+-------------------------------------------------------------------------
+             0.1%           1                                 2  _ioctl (@0x0fa573bc; libc.so.1: ioctlSCI.c, 28) [106]
+             0.1%           2                                 3  ___libc_lockmalloc (@0x0fac4918; libc.so.1: libcthread.c, 286) [75]
+            13.1%         257                               381  _usleep (@0x0faee780; libc.so.1: usleep.c, 35) [5]
+     [9]    13.3%         260     8.2%         161         ptctl [9]
+                                  4.9%          97           97  _SGIPT_libc_cncl_test (@0x0c217cb0; libpthread.so: libcthread.c, 211) [21]
+                                  0.1%           2            2  libc_lock_lock (@0x0c217cb0; libpthread.so: libcthread.c, 211) [82]
+-------------------------------------------------------------------------
+            11.4%         223                               276  veClock (@0x5ffe0e08; libveclock.so: ve_clock_unix.c, 120) [8]
+    [10]    11.4%         223     4.6%          90         get_the_time [10]
+                                  6.8%         133          133  _clock_gettime (@0x5ffe0a9c; libveclock.so: ve_clock_unix.c, 56) [17]
+-------------------------------------------------------------------------
+    [11]     9.2%         180     0.0%           0         __start [11]
+                                  9.2%         180          180  main (@0x100042e8; skyfly: crt1text.s, 177) [12]
+-------------------------------------------------------------------------
+             9.2%         180                               180  __start (@0x100042e8; skyfly: crt1text.s, 177) [11]
+    [12]     9.2%         180     0.0%           0         main [12]
+                                  9.0%         177          177  init_skyfly (@0x1000b9dc; skyfly: gm_main.c, 401) [13]
+                                  0.1%           2            2  veInit (@0x1000b78c; skyfly: gm_main.c, 371) [89]
+                                  0.1%           1            1  veRun (@0x1000b9e8; skyfly: gm_main.c, 403) [144]
+-------------------------------------------------------------------------
+             9.0%         177                               180  main (@0x1000b9dc; skyfly: gm_main.c, 401) [12]
+    [13]     9.0%         177     0.0%           0         init_skyfly [13]
+                                  9.0%         176          176  init_terrain (@0x1000ce00; skyfly: skyfly.c, 144) [14]
+                                  0.1%           1            1  init_shmem (@0x1000cddc; skyfly: skyfly.c, 141) [134]
+-------------------------------------------------------------------------
+             9.0%         176                               177  init_skyfly (@0x1000ce00; skyfly: skyfly.c, 144) [13]
+    [14]     9.0%         176     0.0%           0         init_terrain [14]
+                                  7.7%         152          152  erode_terrain (@0x10004710; skyfly: database.c, 153) [16]
+                                  0.5%          10           10  create_terrain (@0x10004700; skyfly: database.c, 152) [50]
+                                  0.4%           8            8  init_cells (@0x10004730; skyfly: database.c, 155) [53]
+                                  0.3%           6            6  color_terrain (@0x10004720; skyfly: database.c, 154) [59]
+-------------------------------------------------------------------------
+             8.6%         168                               297  veThrMutexUnlock (@0x5ffb201c; libve.so: ve_thread_posix.c, 191) [6]
+    [15]     8.6%         168     5.0%          99         pthread_mutex_unlock [15]
+                                  3.5%          69           69  _SGIPT_cmp_and_swap (@0x0c219a50; libpthread.so: mtx.c, 690) [23]
+-------------------------------------------------------------------------
+             7.7%         152                               176  init_terrain (@0x10004710; skyfly: database.c, 153) [14]
+    [16]     7.7%         152     7.7%         152         erode_terrain [16]
+-------------------------------------------------------------------------
+             6.8%         133                               223  get_the_time (@0x5ffe0a9c; libveclock.so: ve_clock_unix.c, 56) [10]
+    [17]     6.8%         133     4.0%          79         _clock_gettime [17]
+                                  2.8%          54           54  _BSD_getime (@0x0fa524e4; libc.so.1: clock_gettime.c, 45) [27]
+-------------------------------------------------------------------------
+             6.6%         129                               283  veThrMutexLock (@0x5ffb1efc; libve.so: ve_thread_posix.c, 182) [7]
+    [18]     6.6%         129     3.3%          64         pthread_mutex_lock [18]
+                                  3.3%          64           64  _SGIPT_cmp0_and_swap (@0x0c218eec; libpthread.so: mtx.c, 307) [26]
+                                  0.1%           1            1  mtx_slow_lock (@0x0c218f84; libpthread.so: mtx.c, 336) [122]
+-------------------------------------------------------------------------
+             5.8%         114                              1702  timer_thread (@0x5ffa8fbc; libve.so: ve_main.c, 411) [2]
+    [19]     5.8%         114     0.0%           0         veTimerProcEvent [19]
+                                  5.6%         109          109  gameLogic (@0x5ffad088; libve.so: ve_timer.c, 210) [20]
+                                  0.3%           5          276  veClock (@0x5ffacf5c; libve.so: ve_timer.c, 193) [8]
+-------------------------------------------------------------------------
+             5.6%         109                               114  veTimerProcEvent (@0x5ffad088; libve.so: ve_timer.c, 210) [19]
+    [20]     5.6%         109     0.0%           0         gameLogic [20]
+                                  3.5%          68           68  sim_singlechannel (@0x1000b13c; skyfly: gm_main.c, 258) [24]
+                                  1.8%          36           36  update_view_pos (@0x1000b148; skyfly: gm_main.c, 259) [35]
+                                  0.2%           3            3  veAddTimerProc (@0x1000b178; skyfly: gm_main.c, 263) [76]
+                                  0.1%           2            2  vePostRedisplay (@0x1000b154; skyfly: gm_main.c, 261) [104]
+-------------------------------------------------------------------------
+             4.9%          97                               260  ptctl (@0x0c217cb0; libpthread.so: libcthread.c, 211) [9]
+    [21]     4.9%          97     2.9%          57         _SGIPT_libc_cncl_test [21]
+                                  2.0%          40           40  pthread_testcancel (@0x0c217710; libpthread.so: intr.c, 327) [33]
+-------------------------------------------------------------------------
+             1.1%          22                               283  veThrMutexLock (@0x5ffb1f54; libve.so: ve_thread_posix.c, 184) [7]
+             1.8%          35                               283  veThrMutexLock (@0x5ffb1eb0; libve.so: ve_thread_posix.c, 180) [7]
+             2.0%          39                               297  veThrMutexUnlock (@0x5ffb1fd0; libve.so: ve_thread_posix.c, 189) [6]
+    [22]     4.9%          96     4.9%          96         veGetDebugLevel [22]
+-------------------------------------------------------------------------
+             3.5%          69                               168  pthread_mutex_unlock (@0x0c219a50; libpthread.so: mtx.c, 690) [15]
+    [23]     3.5%          69     3.5%          69         _SGIPT_cmp_and_swap [23]
+-------------------------------------------------------------------------
+             3.5%          68                               109  gameLogic (@0x1000b13c; skyfly: gm_main.c, 258) [20]
+    [24]     3.5%          68     0.0%           0         sim_singlechannel [24]
+                                  3.3%          65           65  fly_paper_planes (@0x1000cec8; skyfly: skyfly.c, 166) [25]
+                                  0.1%           2            2  fly_stick (@0x1000ce94; skyfly: skyfly.c, 163) [87]
+                                  0.1%           1            1  track_shots (@0x1000cee0; skyfly: skyfly.c, 167) [116]
+-------------------------------------------------------------------------
+             3.3%          65                                68  sim_singlechannel (@0x1000cec8; skyfly: skyfly.c, 166) [24]
+    [25]     3.3%          65     1.9%          38         fly_paper_planes [25]
+                                  0.8%          15           16  terrain_height (@0x10009a80; skyfly: fly.c, 415) [43]
+                                  0.3%           6            6  __cos (@0x10009d28; skyfly: fly.c, 428) [60]
+                                  0.3%           6            9  __sin (@0x10009dd4; skyfly: fly.c, 429) [52]
+-------------------------------------------------------------------------
+             3.3%          64                               129  pthread_mutex_lock (@0x0c218eec; libpthread.so: mtx.c, 307) [18]
+    [26]     3.3%          64     3.3%          64         _SGIPT_cmp0_and_swap [26]
+-------------------------------------------------------------------------
+             2.8%          54                               133  _clock_gettime (@0x0fa524e4; libc.so.1: clock_gettime.c, 45) [17]
+    [27]     2.8%          54     2.8%          54         _BSD_getime [27]
+-------------------------------------------------------------------------
+             2.6%          51                              1782  _SGIPT_pt_start (@0x0c21bd3c; libpthread.so: pt.c, 797) [1]
+    [28]     2.6%          51     0.0%           0         render_thread [28]
+                                  2.1%          42           42  veiGlRenderWindow (@0x5ff69c98; libveglx.so: vei_glx.c, 453) [31]
+                                  0.2%           4            8  glXMakeCurrent (@0x5ff69bf4; libveglx.so: vei_glx.c, 446) [56]
+                                  0.2%           4            4  open_window (@0x5ff69b48; libveglx.so: vei_glx.c, 428) [67]
+                                  0.1%           1            8  glXMakeCurrent (@0x5ff69cb4; libveglx.so: vei_glx.c, 454) [56]
+-------------------------------------------------------------------------
+             2.5%          49                               381  _usleep (@0x0faee76c; libc.so.1: usleep.c, 35) [5]
+    [29]     2.5%          49     2.5%          49         _mtlib_libc_cncl [29]
+-------------------------------------------------------------------------
+             2.4%          47                              1583  veTimerWaitForEvents (@0x5fface84; libve.so: ve_timer.c, 174) [3]
+    [30]     2.4%          47     2.4%          47         peekNextTime [30]
+-------------------------------------------------------------------------
+             2.1%          42                                51  render_thread (@0x5ff69c98; libveglx.so: vei_glx.c, 453) [28]
+    [31]     2.1%          42     0.0%           0         veiGlRenderWindow [31]
+                                  2.1%          42           42  veiGlRenderMonoWindow (@0x5ff66fc8; libveglx.so: vei_gl.c, 168) [32]
+-------------------------------------------------------------------------
+             2.1%          42                                42  veiGlRenderWindow (@0x5ff66fc8; libveglx.so: vei_gl.c, 168) [31]
+    [32]     2.1%          42     0.0%           0         veiGlRenderMonoWindow [32]
+                                  1.8%          35           35  veiGlDisplayWindow (@0x5ff66ebc; libveglx.so: vei_gl.c, 153) [37]
+                                  0.4%           7            7  veGetWindowView (@0x5ff66d84; libveglx.so: vei_gl.c, 139) [58]
+-------------------------------------------------------------------------
+             2.0%          40                                97  _SGIPT_libc_cncl_test (@0x0c217710; libpthread.so: intr.c, 327) [21]
+    [33]     2.0%          40     2.0%          40         pthread_testcancel [33]
+-------------------------------------------------------------------------
+             0.1%           1                                 7  veGetWindowView (@0x5ff96d8c; libve.so: ve_core.c, 177) [58]
+             0.2%           4                                 4  veMatrixInvLookAt (@0x5ffaa4c0; libve.so: ve_math.c, 201) [70]
+             0.7%          14                                36  update_view_pos (@0x1000d460; skyfly: skyfly.c, 277) [35]
+             0.9%          17                                36  update_view_pos (@0x1000d448; skyfly: skyfly.c, 276) [35]
+    [34]     1.8%          36     1.8%          36         veMatrixMult [34]
+-------------------------------------------------------------------------
+             1.8%          36                               109  gameLogic (@0x1000b148; skyfly: gm_main.c, 259) [20]
+    [35]     1.8%          36     0.1%           1         update_view_pos [35]
+                                  0.9%          17           36  veMatrixMult (@0x1000d448; skyfly: skyfly.c, 276) [34]
+                                  0.7%          14           36  veMatrixMult (@0x1000d460; skyfly: skyfly.c, 277) [34]
+                                  0.1%           1            1  update_sounds (@0x1000d3c8; skyfly: skyfly.c, 270) [121]
+                                  0.1%           1            3  veMatrixRotate (@0x1000d430; skyfly: skyfly.c, 274) [80]
+                                  0.1%           1            3  veMatrixRotate (@0x1000d3e4; skyfly: skyfly.c, 272) [80]
+                                  0.1%           1            3  veMatrixRotate (@0x1000d400; skyfly: skyfly.c, 273) [80]
+-------------------------------------------------------------------------
+             1.8%          35                                35  handle_draw (@0x1000dcbc; skyfly: skyfly.c, 409) [39]
+    [36]     1.8%          35     0.1%           1         cull_proc [36]
+                                  1.1%          22           30  enter_in_ring (@0x1000daec; skyfly: skyfly.c, 382) [41]
+                                  0.4%           7           30  enter_in_ring (@0x1000dad8; skyfly: skyfly.c, 381) [41]
+                                  0.2%           4            4  init_terrain_list (@0x1000d80c; skyfly: skyfly.c, 323) [68]
+                                  0.1%           1           30  enter_in_ring (@0x1000daa0; skyfly: skyfly.c, 375) [41]
+-------------------------------------------------------------------------
+             1.8%          35                                42  veiGlRenderMonoWindow (@0x5ff66ebc; libveglx.so: vei_gl.c, 153) [32]
+    [37]     1.8%          35     0.0%           0         veiGlDisplayWindow [37]
+                                  1.8%          35           35  draw (@0x5ff66b80; libveglx.so: vei_gl.c, 105) [38]
+-------------------------------------------------------------------------
+             1.8%          35                                35  veiGlDisplayWindow (@0x5ff66b80; libveglx.so: vei_gl.c, 105) [37]
+    [38]     1.8%          35     0.0%           0         draw [38]
+                                  1.8%          35           35  handle_draw (@0x1000b1d0; skyfly: gm_main.c, 274) [39]
+-------------------------------------------------------------------------
+             1.8%          35                                35  draw (@0x1000b1d0; skyfly: gm_main.c, 274) [38]
+    [39]     1.8%          35     0.0%           0         handle_draw [39]
+                                  1.8%          35           35  cull_proc (@0x1000dcbc; skyfly: skyfly.c, 409) [36]
+-------------------------------------------------------------------------
+             0.2%           4                                 4  init_terrain_list (@0x1000d044; skyfly: skyfly.c, 231) [68]
+             1.4%          27                                30  enter_in_ring (@0x1000dd34; skyfly: skyfly.c, 417) [41]
+    [40]     1.6%          31     0.4%           8         drawperfobj [40]
+                                  0.5%           9           16  drawlitmesh_11 (@0x1000bdb4; skyfly: perfdraw.c, 59) [44]
+                                  0.4%           7           16  drawlitmesh_11 (@0x1000bddc; skyfly: perfdraw.c, 61) [44]
+                                  0.2%           4            4  drawcolrtexmesh_10 (@0x1000be1c; skyfly: perfdraw.c, 68) [69]
+                                  0.1%           1            1  glDisable (@0x1000bf20; skyfly: perfdraw.c, 94) [117]
+                                  0.1%           1            1  __glkonim_Rotatef (@0x1000c054; skyfly: perfdraw.c, 113) [120]
+                                  0.1%           1            1  glRotatef (@0x1000c014; skyfly: perfdraw.c, 111) [119]
+-------------------------------------------------------------------------
+             0.1%           1                                35  cull_proc (@0x1000daa0; skyfly: skyfly.c, 375) [36]
+             0.4%           7                                35  cull_proc (@0x1000dad8; skyfly: skyfly.c, 381) [36]
+             1.1%          22                                35  cull_proc (@0x1000daec; skyfly: skyfly.c, 382) [36]
+    [41]     1.5%          30     0.2%           3         enter_in_ring [41]
+                                  1.4%          27           31  drawperfobj (@0x1000dd34; skyfly: skyfly.c, 417) [40]
+-------------------------------------------------------------------------
+             1.2%          24                              1782  _SGIPT_pt_start (@0x0c21bd3c; libpthread.so: pt.c, 797) [1]
+    [42]     1.2%          24     0.1%           2         nid_uncompressed_thread [42]
+                                  0.6%          12           12  nidNextEvents (@0x5ffe50cc; niddrv.so: venid.c, 853) [45]
+                                  0.5%          10           10  push_nid_event (@0x5ffe5078; niddrv.so: venid.c, 865) [51]
+-------------------------------------------------------------------------
+             0.1%           1                                 2  fly_stick (@0x1000806c; skyfly: fly.c, 238) [87]
+             0.8%          15                                65  fly_paper_planes (@0x10009a80; skyfly: fly.c, 415) [25]
+    [43]     0.8%          16     0.8%          16         terrain_height [43]
+-------------------------------------------------------------------------
+             0.4%           7                                31  drawperfobj (@0x1000bddc; skyfly: perfdraw.c, 61) [40]
+             0.5%           9                                31  drawperfobj (@0x1000bdb4; skyfly: perfdraw.c, 59) [40]
+    [44]     0.8%          16     0.3%           5         drawlitmesh_11 [44]
+                                  0.1%           2            5  glNormal3fv (@0x1000c5c4; skyfly: perfdraw.c, 233) [62]
+                                  0.1%           2            5  glNormal3fv (@0x1000c488; skyfly: perfdraw.c, 209) [62]
+                                  0.1%           2            2  __glkonim_Begin (@0x1000c474; skyfly: perfdraw.c, 207) [84]
+                                  0.1%           1            3  glVertex3fv (@0x1000c510; skyfly: perfdraw.c, 219) [72]
+                                  0.1%           1            3  glVertex3fv (@0x1000c600; skyfly: perfdraw.c, 237) [72]
+                                  0.1%           1            2  __glkonim_Normal3fv (@0x1000c614; skyfly: perfdraw.c, 239) [83]
+                                  0.1%           1            2  __glkonim_Normal3fv (@0x1000c574; skyfly: perfdraw.c, 227) [83]
+                                  0.1%           1            5  glNormal3fv (@0x1000c59c; skyfly: perfdraw.c, 230) [62]
+-------------------------------------------------------------------------
+             0.6%          12                                24  nid_uncompressed_thread (@0x5ffe50cc; niddrv.so: venid.c, 853) [42]
+    [45]     0.6%          12     0.0%           0         nidNextEvents [45]
+                                  0.6%          12           12  nidReceiveRawPacket (@0x5ffe7554; libnid.so: nid.c, 1070) [46]
+-------------------------------------------------------------------------
+             0.6%          12                                12  nidNextEvents (@0x5ffe7554; libnid.so: nid.c, 1070) [45]
+    [46]     0.6%          12     0.0%           0         nidReceiveRawPacket [46]
+                                  0.6%          11           11  nidOsNextPacket (@0x5ffe2b54; libnid.so: nid.c, 189) [48]
+                                  0.1%           1            2  _malloc (@0x5ffe38d0; libnid.so: nid.c, 330) [107]
+-------------------------------------------------------------------------
+             0.6%          11                                11  _read (@0x0fa5801c; libc.so.1: readSCI.c, 29) [49]
+    [47]     0.6%          11     0.6%          11         __read [47]
+-------------------------------------------------------------------------
+             0.6%          11                                12  nidReceiveRawPacket (@0x5ffe2b54; libnid.so: nid.c, 189) [46]
+    [48]     0.6%          11     0.0%           0         nidOsNextPacket [48]
+                                  0.5%          10           11  _read (@0x5ffe7c64; libnid.so: nid_unix.c, 73) [49]
+                                  0.1%           1           11  _read (@0x5ffe7d70; libnid.so: nid_unix.c, 83) [49]
+-------------------------------------------------------------------------
+             0.1%           1                                11  nidOsNextPacket (@0x5ffe7d70; libnid.so: nid_unix.c, 83) [48]
+             0.5%          10                                11  nidOsNextPacket (@0x5ffe7c64; libnid.so: nid_unix.c, 73) [48]
+    [49]     0.6%          11     0.0%           0         _read [49]
+                                  0.6%          11           11  __read (@0x0fa5801c; libc.so.1: readSCI.c, 29) [47]
+-------------------------------------------------------------------------
+             0.5%          10                               176  init_terrain (@0x10004700; skyfly: database.c, 152) [14]
+    [50]     0.5%          10     0.4%           7         create_terrain [50]
+                                  0.2%           3            9  __sin (@0x10004e44; skyfly: database.c, 231) [52]
+-------------------------------------------------------------------------
+             0.5%          10                                24  nid_uncompressed_thread (@0x5ffe5078; niddrv.so: venid.c, 865) [42]
+    [51]     0.5%          10     0.1%           1         push_nid_event [51]
+                                  0.4%           8            8  veDeviceInsertEvent (@0x5ffe4b00; niddrv.so: venid.c, 812) [55]
+                                  0.1%           1            1  veDupString (@0x5ffe486c; niddrv.so: venid.c, 764) [152]
+-------------------------------------------------------------------------
+             0.2%           3                                10  create_terrain (@0x10004e44; skyfly: database.c, 231) [50]
+             0.3%           6                                65  fly_paper_planes (@0x10009dd4; skyfly: fly.c, 429) [25]
+    [52]     0.5%           9     0.5%           9         __sin [52]
+-------------------------------------------------------------------------
+             0.4%           8                               176  init_terrain (@0x10004730; skyfly: database.c, 155) [14]
+    [53]     0.4%           8     0.3%           6         init_cells [53]
+                                  0.1%           2            2  put_cell (@0x1000715c; skyfly: database.c, 491) [86]
+-------------------------------------------------------------------------
+             0.4%           8                                 8  glXMakeCurrent (@0x0d8bfac0; libGL.so: glx_ext.c, 2335) [56]
+    [54]     0.4%           8     0.1%           2         __glXMakeContextCurrent [54]
+                                  0.3%           6            6  MakeCurrentRead (@0x0d8beebc; libGL.so: glx_ext.c, 2212) [61]
+-------------------------------------------------------------------------
+             0.4%           8                                10  push_nid_event (@0x5ffe4b00; niddrv.so: venid.c, 812) [51]
+    [55]     0.4%           8     0.0%           0         veDeviceInsertEvent [55]
+                                  0.4%           7            7  _doProcessEvent (@0x5ff98c20; libve.so: ve_dev_event.c, 433) [57]
+                                  0.1%           1            1  veDeviceEventDestroy (@0x5ff98c38; libve.so: ve_dev_event.c, 434) [141]
+-------------------------------------------------------------------------
+             0.1%           1                                51  render_thread (@0x5ff69cb4; libveglx.so: vei_glx.c, 454) [28]
+             0.1%           1                                 5  render_ctrl_handler (@0x5ff6a608; libveglx.so: vei_glx.c, 575) [64]
+             0.1%           2                                 5  render_ctrl_handler (@0x5ff6a5c4; libveglx.so: vei_glx.c, 572) [64]
+             0.2%           4                                51  render_thread (@0x5ff69bf4; libveglx.so: vei_glx.c, 446) [28]
+    [56]     0.4%           8     0.0%           0         glXMakeCurrent [56]
+                                  0.4%           8            8  __glXMakeContextCurrent (@0x0d8bfac0; libGL.so: glx_ext.c, 2335) [54]
+-------------------------------------------------------------------------
+             0.4%           7                                 8  veDeviceInsertEvent (@0x5ff98c20; libve.so: ve_dev_event.c, 433) [55]
+    [57]     0.4%           7     0.1%           1         _doProcessEvent [57]
+                                  0.1%           2            2  veDeviceHandleCallback (@0x5ff98a84; libve.so: ve_dev_event.c, 407) [105]
+                                  0.1%           1            1  veDeviceRunFilterChain (@0x5ff9891c; libve.so: ve_dev_event.c, 372) [130]
+                                  0.1%           1            2  veDeviceFTableFind (@0x5ff98414; libve.so: ve_dev_event.c, 284) [108]
+                                  0.1%           1            2  veDeviceFTableFind (@0x5ff98a4c; libve.so: ve_dev_event.c, 284) [108]
+                                  0.1%           1            1  veDeviceApplyEvent (@0x5ff98a74; libve.so: ve_dev_event.c, 406) [153]
+-------------------------------------------------------------------------
+             0.4%           7                                42  veiGlRenderMonoWindow (@0x5ff66d84; libveglx.so: vei_gl.c, 139) [32]
+    [58]     0.4%           7     0.0%           0         veGetWindowView [58]
+                                  0.2%           3            3  veUnmapFrame (@0x5ff968fc; libve.so: ve_core.c, 127) [79]
+                                  0.1%           1           36  veMatrixMult (@0x5ff96d8c; libve.so: ve_core.c, 177) [34]
+                                  0.1%           1            4  veMatrixInvLookAt (@0x5ff96be4; libve.so: ve_core.c, 155) [70]
+                                  0.1%           1            1  veMatrixFrustum (@0x5ff96d6c; libve.so: ve_core.c, 175) [118]
+                                  0.1%           1            1  veMatrixLookAt (@0x5ff96bbc; libve.so: ve_core.c, 154) [150]
+-------------------------------------------------------------------------
+             0.3%           6                               176  init_terrain (@0x10004720; skyfly: database.c, 154) [14]
+    [59]     0.3%           6     0.3%           6         color_terrain [59]
+-------------------------------------------------------------------------
+             0.3%           6                                65  fly_paper_planes (@0x10009d28; skyfly: fly.c, 428) [25]
+    [60]     0.3%           6     0.3%           6         __cos [60]
+-------------------------------------------------------------------------
+             0.3%           6                                 8  __glXMakeContextCurrent (@0x0d8beebc; libGL.so: glx_ext.c, 2212) [54]
+    [61]     0.3%           6     0.1%           2         MakeCurrentRead [61]
+                                  0.2%           4            4  __glXBindHWContextToWindow (@0x0da89554; libGLcore.so: kon_context.c, 597) [66]
+-------------------------------------------------------------------------
+             0.1%           1                                16  drawlitmesh_11 (@0x1000c59c; skyfly: perfdraw.c, 230) [44]
+             0.1%           2                                16  drawlitmesh_11 (@0x1000c488; skyfly: perfdraw.c, 209) [44]
+             0.1%           2                                16  drawlitmesh_11 (@0x1000c5c4; skyfly: perfdraw.c, 233) [44]
+    [62]     0.3%           5     0.3%           5         glNormal3fv [62]
+-------------------------------------------------------------------------
+             0.1%           1                              1702  timer_thread (@0x5ffa8ff8; libve.so: ve_main.c, 409) [2]
+             0.2%           4                              1702  timer_thread (@0x5ffa8f5c; libve.so: ve_main.c, 407) [2]
+    [63]     0.3%           5     0.1%           1         veTimerEventsPending [63]
+                                  0.1%           2          283  veThrMutexLock (@0x5ffacc84; libve.so: ve_timer.c, 146) [7]
+                                  0.1%           1          276  veClock (@0x5ffacca8; libve.so: ve_timer.c, 147) [8]
+                                  0.1%           1          297  veThrMutexUnlock (@0x5ffaccfc; libve.so: ve_timer.c, 148) [6]
+-------------------------------------------------------------------------
+             0.3%           5                                 5  msg_thread (@0x5ffaf668; libve.so: ve_mp.c, 96) [65]
+    [64]     0.3%           5     0.1%           1         render_ctrl_handler [64]
+                                  0.1%           2            8  glXMakeCurrent (@0x5ff6a5c4; libveglx.so: vei_glx.c, 572) [56]
+                                  0.1%           1            1  veMPRespond (@0x5ff6a4c8; libveglx.so: vei_glx.c, 558) [143]
+                                  0.1%           1            8  glXMakeCurrent (@0x5ff6a608; libveglx.so: vei_glx.c, 575) [56]
+-------------------------------------------------------------------------
+             0.3%           5                              1782  _SGIPT_pt_start (@0x0c21bd3c; libpthread.so: pt.c, 797) [1]
+    [65]     0.3%           5     0.0%           0         msg_thread [65]
+                                  0.3%           5            5  render_ctrl_handler (@0x5ffaf668; libve.so: ve_mp.c, 96) [64]
+-------------------------------------------------------------------------
+             0.2%           4                                 6  MakeCurrentRead (@0x0da89554; libGLcore.so: kon_context.c, 597) [61]
+    [66]     0.2%           4     0.1%           1         __glXBindHWContextToWindow [66]
+                                  0.1%           1            1  Ioctl (@0x0d8ae9ec; libGL.so: glx_direct.c, 645) [129]
+                                  0.1%           1            2  _ioctl (@0x0d8ae9ec; libGL.so: glx_direct.c, 645) [106]
+                                  0.1%           1            2  _ioctl (@0x0d8ae944; libGL.so: glx_direct.c, 674) [106]
+-------------------------------------------------------------------------
+             0.2%           4                                51  render_thread (@0x5ff69b48; libveglx.so: vei_glx.c, 428) [28]
+    [67]     0.2%           4     0.0%           0         open_window [67]
+                                  0.2%           3            3  veiGlSetupWindow (@0x5ff69640; libveglx.so: vei_glx.c, 329) [77]
+                                  0.1%           1            1  glXQueryExtensionsString (@0x5ff68d44; libveglx.so: vei_glx.c, 209) [135]
+-------------------------------------------------------------------------
+             0.2%           4                                35  cull_proc (@0x1000d80c; skyfly: skyfly.c, 323) [36]
+    [68]     0.2%           4     0.0%           0         init_terrain_list [68]
+                                  0.2%           4           31  drawperfobj (@0x1000d044; skyfly: skyfly.c, 231) [40]
+-------------------------------------------------------------------------
+             0.2%           4                                31  drawperfobj (@0x1000be1c; skyfly: perfdraw.c, 68) [40]
+    [69]     0.2%           4     0.0%           0         drawcolrtexmesh_10 [69]
+                                  0.1%           1            1  __glkonlc_Vertex3fv (@0x1000c6d8; skyfly: perfdraw.c, 256) [112]
+                                  0.1%           1            3  glVertex3fv (@0x1000c7c8; skyfly: perfdraw.c, 272) [72]
+                                  0.1%           1            1  __glkonlc_Color3fv (@0x1000c700; skyfly: perfdraw.c, 259) [113]
+                                  0.1%           1            1  glTexCoord2fv (@0x1000c818; skyfly: perfdraw.c, 278) [114]
+-------------------------------------------------------------------------
+             0.1%           1                                 7  veGetWindowView (@0x5ff96be4; libve.so: ve_core.c, 155) [58]
+             0.2%           3                                 3  veUnmapFrame (@0x5ff970e0; libve.so: ve_core.c, 218) [79]
+    [70]     0.2%           4     0.0%           0         veMatrixInvLookAt [70]
+                                  0.2%           4           36  veMatrixMult (@0x5ffaa4c0; libve.so: ve_math.c, 201) [34]
+-------------------------------------------------------------------------
+             0.2%           3                                 3  init_gl (@0x1000e8d0; skyfly: skyfly.c, 582) [78]
+    [71]     0.2%           3     0.2%           3         init_texture_and_lighting [71]
+-------------------------------------------------------------------------
+             0.1%           1                                16  drawlitmesh_11 (@0x1000c510; skyfly: perfdraw.c, 219) [44]
+             0.1%           1                                16  drawlitmesh_11 (@0x1000c600; skyfly: perfdraw.c, 237) [44]
+             0.1%           1                                 4  drawcolrtexmesh_10 (@0x1000c7c8; skyfly: perfdraw.c, 272) [69]
+    [72]     0.2%           3     0.2%           3         glVertex3fv [72]
+-------------------------------------------------------------------------
+             0.2%           3                                 3  veMatrixRotate (@0x5ffa93c4; libve.so: ve_math.c, 25) [80]
+    [73]     0.2%           3     0.2%           3         veMatrixIdentity [73]
+-------------------------------------------------------------------------
+             0.1%           1                                 2  veDeviceHandleCallback (@0x5ff97c10; libve.so: ve_dev_event.c, 128) [105]
+             0.1%           2                                 2  veDeviceFTableFind (@0x5ff9a11c; libve.so: ve_dev_filter.c, 285) [108]
+    [74]     0.2%           3     0.1%           2         veDeviceMatchSpec [74]
+                                  0.1%           1            1  etype_to_str (@0x5ff9cb3c; libve.so: ve_dev_spec.c, 98) [128]
+-------------------------------------------------------------------------
+             0.1%           1                                 1  _free (@0x0fa3c264; libc.so.1: malloc.c, 904) [142]
+             0.1%           2                                 2  _malloc (@0x0fa3b424; libc.so.1: malloc.c, 185) [107]
+    [75]     0.2%           3     0.1%           1         ___libc_lockmalloc [75]
+                                  0.1%           2          260  ptctl (@0x0fac4918; libc.so.1: libcthread.c, 286) [9]
+-------------------------------------------------------------------------
+             0.2%           3                               109  gameLogic (@0x1000b178; skyfly: gm_main.c, 263) [20]
+    [76]     0.2%           3     0.1%           1         veAddTimerProc [76]
+                                  0.1%           2            2  insertHeap (@0x5ffacbf0; libve.so: ve_timer.c, 137) [85]
+-------------------------------------------------------------------------
+             0.2%           3                                 4  open_window (@0x5ff69640; libveglx.so: vei_glx.c, 329) [67]
+    [77]     0.2%           3     0.0%           0         veiGlSetupWindow [77]
+                                  0.2%           3            3  init_gl (@0x5ff66a90; libveglx.so: vei_gl.c, 88) [78]
+-------------------------------------------------------------------------
+             0.2%           3                                 3  veiGlSetupWindow (@0x5ff66a90; libveglx.so: vei_gl.c, 88) [77]
+    [78]     0.2%           3     0.0%           0         init_gl [78]
+                                  0.2%           3            3  init_texture_and_lighting (@0x1000e8d0; skyfly: skyfly.c, 582) [71]
+-------------------------------------------------------------------------
+             0.2%           3                                 7  veGetWindowView (@0x5ff968fc; libve.so: ve_core.c, 127) [58]
+    [79]     0.2%           3     0.0%           0         veUnmapFrame [79]
+                                  0.2%           3            4  veMatrixInvLookAt (@0x5ff970e0; libve.so: ve_core.c, 218) [70]
+-------------------------------------------------------------------------
+             0.1%           1                                36  update_view_pos (@0x1000d400; skyfly: skyfly.c, 273) [35]
+             0.1%           1                                36  update_view_pos (@0x1000d430; skyfly: skyfly.c, 274) [35]
+             0.1%           1                                36  update_view_pos (@0x1000d3e4; skyfly: skyfly.c, 272) [35]
+    [80]     0.2%           3     0.0%           0         veMatrixRotate [80]
+                                  0.2%           3            3  veMatrixIdentity (@0x5ffa93c4; libve.so: ve_math.c, 25) [73]
+-------------------------------------------------------------------------
+             0.1%           2                                 2  _sigprocmask (@0x09f86f78; libssrt.so: sigprocmask.c, 214) [102]
+    [81]     0.1%           2     0.1%           2         _ksigprocmask [81]
+-------------------------------------------------------------------------
+             0.1%           2                               260  ptctl (@0x0c217cb0; libpthread.so: libcthread.c, 211) [9]
+    [82]     0.1%           2     0.1%           2         libc_lock_lock [82]
+-------------------------------------------------------------------------
+             0.1%           1                                16  drawlitmesh_11 (@0x1000c574; skyfly: perfdraw.c, 227) [44]
+             0.1%           1                                16  drawlitmesh_11 (@0x1000c614; skyfly: perfdraw.c, 239) [44]
+    [83]     0.1%           2     0.1%           2         __glkonim_Normal3fv [83]
+-------------------------------------------------------------------------
+             0.1%           2                                16  drawlitmesh_11 (@0x1000c474; skyfly: perfdraw.c, 207) [44]
+    [84]     0.1%           2     0.1%           2         __glkonim_Begin [84]
+-------------------------------------------------------------------------
+             0.1%           2                                 3  veAddTimerProc (@0x5ffacbf0; libve.so: ve_timer.c, 137) [76]
+    [85]     0.1%           2     0.1%           2         insertHeap [85]
+-------------------------------------------------------------------------
+             0.1%           2                                 8  init_cells (@0x1000715c; skyfly: database.c, 491) [53]
+    [86]     0.1%           2     0.1%           1         put_cell [86]
+                                  0.1%           1            1  putv3fdata (@0x100072ac; skyfly: database.c, 514) [110]
+-------------------------------------------------------------------------
+             0.1%           2                                68  sim_singlechannel (@0x1000ce94; skyfly: skyfly.c, 163) [24]
+    [87]     0.1%           2     0.1%           1         fly_stick [87]
+                                  0.1%           1           16  terrain_height (@0x1000806c; skyfly: fly.c, 238) [43]
+-------------------------------------------------------------------------
+             0.1%           1                                 1  veMPRespond (@0x5ffb120c; libve.so: ve_mp.c, 487) [143]
+             0.1%           1                                 1  veMPIntPush (@0x5ffb0d7c; libve.so: ve_mp.c, 435) [149]
+    [88]     0.1%           2     0.1%           1         veMP_OSSend [88]
+                                  0.1%           1            1  _writev (@0x5ffb5218; libve.so: ve_mp_posix.c, 666) [151]
+-------------------------------------------------------------------------
+             0.1%           2                               180  main (@0x1000b78c; skyfly: gm_main.c, 371) [12]
+    [89]     0.1%           2     0.0%           0         veInit [89]
+                                  0.1%           2            2  process_options (@0x5ffa8a04; libve.so: ve_main.c, 311) [90]
+-------------------------------------------------------------------------
+             0.1%           2                                 2  veInit (@0x5ffa8a04; libve.so: ve_main.c, 311) [89]
+    [90]     0.1%           2     0.0%           0         process_options [90]
+                                  0.1%           2            2  veReadDevices (@0x5ffa88f0; libve.so: ve_main.c, 285) [91]
+-------------------------------------------------------------------------
+             0.1%           2                                 2  process_options (@0x5ffa88f0; libve.so: ve_main.c, 285) [90]
+    [91]     0.1%           2     0.0%           0         veReadDevices [91]
+                                  0.1%           2            2  veDeviceUse (@0x5ffa78e8; libve.so: ve_main.c, 97) [92]
+-------------------------------------------------------------------------
+             0.1%           2                                 2  veReadDevices (@0x5ffa78e8; libve.so: ve_main.c, 97) [91]
+    [92]     0.1%           2     0.0%           0         veDeviceUse [92]
+                                  0.1%           2            2  veDeviceUseByDesc (@0x5ff9ff6c; libve.so: ve_device.c, 82) [93]
+-------------------------------------------------------------------------
+             0.1%           2                                 2  veDeviceUse (@0x5ff9ff6c; libve.so: ve_device.c, 82) [92]
+    [93]     0.1%           2     0.0%           0         veDeviceUseByDesc [93]
+                                  0.1%           2            2  veDeviceFindDriver (@0x5ff9fd74; libve.so: ve_device.c, 63) [94]
+-------------------------------------------------------------------------
+             0.1%           2                                 2  veDeviceUseByDesc (@0x5ff9fd74; libve.so: ve_device.c, 63) [93]
+    [94]     0.1%           2     0.0%           0         veDeviceFindDriver [94]
+                                  0.1%           2            2  veRegDynamicDriver (@0x5ff97480; libve.so: ve_dev_driver.c, 32) [95]
+-------------------------------------------------------------------------
+             0.1%           2                                 2  veDeviceFindDriver (@0x5ff97480; libve.so: ve_dev_driver.c, 32) [94]
+    [95]     0.1%           2     0.0%           0         veRegDynamicDriver [95]
+                                  0.1%           2            2  _dlopen (@0x5ffa1b18; libve.so: ve_driver.c, 156) [96]
+-------------------------------------------------------------------------
+             0.1%           2                                 2  veRegDynamicDriver (@0x5ffa1b18; libve.so: ve_driver.c, 156) [95]
+    [96]     0.1%           2     0.0%           0         _dlopen [96]
+                                  0.1%           2            2  __tp_dlinsert_post (@0x0faa7734; libc.so.1: libdl.c, 50) [97]
+-------------------------------------------------------------------------
+             0.1%           2                                 2  _dlopen (@0x0faa7734; libc.so.1: libdl.c, 50) [96]
+    [97]     0.1%           2     0.0%           0         __tp_dlinsert_post [97]
+                                  0.1%           2            2  libss_dlinsert_post (@0x09fe188c; libss.so: sswrap.c, 124) [98]
+-------------------------------------------------------------------------
+             0.1%           2                                 2  __tp_dlinsert_post (@0x09fe188c; libss.so: sswrap.c, 124) [97]
+    [98]     0.1%           2     0.0%           0         libss_dlinsert_post [98]
+                                  0.1%           2            2  libss_update_objlist (@0x09ee5080; libssrt.so: sslibc.c, 1244) [99]
+-------------------------------------------------------------------------
+             0.1%           2                                 2  libss_dlinsert_post (@0x09ee5080; libssrt.so: sslibc.c, 1244) [98]
+    [99]     0.1%           2     0.0%           0         libss_update_objlist [99]
+                                  0.1%           2            2  libss_scan_addresses_from_rld (@0x09ed6928; libssrt.so: ssbase.c, 987) [100]
+-------------------------------------------------------------------------
+             0.1%           2                                 2  libss_update_objlist (@0x09ed6928; libssrt.so: ssbase.c, 987) [99]
+   [100]     0.1%           2     0.0%           0         libss_scan_addresses_from_rld [100]
+                                  0.1%           2            2  __malloc (@0x09ed5308; libssrt.so: ssbase.c, 353) [101]
+-------------------------------------------------------------------------
+             0.1%           2                                 2  libss_scan_addresses_from_rld (@0x09ed5308; libssrt.so: ssbase.c, 353) [100]
+   [101]     0.1%           2     0.0%           0         __malloc [101]
+                                  0.1%           2            2  _sigprocmask (@0x09ee6408; libssrt.so: ssmem.c, 563) [102]
+-------------------------------------------------------------------------
+             0.1%           2                                 2  __malloc (@0x09ee6408; libssrt.so: ssmem.c, 563) [101]
+   [102]     0.1%           2     0.0%           0         _sigprocmask [102]
+                                  0.1%           2            2  _ksigprocmask (@0x09f86f78; libssrt.so: sigprocmask.c, 214) [81]
+-------------------------------------------------------------------------
+             0.1%           1                                 1  fzeromalloc (@0x5ff9b278; libve.so: ve_dev_model.c, 13) [133]
+             0.1%           1                                 1  init_shmem (@0x1000e34c; skyfly: skyfly.c, 501) [134]
+   [103]     0.1%           2     0.0%           0         _calloc [103]
+                                  0.1%           1            2  _malloc (@0x0fa3c480; libc.so.1: calloc.c, 40) [107]
+                                  0.1%           1            1  memset (@0x0fa3c4b8; libc.so.1: calloc.c, 41) [109]
+-------------------------------------------------------------------------
+             0.1%           2                               109  gameLogic (@0x1000b154; skyfly: gm_main.c, 261) [20]
+   [104]     0.1%           2     0.0%           0         vePostRedisplay [104]
+                                  0.1%           1            1  veThrCondBcast (@0x5ffa8ab8; libve.so: ve_main.c, 323) [115]
+                                  0.1%           1          297  veThrMutexUnlock (@0x5ffa8ac8; libve.so: ve_main.c, 324) [6]
+-------------------------------------------------------------------------
+             0.1%           2                                 7  _doProcessEvent (@0x5ff98a84; libve.so: ve_dev_event.c, 407) [57]
+   [105]     0.1%           2     0.0%           0         veDeviceHandleCallback [105]
+                                  0.1%           1            3  veDeviceMatchSpec (@0x5ff97c10; libve.so: ve_dev_event.c, 128) [74]
+                                  0.1%           1            1  veLockCallbacks (@0x5ff97e60; libve.so: ve_dev_event.c, 157) [140]
+-------------------------------------------------------------------------
+             0.1%           1                                 4  __glXBindHWContextToWindow (@0x0d8ae944; libGL.so: glx_direct.c, 674) [66]
+             0.1%           1                                 4  __glXBindHWContextToWindow (@0x0d8ae9ec; libGL.so: glx_direct.c, 645) [66]
+   [106]     0.1%           2     0.0%           0         _ioctl [106]
+                                  0.1%           1            1  __ioctl (@0x0fa573a0; libc.so.1: ioctlSCI.c, 28) [123]
+                                  0.1%           1          260  ptctl (@0x0fa573bc; libc.so.1: ioctlSCI.c, 28) [9]
+-------------------------------------------------------------------------
+             0.1%           1                                12  nidReceiveRawPacket (@0x5ffe38d0; libnid.so: nid.c, 330) [46]
+             0.1%           1                                 2  _calloc (@0x0fa3c480; libc.so.1: calloc.c, 40) [103]
+   [107]     0.1%           2     0.0%           0         _malloc [107]
+                                  0.1%           2            3  ___libc_lockmalloc (@0x0fa3b424; libc.so.1: malloc.c, 185) [75]
+-------------------------------------------------------------------------
+             0.1%           1                                 7  _doProcessEvent (@0x5ff98414; libve.so: ve_dev_event.c, 284) [57]
+             0.1%           1                                 7  _doProcessEvent (@0x5ff98a4c; libve.so: ve_dev_event.c, 284) [57]
+   [108]     0.1%           2     0.0%           0         veDeviceFTableFind [108]
+                                  0.1%           2            3  veDeviceMatchSpec (@0x5ff9a11c; libve.so: ve_dev_filter.c, 285) [74]
+-------------------------------------------------------------------------
+             0.1%           1                                 2  _calloc (@0x0fa3c4b8; libc.so.1: calloc.c, 41) [103]
+   [109]     0.1%           1     0.1%           1         memset [109]
+-------------------------------------------------------------------------
+             0.1%           1                                 2  put_cell (@0x100072ac; skyfly: database.c, 514) [86]
+   [110]     0.1%           1     0.1%           1         putv3fdata [110]
+-------------------------------------------------------------------------
+             0.1%           1                                 1  __glXOverrideVisualGetVisualInfo (@0x0d8dbc7c; libGL.so: glx_ext.c, 116) [139]
+   [111]     0.1%           1     0.1%           1         XGetVisualInfo [111]
+-------------------------------------------------------------------------
+             0.1%           1                                 4  drawcolrtexmesh_10 (@0x1000c6d8; skyfly: perfdraw.c, 256) [69]
+   [112]     0.1%           1     0.1%           1         __glkonlc_Vertex3fv [112]
+-------------------------------------------------------------------------
+             0.1%           1                                 4  drawcolrtexmesh_10 (@0x1000c700; skyfly: perfdraw.c, 259) [69]
+   [113]     0.1%           1     0.1%           1         __glkonlc_Color3fv [113]
+-------------------------------------------------------------------------
+             0.1%           1                                 4  drawcolrtexmesh_10 (@0x1000c818; skyfly: perfdraw.c, 278) [69]
+   [114]     0.1%           1     0.1%           1         glTexCoord2fv [114]
+-------------------------------------------------------------------------
+             0.1%           1                                 2  vePostRedisplay (@0x5ffa8ab8; libve.so: ve_main.c, 323) [104]
+   [115]     0.1%           1     0.1%           1         veThrCondBcast [115]
+-------------------------------------------------------------------------
+             0.1%           1                                68  sim_singlechannel (@0x1000cee0; skyfly: skyfly.c, 167) [24]
+   [116]     0.1%           1     0.1%           1         track_shots [116]
+-------------------------------------------------------------------------
+             0.1%           1                                31  drawperfobj (@0x1000bf20; skyfly: perfdraw.c, 94) [40]
+   [117]     0.1%           1     0.1%           1         glDisable [117]
+-------------------------------------------------------------------------
+             0.1%           1                                 7  veGetWindowView (@0x5ff96d6c; libve.so: ve_core.c, 175) [58]
+   [118]     0.1%           1     0.1%           1         veMatrixFrustum [118]
+-------------------------------------------------------------------------
+             0.1%           1                                31  drawperfobj (@0x1000c014; skyfly: perfdraw.c, 111) [40]
+   [119]     0.1%           1     0.1%           1         glRotatef [119]
+-------------------------------------------------------------------------
+             0.1%           1                                31  drawperfobj (@0x1000c054; skyfly: perfdraw.c, 113) [40]
+   [120]     0.1%           1     0.1%           1         __glkonim_Rotatef [120]
+-------------------------------------------------------------------------
+             0.1%           1                                36  update_view_pos (@0x1000d3c8; skyfly: skyfly.c, 270) [35]
+   [121]     0.1%           1     0.1%           1         update_sounds [121]
+-------------------------------------------------------------------------
+             0.1%           1                               129  pthread_mutex_lock (@0x0c218f84; libpthread.so: mtx.c, 336) [18]
+   [122]     0.1%           1     0.1%           1         mtx_slow_lock [122]
+-------------------------------------------------------------------------
+             0.1%           1                                 2  _ioctl (@0x0fa573a0; libc.so.1: ioctlSCI.c, 28) [106]
+   [123]     0.1%           1     0.1%           1         __ioctl [123]
+-------------------------------------------------------------------------
+             0.1%           1                                 1  veMatrixLookAt (@0x5ffaa0e8; libve.so: ve_math.c, 156) [150]
+   [124]     0.1%           1     0.1%           1         veVectorCross [124]
+-------------------------------------------------------------------------
+             0.1%           1                                 1  _writev (@0x0fa47fc8; libc.so.1: writevSCI.c, 29) [151]
+   [125]     0.1%           1     0.1%           1         __writev [125]
+-------------------------------------------------------------------------
+             0.1%           1                                 1  veDupString (@0x5ffae03c; libve.so: ve_util.c, 32) [152]
+   [126]     0.1%           1     0.1%           1         strlen [126]
+-------------------------------------------------------------------------
+             0.1%           1                                 1  veStrMapLookup (@0x5ffae62c; libve.so: ve_util.c, 167) [155]
+   [127]     0.1%           1     0.1%           1         hashString [127]
+-------------------------------------------------------------------------
+             0.1%           1                                 3  veDeviceMatchSpec (@0x5ff9cb3c; libve.so: ve_dev_spec.c, 98) [74]
+   [128]     0.1%           1     0.1%           1         etype_to_str [128]
+-------------------------------------------------------------------------
+             0.1%           1                                 4  __glXBindHWContextToWindow (@0x0d8ae9ec; libGL.so: glx_direct.c, 645) [66]
+   [129]     0.1%           1     0.1%           1         Ioctl [129]
+-------------------------------------------------------------------------
+             0.1%           1                                 7  _doProcessEvent (@0x5ff9891c; libve.so: ve_dev_event.c, 372) [57]
+   [130]     0.1%           1     0.0%           0         veDeviceRunFilterChain [130]
+                                  0.1%           1            1  convert_to_valuator_proc (@0x5ff9a570; libve.so: ve_dev_filter.c, 334) [131]
+-------------------------------------------------------------------------
+             0.1%           1                                 1  veDeviceRunFilterChain (@0x5ff9a570; libve.so: ve_dev_filter.c, 334) [130]
+   [131]     0.1%           1     0.0%           0         convert_to_valuator_proc [131]
+                                  0.1%           1            1  veDeviceEContentCreate (@0x5ff9ec94; libve.so: ve_dev_intf.c, 646) [132]
+-------------------------------------------------------------------------
+             0.1%           1                                 1  convert_to_valuator_proc (@0x5ff9ec94; libve.so: ve_dev_intf.c, 646) [131]
+   [132]     0.1%           1     0.0%           0         veDeviceEContentCreate [132]
+                                  0.1%           1            1  fzeromalloc (@0x5ff9b570; libve.so: ve_dev_model.c, 54) [133]
+-------------------------------------------------------------------------
+             0.1%           1                                 1  veDeviceEContentCreate (@0x5ff9b570; libve.so: ve_dev_model.c, 54) [132]
+   [133]     0.1%           1     0.0%           0         fzeromalloc [133]
+                                  0.1%           1            2  _calloc (@0x5ff9b278; libve.so: ve_dev_model.c, 13) [103]
+-------------------------------------------------------------------------
+             0.1%           1                               177  init_skyfly (@0x1000cddc; skyfly: skyfly.c, 141) [13]
+   [134]     0.1%           1     0.0%           0         init_shmem [134]
+                                  0.1%           1            2  _calloc (@0x1000e34c; skyfly: skyfly.c, 501) [103]
+-------------------------------------------------------------------------
+             0.1%           1                                 4  open_window (@0x5ff68d44; libveglx.so: vei_glx.c, 209) [67]
+   [135]     0.1%           1     0.0%           0         glXQueryExtensionsString [135]
+                                  0.1%           1            1  __glXInitialize (@0x0d8d6038; libGL.so: glx_cmds.c, 1874) [136]
+-------------------------------------------------------------------------
+             0.1%           1                                 1  glXQueryExtensionsString (@0x0d8d6038; libGL.so: glx_cmds.c, 1874) [135]
+   [136]     0.1%           1     0.0%           0         __glXInitialize [136]
+                                  0.1%           1            1  AllocAndFetchScreenConfigs (@0x0d8bdb44; libGL.so: glx_ext.c, 1452) [137]
+-------------------------------------------------------------------------
+             0.1%           1                                 1  __glXInitialize (@0x0d8bdb44; libGL.so: glx_ext.c, 1452) [136]
+   [137]     0.1%           1     0.0%           0         AllocAndFetchScreenConfigs [137]
+                                  0.1%           1            1  GetFBConfigs (@0x0d8bd5f0; libGL.so: glx_ext.c, 1266) [138]
+-------------------------------------------------------------------------
+             0.1%           1                                 1  AllocAndFetchScreenConfigs (@0x0d8bd5f0; libGL.so: glx_ext.c, 1266) [137]
+   [138]     0.1%           1     0.0%           0         GetFBConfigs [138]
+                                  0.1%           1            1  __glXOverrideVisualGetVisualInfo (@0x0d8bd1f4; libGL.so: glx_ext.c, 1166) [139]
+-------------------------------------------------------------------------
+             0.1%           1                                 1  GetFBConfigs (@0x0d8bd1f4; libGL.so: glx_ext.c, 1166) [138]
+   [139]     0.1%           1     0.0%           0         __glXOverrideVisualGetVisualInfo [139]
+                                  0.1%           1            1  XGetVisualInfo (@0x0d8dbc7c; libGL.so: glx_ext.c, 116) [111]
+-------------------------------------------------------------------------
+             0.1%           1                                 2  veDeviceHandleCallback (@0x5ff97e60; libve.so: ve_dev_event.c, 157) [105]
+   [140]     0.1%           1     0.0%           0         veLockCallbacks [140]
+                                  0.1%           1          283  veThrMutexLock (@0x5ff96284; libve.so: ve_core.c, 25) [7]
+-------------------------------------------------------------------------
+             0.1%           1                                 8  veDeviceInsertEvent (@0x5ff98c38; libve.so: ve_dev_event.c, 434) [55]
+   [141]     0.1%           1     0.0%           0         veDeviceEventDestroy [141]
+                                  0.1%           1            1  _free (@0x5ff97984; libve.so: ve_dev_event.c, 73) [142]
+-------------------------------------------------------------------------
+             0.1%           1                                 1  veDeviceEventDestroy (@0x5ff97984; libve.so: ve_dev_event.c, 73) [141]
+   [142]     0.1%           1     0.0%           0         _free [142]
+                                  0.1%           1            3  ___libc_lockmalloc (@0x0fa3c264; libc.so.1: malloc.c, 904) [75]
+-------------------------------------------------------------------------
+             0.1%           1                                 5  render_ctrl_handler (@0x5ff6a4c8; libveglx.so: vei_glx.c, 558) [64]
+   [143]     0.1%           1     0.0%           0         veMPRespond [143]
+                                  0.1%           1            2  veMP_OSSend (@0x5ffb120c; libve.so: ve_mp.c, 487) [88]
+-------------------------------------------------------------------------
+             0.1%           1                               180  main (@0x1000b9e8; skyfly: gm_main.c, 403) [12]
+   [144]     0.1%           1     0.0%           0         veRun [144]
+                                  0.1%           1            1  veEventLoop (@0x5ffa9258; libve.so: ve_main.c, 473) [145]
+-------------------------------------------------------------------------
+             0.1%           1                                 1  veRun (@0x5ffa9258; libve.so: ve_main.c, 473) [144]
+   [145]     0.1%           1     0.0%           0         veEventLoop [145]
+                                  0.1%           1            1  render_thread (@0x5ffa916c; libve.so: ve_main.c, 454) [146]
+-------------------------------------------------------------------------
+             0.1%           1                                 1  veEventLoop (@0x5ffa916c; libve.so: ve_main.c, 454) [145]
+   [146]     0.1%           1     0.0%           0         render_thread [146]
+                                  0.1%           1            1  veRender (@0x5ffa8d7c; libve.so: ve_main.c, 375) [147]
+-------------------------------------------------------------------------
+             0.1%           1                                 1  render_thread (@0x5ffa8d7c; libve.so: ve_main.c, 375) [146]
+   [147]     0.1%           1     0.0%           0         veRender [147]
+                                  0.1%           1            1  veMPSendCtrl (@0x5ff6a8a0; libveglx.so: vei_glx.c, 623) [148]
+-------------------------------------------------------------------------
+             0.1%           1                                 1  veRender (@0x5ff6a8a0; libveglx.so: vei_glx.c, 623) [147]
+   [148]     0.1%           1     0.0%           0         veMPSendCtrl [148]
+                                  0.1%           1            1  veMPIntPush (@0x5ffb11a8; libve.so: ve_mp.c, 481) [149]
+-------------------------------------------------------------------------
+             0.1%           1                                 1  veMPSendCtrl (@0x5ffb11a8; libve.so: ve_mp.c, 481) [148]
+   [149]     0.1%           1     0.0%           0         veMPIntPush [149]
+                                  0.1%           1            2  veMP_OSSend (@0x5ffb0d7c; libve.so: ve_mp.c, 435) [88]
+-------------------------------------------------------------------------
+             0.1%           1                                 7  veGetWindowView (@0x5ff96bbc; libve.so: ve_core.c, 154) [58]
+   [150]     0.1%           1     0.0%           0         veMatrixLookAt [150]
+                                  0.1%           1            1  veVectorCross (@0x5ffaa0e8; libve.so: ve_math.c, 156) [124]
+-------------------------------------------------------------------------
+             0.1%           1                                 2  veMP_OSSend (@0x5ffb5218; libve.so: ve_mp_posix.c, 666) [88]
+   [151]     0.1%           1     0.0%           0         _writev [151]
+                                  0.1%           1            1  __writev (@0x0fa47fc8; libc.so.1: writevSCI.c, 29) [125]
+-------------------------------------------------------------------------
+             0.1%           1                                10  push_nid_event (@0x5ffe486c; niddrv.so: venid.c, 764) [51]
+   [152]     0.1%           1     0.0%           0         veDupString [152]
+                                  0.1%           1            1  strlen (@0x5ffae03c; libve.so: ve_util.c, 32) [126]
+-------------------------------------------------------------------------
+             0.1%           1                                 7  _doProcessEvent (@0x5ff98a74; libve.so: ve_dev_event.c, 406) [57]
+   [153]     0.1%           1     0.0%           0         veDeviceApplyEvent [153]
+                                  0.1%           1            1  veDeviceFind (@0x5ff98d44; libve.so: ve_dev_event.c, 452) [154]
+-------------------------------------------------------------------------
+             0.1%           1                                 1  veDeviceApplyEvent (@0x5ff98d44; libve.so: ve_dev_event.c, 452) [153]
+   [154]     0.1%           1     0.0%           0         veDeviceFind [154]
+                                  0.1%           1            1  veStrMapLookup (@0x5ff9ffec; libve.so: ve_device.c, 88) [155]
+-------------------------------------------------------------------------
+             0.1%           1                                 1  veDeviceFind (@0x5ff9ffec; libve.so: ve_device.c, 88) [154]
+   [155]     0.1%           1     0.0%           0         veStrMapLookup [155]
+                                  0.1%           1            1  hashString (@0x5ffae62c; libve.so: ve_util.c, 167) [127]
+-------------------------------------------------------------------------
+

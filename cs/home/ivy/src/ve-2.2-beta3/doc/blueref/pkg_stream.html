@@ -1,0 +1,217 @@
+<html>
+<head>
+<title>BlueScript: Stream Objects</title>
+<link rel="stylesheet" href="bluescript.css" type="text/css" />
+</head>
+<body>
+<h1>BlueScript: Stream Objects</h1>
+<h2>Contents</h2>
+<ul>
+<li><a href="#objs">Objects</a>
+<ul>
+<li><a href="#obj_stream">stream</a>
+<ul>
+<li><a href="#oproc_stream__close"><i>stream</i> close</a></li>
+<li><a href="#oproc_stream__flush"><i>stream</i> flush</a></li>
+<li><a href="#oproc_stream__getc"><i>stream</i> getc</a></li>
+<li><a href="#oproc_stream__poll"><i>stream</i> poll</a></li>
+<li><a href="#oproc_stream__read"><i>stream</i> read</a></li>
+<li><a href="#oproc_stream__readblock"><i>stream</i> readblock</a></li>
+<li><a href="#oproc_stream__readln"><i>stream</i> readln</a></li>
+<li><a href="#oproc_stream__write"><i>stream</i> write</a></li>
+<li><a href="#oproc_stream__writeln"><i>stream</i> writeln</a></li>
+</ul>
+</li>
+</ul>
+</ul>
+<h2>Description</h2>
+
+	Objects representing sequences of bytes (e.g. files) supporting
+	a simple I/O model.
+    
+<h2>Documentation</h2>
+
+      <p>
+	Streams (sequences of bytes that can be read and-or written)
+	are not returned by any function in Standard BlueScript.
+	[Note:  There are optional functions that do so - see below.]
+	However, other modules may make use of stream objects, so the
+	common methods for stream objects are denoted below.
+      </p>
+    
+<a name="objs"></a>
+<h2>Objects</h2>
+<ul>
+<li><a href="#obj_stream">stream</a></li>
+</ul>
+<a name="obj_stream"></a>
+<h3>stream</h3>
+<a name="oproc_stream__close"></a>
+<div class="proctitle"><i>stream</i> close</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b></b><i>stream</i><b> close</b><br />
+</div>
+<div class="label"></div>
+
+	  Explicitly closes the stream.  Nothing further may be
+	  written to or read from the stream.  Any buffers are flushed
+	  and the underlying stream implementation is notified of the
+	  closing.  For example, if <i>stream</i> represents a network
+	  socket, the network socket will be shutdown.
+	
+<a name="oproc_stream__flush"></a>
+<div class="proctitle"><i>stream</i> flush</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b></b><i>stream</i><b> flush</b><br />
+</div>
+<div class="label"></div>
+
+	  Forces the stream to flush any output buffers, whether in
+	  the stream object itself or its underlying implementation.
+	
+<a name="oproc_stream__getc"></a>
+<div class="proctitle"><i>stream</i> getc</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b></b><i>stream</i><b> getc</b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">The next character or an empty string if no
+	    characters are left.</div>
+<div class="label"></div>
+
+	  Reads the next character from the stream and returns it.
+	  If there are no characters left in the stream, then an empty
+	  string is returned.
+	
+<a name="oproc_stream__poll"></a>
+<div class="proctitle"><i>stream</i> poll</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b></b><i>stream</i><b> poll </b>(<b>read</b>|<b>write</b>)<b></b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">True (1) if the corresponding operation would not
+	    block or false (0) if the operation would block.</div>
+<div class="label"></div>
+
+	  Checks the given stream to see if there is either data
+	  available to be read (<code>read</code>) or if data can be
+	  written without blocking (<code>write</code>).  Returns a
+	  corresponding Boolean value ('1' or '0').  If the underlying
+	  implementation does not support polling, an error is generated.
+	
+<a name="oproc_stream__read"></a>
+<div class="proctitle"><i>stream</i> read</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b></b><i>stream</i><b> read </b>[<b></b><i>n</i><b></b>]<b></b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">A string of bytes read from the stream.</div>
+<div class="label"></div>
+
+	  <p>
+	    Reads data from the stream.  If <i>n</i> is omitted, then
+	    this function will read all available data up to an
+	    "end-of-file" condition.  If <i>n</i> is specified, then any
+	    available data up to <i>n</i> bytes are read.  The read data
+	    is returned as a string.
+	  </p>
+	  <p>
+	    Note that given a size to read <i>n</i>, it is valid
+	    for this function to return a string that has fewer than
+	    <i>n</i> bytes yet not be at the "end-of-file".
+	    See <code>readblock</code> below for a method by which to
+	    read a precise number of bytes.
+	  </p>
+	
+<a name="oproc_stream__readblock"></a>
+<div class="proctitle"><i>stream</i> readblock</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b></b><i>stream</i><b> readblock </b><i>n</i><b> </b>[<b></b><i>var</i><b></b>]<b></b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">A string containing the data (if <i>var</i> is not
+					       specified) or a boolean
+	    value (true if read successfully, false if not) (if
+							     <i>var</i> is specified).</div>
+<div class="label"></div>
+
+	    <p>
+	    Reads exactly <i>n</i> bytes from the stream.  
+	    If the stream is currently in an "end-of-file" condition,
+	    then an empty string is returned (regardless of whether or
+					      not <i>var</i> is specified).
+	    Otherwise, if <i>n</i> bytes cannot be read, then an error
+	    is generated.
+	    </p>
+	    <p>
+	    If <i>var</i> is not specified, then the read data is
+	    returned or a blank string is returned if an
+	    "end-of-file" was encountered.  If <i>var</i> is
+	    specified, then the read
+	    data is stored in the variable <i>var</i> in the current
+	    context and returns a Boolean value indicating whether
+	    or not a block was read ('1' if a block was stored in
+	    <i>var</i> or '0' if an "end-of-file" was encountered at
+            the beginning of the block).
+	    </p>
+	    <p>
+	    Note that an "end-of-file" is only recognized as such if
+	    it occurs before any characters are actually read.  If
+	    an "end-of-file" is encountered in the middle of a block
+	    it is treated as a "short block" error.
+	    </p>
+	
+<a name="oproc_stream__readln"></a>
+<div class="proctitle"><i>stream</i> readln</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b></b><i>stream</i><b> readln </b>[<b></b><i>var</i><b></b>]<b></b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">A string containing the data (if <i>var</i> is not
+					       specified) or a boolean
+	    value (true if read successfully, false if not) (if
+							     <i>var</i> is specified).</div>
+<div class="label"></div>
+
+	    Reads the next line from the given stream.  If <i>var</i> is
+	    not specified then the line that was read is returned, or an
+	    error is generated if an "end-of-file" is encountered.
+	    If <i>var</i> is specified then the line is
+	    stored in the variable <i>var</i> in the current context and
+	    a Boolean value is returned to indicate whether or not a
+	    line was read ('1' indicates a line was read and stored in
+			   <i>var</i> and '0' indicates that an "end-of-file" was
+			   encountered).
+	
+<a name="oproc_stream__write"></a>
+<div class="proctitle"><i>stream</i> write</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b></b><i>stream</i><b> write </b><i>string</i><b></b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text"><i>string</i></div>
+<div class="label"></div>
+
+	    Writes the given <i>string</i> to the stream.
+	
+<a name="oproc_stream__writeln"></a>
+<div class="proctitle"><i>stream</i> writeln</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b></b><i>stream</i><b> writeln </b><i>string</i><b></b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text"><i>string</i></div>
+<div class="label"></div>
+
+	  Writes the given <i>string</i> to the stream followed
+	  by a newline character.	    
+	

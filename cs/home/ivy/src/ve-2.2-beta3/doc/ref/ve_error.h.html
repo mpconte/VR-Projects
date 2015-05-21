@@ -1,0 +1,150 @@
+<html>
+<head>
+<title>File: ve_error.h</title>
+</head>
+<body>
+<h1 class="cdoc-file">File: ve_error.h</h1>
+
+
+<p class="cdoc-item">
+      <p>The ve_error module is a general method for reporting internal
+      errors to the application and/or user.  Its API is also available
+      for applications to use for application errors if the author
+      chooses.</p>
+      <p>Errors are loosely grouped into the following categories:
+      notices, warning, errors, and fatal errors (a.k.a. "fatals").
+      Notices are information messages which relate information about
+      the state of the library, detected or default settings, but which
+      do not indicate a problem.  Warnings are detected problems from
+      which the library believes it can recover with little impact
+      on the functioning of the system.  Errors are problems from which
+      the library can recover but which may significantly impact 
+      operations.  Fatals are errors from which the library cannot
+      (or should not) recover.</p>
+      <p>Of these, notices and warnings are the only optional messages.
+      That is, the application may choose to disregard notices and
+      warnings.  By default notices are not shown, and warnings are
+      shown.</p>
+  
+<p class="cdoc-item">
+<a name="function_veShowNotices"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veShowNotices</span>
+<div class="body-function">
+<div class="codeblock">void veShowNotices(int i);</div>      <p>Sets the library's disposition to notices - if non-zero then
+      notices will be passed to the error handler.  If zero then notices
+      will not be passed to the error handler.  By default, notices are
+      not passed to the error handler.</p>
+
+<div class="start-param"><span class="tag-param">i</span> - 
+      If non-zero, notices are passed on.  If zero, notices are discarded.
+  </div></div></div>
+<p class="cdoc-item">
+<a name="function_veShowWarnings"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veShowWarnings</span>
+<div class="body-function">
+<div class="codeblock">void veShowWarnings(int i);</div>      <p>Sets the library's disposition to warnings - if non-zero then
+      warnings will be passed to the error handler.  If zero then warnings
+      will not be passed to the error handler.  By default, warnings are
+      passed to the error handler.</p>
+
+<div class="start-param"><span class="tag-param">i</span> - 
+      If non-zero, warnings are passed on.  If zero, warnings are discarded.
+  </div></div></div>
+<p class="cdoc-item">
+<a name="function_veNotice"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veNotice</span>
+<div class="body-function">
+<div class="codeblock">void veNotice(char *module, char *fmt, ...);</div>      <p>Generates a notice.  The message is passed in <code>printf()</code>
+      style.</p>
+      
+<div class="start-param"><span class="tag-param">module</span> - 
+      The name of the module from which the notice originates.  All
+      VE library messages have modules which begin with "ve_" or "vei_".
+      Applications should avoid these prefixes.
+      </div>
+<div class="start-param"><span class="tag-param">fmt</span> - 
+      The format string of the message, in <code>printf()</code>-style.
+  </div></div></div>
+<p class="cdoc-item">
+<a name="function_veWarning"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veWarning</span>
+<div class="body-function">
+<div class="codeblock">void veWarning(char *module, char *fmt, ...);</div>      <p>Generates a warning.  The message is passed in <code>printf()</code>
+      style.</p>
+      
+<div class="start-param"><span class="tag-param">module</span> - 
+      The name of the module from which the notice originates.  All
+      VE library messages have modules which begin with "ve_" or "vei_".
+      Applications should avoid these prefixes.
+      </div>
+<div class="start-param"><span class="tag-param">fmt</span> - 
+      The format string of the message, in <code>printf()</code>-style.
+  </div></div></div>
+<p class="cdoc-item">
+<a name="function_veError"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veError</span>
+<div class="body-function">
+<div class="codeblock">void veError(char *module, char *fmt, ...);</div>      <p>Generates an error.  The message is passed in <code>printf()</code>
+      style.</p>
+      
+<div class="start-param"><span class="tag-param">module</span> - 
+      The name of the module from which the notice originates.  All
+      VE library messages have modules which begin with "ve_" or "vei_".
+      Applications should avoid these prefixes.
+      </div>
+<div class="start-param"><span class="tag-param">fmt</span> - 
+      The format string of the message, in <code>printf()</code>-style.
+  </div></div></div>
+<p class="cdoc-item">
+<a name="function_veFatalError"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veFatalError</span>
+<div class="body-function">
+<div class="codeblock">void veFatalError(char *module, char *fmt, ...);</div>      <p>Generates an error.  The message is passed in <code>printf()</code>
+      style.  After delivering the message to the error handler, the
+      program will be terminated.</p>
+      
+<div class="start-param"><span class="tag-param">module</span> - 
+      The name of the module from which the notice originates.  All
+      VE library messages have modules which begin with "ve_" or "vei_".
+      Applications should avoid these prefixes.
+      </div>
+<div class="start-param"><span class="tag-param">fmt</span> - 
+      The format string of the message, in <code>printf()</code>-style.
+  </div></div></div>
+<p class="cdoc-item">
+<a name="function_veSetErrorHandler"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veSetErrorHandler</span>
+<div class="body-function">
+<div class="codeblock">void veSetErrorHandler(VeErrorHandler handler);</div>      <p>There is a single global error handler through which all messages
+      pass.  It is the job of this handler to report the message to the
+      user or application.  The default error handler directs all messages
+      to <code>stderr</code>.<p>
+      <p>An error handler is defined as:
+<pre>
+        void (*VeErrorHandler)(int type, char *module, char *msg)
+</pre>
+      The <code>type</code> argument is one of the following constants,
+      each representing the corresponding type of the error being passed to
+      the handler:  <code>VE_ERR_NOTICE</code>, <code>VE_ERR_WARNING</code>,
+      <code>VE_ERR_ERROR</code>, <code>VE_ERR_FATAL</code>.
+      The <code>module</code> argument is the name of the VE module from
+      which the message originated (as passed to the appropriate error
+      function) and the <code>msg</code> argument is the error message.
+      Error handlers should relate both pieces of information to the
+      user.</p>
+      <p>When writing error handlers, you should also beware when
+      handling fatals.  A fatal will terminate the program as soon as the
+      error handler returns, so relying on an asynchronous event to deliver
+      the message may result in the message never reaching the user.
+      </p>
+
+<div class="start-param"><span class="tag-param">handler</span> - 
+      The new error handler to install.  If this is <code>NULL</code> then
+      the default error handler is installed.
+   </div></div></div>
+
+<h2 class="cdoc-index">Index</h2>
+<ul>
+<li><a class="link-function" href="#function_veError">veError (function)</a></li>
+<li><a class="link-function" href="#function_veFatalError">veFatalError (function)</a></li>
+<li><a class="link-function" href="#function_veNotice">veNotice (function)</a></li>
+<li><a class="link-function" href="#function_veSetErrorHandler">veSetErrorHandler (function)</a></li>
+<li><a class="link-function" href="#function_veShowNotices">veShowNotices (function)</a></li>
+<li><a class="link-function" href="#function_veShowWarnings">veShowWarnings (function)</a></li>
+<li><a class="link-function" href="#function_veWarning">veWarning (function)</a></li>
+</ul>
+</body>
+</html>

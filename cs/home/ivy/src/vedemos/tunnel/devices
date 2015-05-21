@@ -1,0 +1,12 @@
+use keyboard
+filter keyboard.Escape { exit }
+#use gamepad
+filter gamepad.button0 { exit }
+filter gamepad.button1 { rename keyboard.w }
+filter gamepad.button4 { rename keyboard.x }
+filter gamepad.button2 { rename keyboard.e }
+filter gamepad.button5 { rename keyboard.c }
+filter gamepad.button6 { rename keyboard.s }
+filter gamepad.button7 { rename keyboard.d }
+#use fobtrack
+#use flock

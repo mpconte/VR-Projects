@@ -1,0 +1,296 @@
+<html>
+<head>
+<title>BlueScript: String Procedures</title>
+<link rel="stylesheet" href="bluescript.css" type="text/css" />
+</head>
+<body>
+<h1>BlueScript: String Procedures</h1>
+<h2>Contents</h2>
+<ul>
+<li><a href="#procs">Procedures</a>
+<ul>
+<li><a href="#proc_append">append</a></li>
+<li><a href="#proc_script">script</a></li>
+<li><a href="#proc_split">split</a></li>
+<li><a href="#proc_stris">stris</a></li>
+<li><a href="#proc_strlen">strlen</a></li>
+<li><a href="#proc_strltrim">strltrim</a></li>
+<li><a href="#proc_strrtrim">strrtrim</a></li>
+<li><a href="#proc_strstr">strstr</a></li>
+<li><a href="#proc_strtrim">strtrim</a></li>
+<li><a href="#proc_substr">substr</a></li>
+</ul>
+</ul>
+<h2>Description</h2>
+Procedures for manipulating strings.
+<a name="procs"></a>
+<h2>Procedures</h2>
+<ul>
+<li><a href="#proc_append">append</a></li>
+<li><a href="#proc_script">script</a></li>
+<li><a href="#proc_split">split</a></li>
+<li><a href="#proc_stris">stris</a></li>
+<li><a href="#proc_strlen">strlen</a></li>
+<li><a href="#proc_strltrim">strltrim</a></li>
+<li><a href="#proc_strrtrim">strrtrim</a></li>
+<li><a href="#proc_strstr">strstr</a></li>
+<li><a href="#proc_strtrim">strtrim</a></li>
+<li><a href="#proc_substr">substr</a></li>
+</ul>
+<a name="proc_append"></a>
+<div class="proctitle">append</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>append </b><i>var</i><b> </b><i>string</i><b></b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">The contents of variable <i>var</i> after appending
+	<i>string</i>.</div>
+<div class="label"></div>
+
+	Appends <i>string</i> to the contents of variable <i>var</i>.
+	Note that the variable is passed as the variable name and not
+	as a variable substitution (i.e. the '$' is not prepended).
+	This allows the procedure to modify the variable itself.  This
+	is generally more efficient than using string constructs and
+	setting the variable.  For example, the following command
+	<div class="eg">append x data</div>
+	has the same effect as:
+	<div class="eg">set x "${x}data"</div>
+	but the <i>append</i> procedure avoids copying the string.
+	This can greatly improve performance, especially if data is
+	being appended to a large string.
+    
+<div class="label">Examples</div>
+<div class="example">1. Appending to a string
+<div class="eg">set x "Hello"<br />
+	append x ", World!"</div>
+<div class="result">Result: <span class="egspan">Hello, World!</span></div></div>
+</div>
+<a name="proc_script"></a>
+<div class="proctitle">script</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>script </b><i>string</i><b></b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">A list built by splitting <i>string</i> in the same
+	manner as a script.</div>
+<div class="label"></div>
+
+	Splits a string using the rules for parsing scripts. This
+	means:
+	<ul>
+	<li>each element corresponds to a line (unless the end-of-line
+						character is escaped
+						or quoted)</li>
+	<li>blank lines and lines beginning with '#' (comments) are
+	ignored</li>
+	</ul>
+	Note that only parsing rules are applied - there is no
+	evaluation or substitution that is otherwise applied.
+    
+<div class="label">Examples</div>
+<div class="example">1. Splitting a string like a script
+<div class="eg">script {# this is a
+	comment<br /> 
+set x 40<br />
+set y 50<br />
+struct {<br />
+    &nbsp; &nbsp; line<br />
+}<br />
+}</div>
+<div class="result">Result: <span class="egspan">{set x 40} {set y 50} {struct {<br />
+&nbsp; &nbsp; line<br />
+}}</span></div></div>
+</div>
+<a name="proc_split"></a>
+<div class="proctitle">split</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>split </b><i>string</i><b> </b>[<b></b><i>chars</i><b></b>]<b></b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">A list built by splitting <i>string</i> using
+	<i>chars</i> as delimiters.</div>
+<div class="label"></div>
+
+	<p>
+	Splits a string into a list using the given delimiters.  If
+	<i>chars</i> is not specified then the set of white-space
+	characters is used.  Empty elements are not discarded.
+	</p>
+	<p>
+	A special case is when <i>chars</i> is specified as an empty
+	string.  In this case, <i>string</i> will be split into a
+	string where each element is exactly one character long.
+	</p>
+    
+<div class="label">Examples</div>
+<div class="example">1. Splitting a string
+<div class="eg">split abc::d:ef:g :</div>
+<div class="result">Result: <span class="egspan">abc {} d ef g</span></div></div>
+</div>
+<div class="example">2. Splitting a string into characters
+<div class="eg">split {abc def} {}</div>
+<div class="result">Result: <span class="egspan">a b c { } d e f</span></div></div>
+</div>
+<a name="proc_stris"></a>
+<div class="proctitle">stris</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>stris </b>(<b>integer</b>|<b>float</b>|<b>number</b>|<b>blank</b>)<b> </b><i>string</i><b></b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">True (1) if the string matches the given type or false
+	(0) if the string does not match.</div>
+<div class="label"></div>
+
+	The following types are recognized:
+	<ul>
+	<li><b>integer</b> - any of the BlueScript integer forms
+	(signed, unsigned, decimal, octal, hexadecimal)</li>
+	<li><b>float</b> - any of the BlueScript floating-point
+	forms</li>
+	<li><b>number</b> - true if the argument matches either the
+	float or integer representations</li>
+	<li><b>blank</b> - true if the argument is either empty or 
+	comprised solely of white-space characters.</li>
+	</ul>
+    
+<div class="label">Examples</div>
+<div class="example">1. Checking for an integer
+<div class="eg">stris integer 124</div>
+<div class="result">Result: <span class="egspan">1</span></div></div>
+</div>
+<div class="example">2. Checking for an (incorrect) integer
+<div class="eg">stris integer R12F</div>
+<div class="result">Result: <span class="egspan">0</span></div></div>
+</div>
+<a name="proc_strlen"></a>
+<div class="proctitle">strlen</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>strlen </b><i>string</i><b></b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">The length of <i>string</i> in characters.</div>
+<div class="label">Examples</div>
+<div class="example">1. Determining the length of a string
+<div class="eg">strlen "abcdefg"</div>
+<div class="result">Result: <span class="egspan">7</span></div></div>
+</div>
+<a name="proc_strltrim"></a>
+<div class="proctitle">strltrim</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>strltrim </b><i>string</i><b> </b>[<b></b><i>trimchars</i><b></b>]<b></b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">The string with any character in <i>trimchars</i> removed
+	from the left of the string.</div>
+<div class="label"></div>
+Trims unwanted characters from the left of a
+	string.  If <i>trimchars</i> is not specified, then it
+	defaults to the set of white-space characters.
+    
+<div class="label">Examples</div>
+<div class="example">1. Left-trimming a string
+<div class="eg">strtrim
+	{&nbsp;&nbsp;foo&nbsp;&nbsp;}</div>
+<div class="result">Result: <span class="egspan">foo&nbsp;&nbsp;</span></div></div>
+</div>
+<a name="proc_strrtrim"></a>
+<div class="proctitle">strrtrim</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>strrtrim </b><i>string</i><b> </b>[<b></b><i>trimchars</i><b></b>]<b></b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">The string with any character in <i>trimchars</i> removed
+	from the right of the string.</div>
+<div class="label"></div>
+Trims unwanted characters from the right of a
+	string.  If <i>trimchars</i> is not specified, then it
+	defaults to the set of white-space characters.
+    
+<div class="label">Examples</div>
+<div class="example">1. Right-trimming a string
+<div class="eg">strtrim
+	{&nbsp;&nbsp;foo&nbsp;&nbsp;}</div>
+<div class="result">Result: <span class="egspan">&nbsp;&nbsp;foo</span></div></div>
+</div>
+<a name="proc_strstr"></a>
+<div class="proctitle">strstr</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>strstr </b><i>string</i><b> </b><i>sub</i><b></b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">The offset of the first occurrence of string <i>sub</i>
+	in <i>string</i> or -1 if the string cannot be found.</div>
+<div class="label"></div>
+
+	Finds the location of a string (<i>sub</i>) within another
+	string (<i>string</i>).  If the string is found, the offset of
+	the first occurrence (i.e. the left-most occurrence) is
+	returned.  If the sub-string occurs at the beginning of the
+	string, then the offset is 0, if it occurs at the second
+	character, the offset is 1, etc.
+    
+<div class="label">Examples</div>
+<div class="example">1. Finding a substring
+<div class="eg">strstr foobar bar</div>
+<div class="result">Result: <span class="egspan">3</span></div></div>
+</div>
+<div class="example">2. Searching for a non-existent substring
+<div class="eg">strstr foobar
+	bug</div>
+<div class="result">Result: <span class="egspan">-1</span></div></div>
+</div>
+<a name="proc_strtrim"></a>
+<div class="proctitle">strtrim</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>strtrim </b><i>string</i><b> </b>[<b></b><i>trimchars</i><b></b>]<b></b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">The string with any character in <i>trimchars</i> removed
+	from the left and the right.</div>
+<div class="label"></div>
+Trims unwanted characters from the left and right of a
+	string.  If <i>trimchars</i> is not specified, then it
+	defaults to the set of white-space characters.
+    
+<div class="label">Examples</div>
+<div class="example">1. Trimming a string
+<div class="eg">strtrim
+	{&nbsp;&nbsp;foo&nbsp;&nbsp;}</div>
+<div class="result">Result: <span class="egspan">foo</span></div></div>
+</div>
+<a name="proc_substr"></a>
+<div class="proctitle">substr</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>substr </b><i>string</i><b> </b><i>start</i><b> </b>[<b></b><i>length</i><b></b>]<b></b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">A substring of <i>string</i> of <i>length</i> characters
+	starting at offset <i>start</i>.</div>
+<div class="label"></div>
+
+	Extracts a substring of <i>string</i> starting at offset
+	<i>start</i>.  An offset of 0 corresponds to the beginning of
+	the string.  The substring will be <i>length</i> characters
+	long.  If <i>length</i> is not specified, then the substring
+	will run to the end of <i>string</i>.
+    
+<div class="label">Examples</div>
+<div class="example">1. Extracting a substring
+<div class="eg">substr foobar 1 3</div>
+<div class="result">Result: <span class="egspan">oob</span></div></div>
+</div>
+<div class="example">2. Extracting a substring to the end
+<div class="eg">substr foobar 1</div>
+<div class="result">Result: <span class="egspan">oobar</span></div></div>
+</div>

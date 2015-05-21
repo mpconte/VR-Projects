@@ -1,0 +1,89 @@
+#
+# This is the device and filter manifest
+# - entries can be in any order
+#
+# - tell the system where to find drivers for devices and filters
+driver device x11keyboard x11drv.so
+driver device x11mouse x11drv.so
+driver device nid niddrv.so
+driver device fastrak fastrakdrv.so
+driver device fob fobdrv.so
+driver device linuxmouse linuxmousedrv.so
+driver device linuxjs linuxjsdrv.so
+# - declare real devices that we may use
+# - note that these only declare that the devices exist - we still need
+#   to specify somewhere that we want to use the devices
+device keyboard x11keyboard
+device mouse x11mouse
+device gamepad linuxjs {
+	match [Gg]amepad
+}
+
+device flock fastrak {
+        line /dev/ttyS0
+        speed 115200
+        flow none
+        station 1 2 3 4
+        refang -92.91,-2.88,0.85
+        led 0
+	tmstamp 1
+}
+
+# Old Flock-of-birds head tracker
+#device flock nid {
+#	server theremin.cs.yorku.ca
+#	port 1140
+#	devtype fastrak
+#	transport udp
+#}
+# Li Yan's flock of birds tracker
+device leeflock nid {
+	server theremin.cs.yorku.ca
+	port 1141
+	devtype fobg
+	transport udp
+}
+
+# MARVIN head tracker
+device marvin nid {
+        server theremin
+        port 1139
+        transport udp
+        devname marvin
+}
+
+# filter flock.* { dump }
+
+filter flock.pos0 { rename flock.pos }
+filter flock.quat0 { rename flock.quat }
+
+filter flock.pos {
+	headtrack format=pos {loccorr={-1.0 0.0 0.0 0.0} {0.0 0.0 -1.0 0.0} {0.0 -1.0 0.0 1.6097} {0.0 0.0 0.0 1.0}}
+}
+
+filter flock.quat {
+	headtrack format=quat {loccorr={-1.0 0.0 0.0 0.0} {0.0 0.0 -1.0 0.0} {0.0 -1.0 0.0 0.0} {0.0 0.0 0.0 1.0}}
+}
+
+# default head-tracking filters for fobtrack
+filter fobtrack.pos {
+        headtrack format=pos {loccorr={0.0 1.0 0.0 0.06} {0.0 0.0 -1.0 0.22} {-1.0 0.0 0.0 0.67} {0.0 0.0 0.0 1.0}}
+}
+filter fobtrack.quat {
+        headtrack format=quat {dircorr={1.0 0.0 0.0 0.0} {0.0 1.0 0.0 0.0} {0.0 0.0 1.0 0.0} {0.0 0.0 0.0 1.0}} {loccorr={0.0 1.0 0.0 0.06} {0.0 0.0 -1.0 0.22} {-1.0 0.0 0.0 0.67} {0.0 0.0 0.0 1.0}}
+}
+# default head-tracking filters for marvin
+filter marvin.pos {
+        headtrack format=pos {loccorr={1.0 0.0 0.0 0.0} {0.0 1.0 0.0 0.0} {0.0 0.0 1.0 0.0} {0.0 0.0 0.0 1.0}}
+}
+filter marvin.quat {
+        headtrack format=quat {dircorr={1.0 0.0 0.0 0.0} {0.0 1.0 0.0 0.0} {0.0 0.0 1.0 0.0} {0.0 0.0 0.0 1.0}} {loccorr={1.0 0.0 0.0 0.0} {0.0 1.0 0.0 0.0} {0.0 0.0 1.0 0.0} {0.0 0.0 0.0 1.0}}
+}
+filter leeflock.pos0 {
+        headtrack format=pos {loccorr={0.0 1.0 0.0 0.0} {0.0 0.0 -1.0 0.32} {-1.0 0.0 0.0 0.65} {0.0 0.0 0.0 1.0}}
+	# dump	
+}
+filter leeflock.quat0 {
+	headtrack format=quat {loccorr={0.0 1.0 0.0 0.0} {0.0 0.0 -1.0 0.32} {-1.0 0.0 0.0 0.65} {0.0 0.0 0.0 1.0}}
+}
+

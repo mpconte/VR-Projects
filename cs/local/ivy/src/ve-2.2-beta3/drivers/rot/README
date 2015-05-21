@@ -1,0 +1,36 @@
+A set of filters for converting rotation representations: euler angles,
+quaternions, matrices
+
+angles are always vectors of size 3
+quaternions are always vectors of size 4 [x,y,z,w] (vector, scalar)
+matrices are always vectors of size 16 in column-major format a-la
+OpenGL.
+
+All filters take a single unnamed argument which is the name to use
+as a new element name in <device>.<elem>.  If there is no "." in the
+argument, then the string is treated as the new element name and the
+name of the current device is used.  If no argument is specified then
+the device and element name are left unchanged.
+
+All filters accept the following named arguments:
+angin=<rad|deg> - specifies the units for angle data coming in (default=rad)
+angout=<rad|deg> - specifies the units for angle data coming out (default=rad)
+- if the appropriate input/output is not in angles then that named argument
+  is ignored
+
+The filter names are:
+
+ang_to_quat
+ang_to_mtx
+quat_to_ang
+quat_to_mtx
+mtx_to_ang
+mtx_to_quat
+
+There is also:
+
+ang_to_ang
+
+which normally does nothing, unless you specify angin/angout - you can
+use it to convert angles from radians to degrees or vice-versa.
+The ve_math module is used where possible to avoid duplicating code.

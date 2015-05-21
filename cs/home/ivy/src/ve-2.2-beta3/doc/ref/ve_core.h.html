@@ -1,0 +1,467 @@
+<html>
+<head>
+<title>File: ve_core.h</title>
+</head>
+<body>
+<h1 class="cdoc-file">File: ve_core.h</h1>
+
+
+<p class="cdoc-item">
+    The ve_core module provides both the general math setup for view and
+    projection matrices for each wall, as well as a central point for
+    referencing the current structures (environment, profile) that describe
+    the layout of the current setup.  The current point-of-view is also
+    housed in this module.
+
+<p class="cdoc-item">
+<a name="struct_VeWallView"></a><div class="start-struct"><span class="label-struct">Structure:</span> <span class="tag-struct">VeWallView</span>
+<div class="body-struct">
+    Describes the current view and projection values for the
+    scene that is currently being rendered.  The structure
+    describes one particular view, and is usually associated with
+    a particular VeWindow structure.
+
+<div class="codeblock">typedef struct ve_wallview {</div><p class="cdoc-item">
+<div class="start-member"><span class="tag-member">camera</span> - 
+    The location and orientation of the camera or viewpoint from
+    which the scene is viewed.  The direction is typically perpendicular
+    to the wall which is being viewed; it may not be looking directly
+    at the centre of the wall.
+    
+<div class="codeblock">  VeFrame camera;</div></div>
+<p class="cdoc-item">
+<div class="start-member"><span class="tag-member">near far left right top bottom</span> - 
+    These values define the viewing frustum.  The corners are defined
+    by left and right (in X), top and bottom (in Y) with all values in
+    the near clipping plane (in Z).  The far value indicates the far 
+    clipping plane.
+    
+<div class="codeblock">  float near, far, left, right, top, bottom;</div></div>
+<p class="cdoc-item">
+<div class="start-member"><span class="tag-member">view</span> - 
+    The view matrix.  This is the transformation from world co-ordinates to
+    the camera's frame.
+    
+<div class="codeblock">  VeMatrix4 view;</div></div>
+<p class="cdoc-item">
+<div class="start-member"><span class="tag-member">iview</span> - 
+    The inverse view matrix.  This is the transformation from the camera's
+    frame to world co-ordinates.  As implied by its name, it is the inverse
+    of the view member.
+    
+<div class="codeblock">  VeMatrix4 iview;</div></div>
+<p class="cdoc-item">
+<div class="start-member"><span class="tag-member">proj</span> - 
+    The projection matrix.  This matrix converts co-ordinates in the camera's
+    frame to screen co-ordinates.
+    
+<div class="codeblock">  VeMatrix4 proj;</div></div>
+<p class="cdoc-item">
+<div class="start-member"><span class="tag-member">eye</span> - 
+      Which eye is being rendered by this wall.  This value is either
+      <code>VE_EYE_LEFT</code>, <code>VE_EYE_RIGHT</code>, or 
+      <code>VE_EYE_MONO</code> in non-stereoscopic situations.
+  
+<div class="codeblock">  int eye;</div></div>
+<p class="cdoc-item">
+<div class="start-member"><span class="tag-member">eye_frame</span> - 
+      Which eye frame (right now there is only one eye frame - 
+      the "default eye") was used to generate this view.
+  
+<div class="codeblock">  VeFrame eye_frame;</div></div>
+<div class="codeblock">} VeWallView;</div></div></div>
+<p class="cdoc-item">
+<a name="function_veCoreInit"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veCoreInit</span>
+<div class="body-function">
+<div class="codeblock">void veCoreInit();</div>    Initializes the ve_core module.  This is generally called from 
+    <code>veInit()</code>.  Applications which use <code>veInit()</code>
+    to initialize the library do not need to call this function.
+ </div></div>
+<p class="cdoc-item">
+<a name="function_veGetOrigin"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veGetOrigin</span>
+<div class="body-function">
+<div class="codeblock">VeFrame *veGetOrigin();</div>  Returns a pointer to the frame for the origin of the space.  This pointer
+  is live - the origin itself can be modified by modifying the structured
+  pointed to by the result.
+  
+<div class="start-returns"><span class="label-returns">Returns:</span> 
+  A pointer to the origin's VeFrame structure.  Applications can safely
+  assume that this function always returns a valid pointer.
+  </div></div></div>
+<p class="cdoc-item">
+<a name="function_veSetOrigin"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veSetOrigin</span>
+<div class="body-function">
+<div class="codeblock">void veSetOrigin(VeFrame *frame);</div>  Replaces the current origin of the environment with the data pointed to
+  by <i>frame</i>.  After calling this function, the caller need not
+  preserve the data pointed to by <i>frame</i> - the library makes a copy
+  of the data and does not preserve any reference to <i>frame</i>.
+
+<div class="start-param"><span class="tag-param">frame</span> - 
+  A pointer to the frame data to replace the origin with.
+  </div></div></div>
+<p class="cdoc-item">
+<a name="function_veGetDefaultEye"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veGetDefaultEye</span>
+<div class="body-function">
+<div class="codeblock">VeFrame *veGetDefaultEye();</div>  Returns a poitner to the frame for the default eye of the space.
+  The default eye corresponds to the main user's location and orientation
+  in the physical space of the environment.  The frame is defined in
+  coordinates relative to the origin of the space (see veGetOrigin).
+  <p>This pointer
+  is live - the eye itself can be modified by modifying the structured
+  pointed to by the result.
+    
+<div class="start-returns"><span class="label-returns">Returns:</span> 
+  A pointer to the default eye's VeFrame structure.  Applications can
+  safely assume that this function always returns a valid pointer.
+ </div></div></div>
+<p class="cdoc-item">
+<a name="function_veSetDefaultEye"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veSetDefaultEye</span>
+<div class="body-function">
+<div class="codeblock">void veSetDefaultEye(VeFrame *frame);</div>  Replaces the current default eye of the environment with the data
+  pointed to by <i>frame</i>.  After calling this function, the caller
+  need not preserve the data pointed to by <i>frame</i> - the library
+  makes a copy of the data and does not preserve any reference to
+  <i>frame</i>.
+
+<div class="start-param"><span class="tag-param">frame</span> - 
+  A pointer to the frame data to replace the default eye with.
+ </div></div></div>
+<p class="cdoc-item">
+<a name="function_veSetOrigin"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veSetOrigin</span>
+<div class="body-function">
+<div class="codeblock">void veSetOrigin(VeFrame *frame);</div>  Replaces the current origin of the environment with the data pointed to
+  by <i>frame</i>.  After calling this function, the caller need not
+  preserve the data pointed to by <i>frame</i> - the library makes a copy
+  of the data and does not preserve any reference to <i>frame</i>.
+
+<div class="start-param"><span class="tag-param">frame</span> - 
+  A pointer to the frame data to replace the origin with.
+  </div></div></div>
+<p class="cdoc-item">
+<a name="function_veSetEnv"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veSetEnv</span>
+<div class="body-function">
+<div class="codeblock">void veSetEnv(VeEnv *env);</div>  Sets the active environment.  This is the environment object that will
+  be used for all other core functionality.  There can only be a
+  single active environment at a time.  This object should not be
+  deallocated until another object has been set as the active environment.
+
+<div class="start-param"><span class="tag-param">env</span> - 
+  A pointer to the environment object to be used.
+ </div></div></div>
+<p class="cdoc-item">
+<a name="function_veGetEnv"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veGetEnv</span>
+<div class="body-function">
+<div class="codeblock">VeEnv *veGetEnv();</div>  Retrieves the current active environment.  This only returns a
+  reference to the environment - it does not change the current environment
+  at all.
+
+<div class="start-returns"><span class="label-returns">Returns:</span> 
+  A pointer to the current active environment.  This function may
+  return NULL if no environment has been setup.
+ </div></div></div>
+<p class="cdoc-item">
+<a name="function_veSetProfile"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veSetProfile</span>
+<div class="body-function">
+<div class="codeblock">void veSetProfile(VeProfile *prof);</div>  Sets the active user profile.  This is the profile object that will
+  be used by the system when it requires user-specific parameters while
+  working.  This object should not be deallocated until another object
+  has been set as the active profile.
+
+<div class="start-param"><span class="tag-param">prof</span> - 
+  A pointer to the user profile object to be used.
+ </div></div></div>
+<p class="cdoc-item">
+<a name="function_veGetProfile"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veGetProfile</span>
+<div class="body-function">
+<div class="codeblock">VeProfile *veGetProfile();</div>  Retrieves the current active user profile.  This only returns a
+  reference to the profile - it does not change the current environment
+  at all.
+  
+<div class="start-returns"><span class="label-returns">Returns:</span> 
+  A pointer to the current active user profile.  This function may return
+  NULL if no profile has been setup.
+ </div></div></div>
+<p class="cdoc-item">
+<a name="function_veCalcStereoEye"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veCalcStereoEye</span>
+<div class="body-function">
+<div class="codeblock">void veCalcStereoEye(VeFrame *eye_in, VeFrame *out,
+		     VeProfile *pro, int which);</div>  Given the frame for an eye and a user profile, builds a new frame
+  representing either the left or right eye.
+
+<div class="start-param"><span class="tag-param">eye_in</span> - 
+  The frame representing the centre point between the eyes.
+  </div>
+<div class="start-param"><span class="tag-param">out</span> - 
+  The generated frame.  This should not be the same structure as referenced
+  by <i>eye_in</i>.</div>
+<div class="start-param"><span class="tag-param">pro</span> - 
+  The user profile to use for user-specific values.  Right now, only the
+  <i>eyedist</i> value of the <i>stereo</i> compononent of the user profile
+  is used.  This value is the separation between the user's eyes.</div>
+<div class="start-param"><span class="tag-param">which</span> - 
+  Which eye to generate the view for.  Should be one of two constants:
+  <code>VE_EYE_LEFT</code> or <code>VE_EYE_RIGHT</code>.
+ </div></div></div>
+<p class="cdoc-item">
+<a name="function_veGetUnmapMatrix"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veGetUnmapMatrix</span>
+<div class="body-function">
+<div class="codeblock">void veGetUnmapMatrix(VeMatrix4 *m, VeFrame *f);</div>    Constructs a matrix which converts from a frame's space to world space.
+    
+<div class="start-param"><span class="tag-param">m</span> - 
+    A pointer to the matrix where the result will be stored.
+    </div>
+<div class="start-param"><span class="tag-param">f</span> - 
+    The frame from whose space we are converting.
+ </div></div></div>
+<p class="cdoc-item">
+<a name="function_veGetMapMatrix"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veGetMapMatrix</span>
+<div class="body-function">
+<div class="codeblock">void veGetMapMatrix(VeMatrix4 *m, VeFrame *f);</div>    Constructs a matrix which converts from world space to a frame's
+    space.
+
+<div class="start-param"><span class="tag-param">m</span> - 
+    A pointer to the matrix where the result will be stored.
+    </div>
+<div class="start-param"><span class="tag-param">f</span> - 
+    The frame to whose space we are converting.
+ </div></div></div>
+<p class="cdoc-item">
+<a name="function_veGetWindowView"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veGetWindowView</span>
+<div class="body-function">
+<div class="codeblock">void veGetWindowView(VeWindow *w, VeFrame *default_eye, 
+		     VeFrame *eye, VeWallView *wv);</div>    Given a window and a frame (representing an eye or camera) build the
+    corresponding wall-view structure containing the related matrices.
+
+<div class="start-param"><span class="tag-param">w</span> - 
+  The window for which to build the matrices.</div>
+<div class="start-param"><span class="tag-param">default_eye</span> - 
+  The user's default eye (needed for windows on walls with a base of "eye").
+  If <code>NULL</code>, then the system's default eye is used. 
+  </div>
+<div class="start-param"><span class="tag-param">eye</span> - 
+  The camera's position and orientation.  If <code>NULL</code>, then the
+  the value of <i>default_eye</i> is used.
+  </div>
+<div class="start-param"><span class="tag-param">wv</span> - 
+  The structure in which the matrices will be returned.
+ </div></div></div>
+<p class="cdoc-item">
+<a name="function_veGetWindowClipView"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veGetWindowClipView</span>
+<div class="body-function">
+<div class="codeblock">void veGetWindowClipView(VeWindow *w, VeFrame *default_eye, 
+			 VeFrame *eye, float znear, float zfar,
+			 VeWallView *wv);</div>    Given a window and a frame (representing an eye or camera) build the
+    corresponding wall-view structure containing the related matrices.
+    This varies from <code>veGetWindowView()</code> in that it also allows
+    you to specify the Z clipping planes.
+
+<div class="start-param"><span class="tag-param">w</span> - 
+  The window for which to build the matrices.</div>
+<div class="start-param"><span class="tag-param">default_eye</span> - 
+  The user's default eye (needed for windows on walls with a base of "eye").
+  If <code>NULL</code>, then the system's default eye is used. 
+  </div>
+<div class="start-param"><span class="tag-param">eye</span> - 
+  The camera's position and orientation.  If <code>NULL</code>, then the
+  the value of <i>default_eye</i> is used.
+  </div>
+<div class="start-param"><span class="tag-param">znear</span> - 
+  The value of the near Z clipping plane.</div>
+<div class="start-param"><span class="tag-param">zfar</span> - 
+  The value of the far Z clipping plane.</div>
+<div class="start-param"><span class="tag-param">wv</span> - 
+  The structure in which the matrices will be returned.
+
+ </div></div></div>
+<p class="cdoc-item">
+<a name="function_veSetZClip"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veSetZClip</span>
+<div class="body-function">
+<div class="codeblock">void veSetZClip(float near, float far);</div>    Sets the global Z clip planes.  These are used for generating
+    projection matrices.  There is currently only one set of Z clip planes
+    for all windows.
+  
+<div class="start-param"><span class="tag-param">near</span> - 
+  The new value for the near Z clip plane.</div>
+<div class="start-param"><span class="tag-param">far</span> - 
+  The new value for the far Z clip plane.
+ </div></div></div>
+<p class="cdoc-item">
+<a name="function_veGetZClip"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veGetZClip</span>
+<div class="body-function">
+<div class="codeblock">void veGetZClip(float *near_r, float *far_r);</div>    Retrieve the current value of the global Z clip planes.
+
+<div class="start-param"><span class="tag-param">near_r</span> - 
+    A pointer to the variable where the value of the near Z clip
+    plane will be stored.</div>
+<div class="start-param"><span class="tag-param">far_r</span> - 
+    A pointer to the variable where the value of the far Z clip
+    plane will be stored.</div></div></div>
+<p class="cdoc-item">
+<a name="function_veFrameIdentity"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veFrameIdentity</span>
+<div class="body-function">
+<div class="codeblock">void veFrameIdentity(VeFrame *frame);</div>    Fills in the given frame with our base reference.  Our base is a
+    frame, positioned at the origin (i.e. <code>(0,0,0)</code>) looking
+    along the negative Z-axis (specifically looking at point 
+    <code>(0,0,-1)</code>) with up pointing along the positive Y-axis
+    (i.e. along <code>(0,1,0)</code>).
+
+<div class="start-param"><span class="tag-param">frame</span> - 
+  The structure in which to return the generated frame.
+ </div></div></div>
+<p class="cdoc-item">
+<a name="function_veMultFrame"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veMultFrame</span>
+<div class="body-function">
+<div class="codeblock">void veMultFrame(VeMatrix4 *m, VeFrame *f, VeFrame *fp);</div>    Multiplies a frame through an arbitrary matrix.  Given matrix <i>M</i>
+    and frame <i>F</i>, the resulting frame <i>F<sup>'</sup></i> would be:
+    <blockquote><i>F<sup>'</sup></i> = <i>MF</i></blockquote>
+    
+<div class="start-param"><span class="tag-param">m</span> - 
+    The matrix to multiply the frame by.</div>
+<div class="start-param"><span class="tag-param">f</span> - 
+    The frame to multiply.
+    </div>
+<div class="start-param"><span class="tag-param">fp</span> - 
+    A pointer to the frame where the resulting value is stored.</div></div></div>
+<p class="cdoc-item">
+<a name="function_veMapFrame"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veMapFrame</span>
+<div class="body-function">
+<div class="codeblock">void veMapFrame(VeFrame *ref, VeFrame *f, VeFrame *fp);</div>    Given one frame of reference, converts a second frame 
+    from the global co-ordinate system to the one
+    represented by the frame of reference
+    (i.e. where the origin is represented by the frame of reference's
+     origin, and the bases are represented by the frame of reference's
+     orientation).  The global co-ordinate system is the one with
+     the origin at (0,0,0) and without rotation.
+     <p>This function is effectively the inverse of <code>veMapFrame()</code>.
+
+<div class="start-param"><span class="tag-param">ref</span> - 
+  The frame of reference.
+  </div>
+<div class="start-param"><span class="tag-param">f</span> - 
+  The frame to convert.
+  </div>
+<div class="start-param"><span class="tag-param">fp</span> - 
+  The structure which will be filled in with the converted frame.
+ </div></div></div>
+<p class="cdoc-item">
+<a name="function_veUnmapFrame"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veUnmapFrame</span>
+<div class="body-function">
+<div class="codeblock">void veUnmapFrame(VeFrame *ref, VeFrame *f, VeFrame *fp);</div>    Given one frame of reference, converts a second frame 
+    from the co-ordinate system represented by the frame of reference
+    (i.e. where the origin is represented by the frame of reference's
+     origin, and the bases are represented by the frame of reference's
+     orientation) to the global co-ordinate system (i.e. the one in
+     which the values of the original frame of reference are expressed).
+     <p>This function is effectively the inverse of <code>veMapFrame()</code>.
+
+<div class="start-param"><span class="tag-param">ref</span> - 
+  The frame of reference.
+  </div>
+<div class="start-param"><span class="tag-param">f</span> - 
+  The frame to convert.
+  </div>
+<div class="start-param"><span class="tag-param">fp</span> - 
+  The structure which will be filled in with the converted frame.
+ </div></div></div>
+<p class="cdoc-item">
+<a name="function_veLockCallbacks"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veLockCallbacks</span>
+<div class="body-function">
+<div class="codeblock">void veLockCallbacks(void);</div>    Prevents callbacks from being processed until unlocked.  It is used
+    internally to ensure that only one callback is processed at a time.
+    Applications can use this function to prevent callbacks from being
+    called.  Note that it should not be called from a callback itself -
+    this will cause the library to terminate the application to avoid
+    a deadlock.  Applications should also be careful that while they
+    have callbacks locked out that they do not wait for action from
+    a callback.
+    <p>Generally this function is not required by applications, but may
+    be required by some drivers and extensions to the library.  The
+    internal modules of the library use this to ensure that only one
+    thread is ever running in the application code (except for display
+    callbacks which may be multi-threaded).</div></div>
+<p class="cdoc-item">
+<a name="function_veDeviceUnlockCallbacks"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veDeviceUnlockCallbacks</span>
+<div class="body-function">
+<div class="codeblock">void veUnlockCallbacks(void);</div>    Removes a previous lock on callbacks.  This should only be called if
+    callbacks were previously locked out.  See 
+    <code>veLockCallbacks()</code>.</div></div>
+<p class="cdoc-item">
+<a name="function_veCallbacksAreLocked"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veCallbacksAreLocked</span>
+<div class="body-function">
+<div class="codeblock">int veCallbacksAreLocked(void);</div>    A predicate function - checks to see if there is currently a lock
+    on callbacks.
+    
+<div class="start-returns"><span class="label-returns">Returns:</span> 
+    1 if callbacks are currently locked by any thread, and 0 if
+    callbacks are not currently locked by any thread.</div></div></div>
+<p class="cdoc-item">
+    The <code>veLockFrame()</code>, <code>veUnlockFrame()</code>,
+    <code>veLockFrameExcl()</code>, <code>veUnlockFrameExcl()</code>,
+    implement a task-specific synchronization device designed to allow all
+    event callbacks which are ready to run, to run before the renderer
+    starts drawing the next frame.  At the same time, it prevents the
+    handlers which call these callbacks from starving the renderer.  Once
+    the renderer decides to render a frame, only callbacks that try to lock
+    the frame before it will get a chance to run before it renders.
+
+<p class="cdoc-item">
+<a name="function_veLockFrame"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veLockFrame</span>
+<div class="body-function">
+<div class="codeblock">void veLockFrame(void);</div>    Gets a non-exclusive lock on the current frame.  Threads which call
+    callbacks should call this before locking off callbacks.  See the
+    discussion above.
+ </div></div>
+<p class="cdoc-item">
+<a name="function_veUnlockFrame"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veUnlockFrame</span>
+<div class="body-function">
+<div class="codeblock">void veUnlockFrame(void);</div>    Releases a non-exclusive lock on the current frame.  Threads which
+    call callbacks should call this after locking off callbacks.  See the
+    discussion above.</div></div>
+<p class="cdoc-item">
+<a name="function_veLockFrameExcl"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veLockFrameExcl</span>
+<div class="body-function">
+<div class="codeblock">void veLockFrameExcl(void);</div>    Gets an exclusive lock on the current frame.  This should only be called
+    by the renderer thread.  If you are unsure, don't call this.
+    See the discussion above.
+ </div></div>
+<p class="cdoc-item">
+<a name="function_veUnlockFrameExcl"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veUnlockFrameExcl</span>
+<div class="body-function">
+<div class="codeblock">void veUnlockFrameExcl(void);</div>    Releases a exclusive lock on the current frame.  This should only be
+    called by the renderer thread.  If you are unsure, don't call this.
+    See the discussion above.</div></div>
+
+<h2 class="cdoc-index">Index</h2>
+<ul>
+<li><a class="link-function" href="#function_veCalcStereoEye">veCalcStereoEye (function)</a></li>
+<li><a class="link-function" href="#function_veCallbacksAreLocked">veCallbacksAreLocked (function)</a></li>
+<li><a class="link-function" href="#function_veCoreInit">veCoreInit (function)</a></li>
+<li><a class="link-function" href="#function_veDeviceUnlockCallbacks">veDeviceUnlockCallbacks (function)</a></li>
+<li><a class="link-function" href="#function_veFrameIdentity">veFrameIdentity (function)</a></li>
+<li><a class="link-function" href="#function_veGetDefaultEye">veGetDefaultEye (function)</a></li>
+<li><a class="link-function" href="#function_veGetEnv">veGetEnv (function)</a></li>
+<li><a class="link-function" href="#function_veGetMapMatrix">veGetMapMatrix (function)</a></li>
+<li><a class="link-function" href="#function_veGetOrigin">veGetOrigin (function)</a></li>
+<li><a class="link-function" href="#function_veGetProfile">veGetProfile (function)</a></li>
+<li><a class="link-function" href="#function_veGetUnmapMatrix">veGetUnmapMatrix (function)</a></li>
+<li><a class="link-function" href="#function_veGetWindowClipView">veGetWindowClipView (function)</a></li>
+<li><a class="link-function" href="#function_veGetWindowView">veGetWindowView (function)</a></li>
+<li><a class="link-function" href="#function_veGetZClip">veGetZClip (function)</a></li>
+<li><a class="link-function" href="#function_veLockCallbacks">veLockCallbacks (function)</a></li>
+<li><a class="link-function" href="#function_veLockFrame">veLockFrame (function)</a></li>
+<li><a class="link-function" href="#function_veLockFrameExcl">veLockFrameExcl (function)</a></li>
+<li><a class="link-function" href="#function_veMapFrame">veMapFrame (function)</a></li>
+<li><a class="link-function" href="#function_veMultFrame">veMultFrame (function)</a></li>
+<li><a class="link-function" href="#function_veSetDefaultEye">veSetDefaultEye (function)</a></li>
+<li><a class="link-function" href="#function_veSetEnv">veSetEnv (function)</a></li>
+<li><a class="link-function" href="#function_veSetOrigin">veSetOrigin (function)</a></li>
+<li><a class="link-function" href="#function_veSetOrigin">veSetOrigin (function)</a></li>
+<li><a class="link-function" href="#function_veSetProfile">veSetProfile (function)</a></li>
+<li><a class="link-function" href="#function_veSetZClip">veSetZClip (function)</a></li>
+<li><a class="link-function" href="#function_veUnlockFrame">veUnlockFrame (function)</a></li>
+<li><a class="link-function" href="#function_veUnlockFrameExcl">veUnlockFrameExcl (function)</a></li>
+<li><a class="link-function" href="#function_veUnmapFrame">veUnmapFrame (function)</a></li>
+<li><a class="link-struct" href="#struct_VeWallView">VeWallView (struct)</a></li>
+</ul>
+</body>
+</html>

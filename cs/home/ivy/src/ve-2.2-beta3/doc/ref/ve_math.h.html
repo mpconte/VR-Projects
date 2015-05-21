@@ -1,0 +1,459 @@
+<html>
+<head>
+<title>File: ve_math.h</title>
+</head>
+<body>
+<h1 class="cdoc-file">File: ve_math.h</h1>
+
+
+<p class="cdoc-item">
+    <p>The ve_math module provides all of the generalized math operations
+    (i.e. for 4x4 matrices, vectors of size 3, quaternions) that are required
+    for VE.</p>
+
+<p class="cdoc-item">
+<a name="struct_VeMatrix4"></a><div class="start-struct"><span class="label-struct">Structure:</span> <span class="tag-struct">VeMatrix4</span>
+<div class="body-struct">
+    The type for a 4x4 matrix.
+
+<div class="codeblock">typedef struct ve_matrix4 {</div><p class="cdoc-item">
+<div class="start-member"><span class="tag-member">data</span> - 
+      A two-dimensional array of the array's contents nominally in 
+      "row-column" order.
+  
+<div class="codeblock">  float data[4][4];</div></div>
+<div class="codeblock">} VeMatrix4;</div></div></div>
+<p class="cdoc-item">
+<a name="struct_VeVector3"></a><div class="start-struct"><span class="label-struct">Structure:</span> <span class="tag-struct">VeVector3</span>
+<div class="body-struct">
+    The type for a vector of size 3.
+
+<div class="codeblock">typedef struct ve_vector3 {</div><p class="cdoc-item">
+<div class="start-member"><span class="tag-member">data</span> - 
+      A one-dimensional array of the vector's contents.
+  
+<div class="codeblock">  float data[3];</div></div>
+<div class="codeblock">} VeVector3;</div></div></div>
+<p class="cdoc-item">
+<a name="struct_VeQuat"></a><div class="start-struct"><span class="label-struct">Structure:</span> <span class="tag-struct">VeQuat</span>
+<div class="body-struct">
+    The type for a quaternion.
+
+<div class="codeblock">typedef struct ve_quat {</div><p class="cdoc-item">
+<div class="start-member"><span class="tag-member">data</span> - 
+      A one-dimensional array of the quaternion's values.
+      Element 3 is the scalar value, preceeded by the <i>i</i>, 
+      <i>j</i>, <i>k</i> values.  Thus it is (<vector>,<scalar>).
+  
+<div class="codeblock">  float data[4];</div></div>
+<div class="codeblock">} VeQuat;</div></div></div>
+<p class="cdoc-item">
+<a name="function_veMatrixIdentity"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veMatrixIdentity</span>
+<div class="body-function">
+<div class="codeblock">void veMatrixIdentity(VeMatrix4 *m);</div>    <p>
+    Fills in the given matrix with the identity matrix, i.e.
+    <pre>
+        [ 1 0 0 0 ]
+        [ 0 1 0 0 ]
+        [ 0 0 1 0 ]
+        [ 0 0 0 1 ]
+    </pre>    
+    </p>
+
+<div class="start-param"><span class="tag-param">m</span> - 
+    The identity to reset to the identity.
+ </div></div></div>
+<p class="cdoc-item">
+<a name="function_veMatrixRotate"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veMatrixRotate</span>
+<div class="body-function">
+<div class="codeblock">void veMatrixRotate(VeMatrix4 *m, int axis, int fmt, float val);</div>    <p>Fills in the given matrix with a rotation matrix around one of
+    the x, y, or z axes.  For example, for a rotation about the z 
+    axis, of angle <i>a</i> the result would be:
+    <pre>
+    [  cos(<i>a</i>)  -sin(<i>a</i>)   0    0  ]
+    [  sin(<i>a</i>)   cos(<i>a</i>)   0    0  ]
+    [    0        0      1    0  ]
+    [    0        0      0    1  ]
+    </pre>
+
+<div class="start-param"><span class="tag-param">m</span> - 
+    The matrix in which to put the generated rotation matrix.
+    </div>
+<div class="start-param"><span class="tag-param">axis</span> - 
+    The axis around which to generate the rotation.  This should be
+    one of <code>VE_X</code>, <code>VE_Y</code>, or <code>VE_Z</code>.
+    </div>
+<div class="start-param"><span class="tag-param">fmt</span> - 
+    The format in which the angle is being specified.  This should be
+    either <code>VE_DEG</code> or <code>VE_RAD</code>.</div>
+<div class="start-param"><span class="tag-param">val</span> - 
+    The angle to rotate by.</div></div></div>
+<p class="cdoc-item">
+<a name="function_veMatrixRotateArb"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veMatrixRotateArb</span>
+<div class="body-function">
+<div class="codeblock">void veMatrixRotateArb(VeMatrix4 *m, VeVector3 *u, int fmt, float val);</div>    <p>Fills in the given matrix with a rotation matrix around an
+    arbitrary matrix.  If the axis is represented by the unit vector
+    (<i>x</i>,<i>y</i>,<i>z</i>) and the rotation is around angle <i>a</i>
+    with <i>c = cos(a)</i> and <i>s = sin(a)</i>,
+    then the generated matrix would be:
+    <pre>
+        [ x*x+c*(1-x*x)  x*y*(1-c)-z*s  x*z*(1-c)+x*s  0 ]
+        [ x*y*(1-c)+z*s  y*y+c*(1-y*y)  y*z*(1-c)-x*s  0 ]
+        [ x*z*(1-c)-y*s  y*z*(1-c)+x*s  z*z+c*(1-z*z)  0 ]
+        [       0              0                0      1 ]
+    </pre>
+    </p>
+
+<div class="start-param"><span class="tag-param">m</span> - 
+    The matrix in which to put the generated rotation matrix.
+    </div>
+<div class="start-param"><span class="tag-param">u</span> - 
+    The axis around which to rotate.  This vector must have a magnitude
+    of 1 - i.e. it must be a unit vector.</div>
+<div class="start-param"><span class="tag-param">fmt</span> - 
+    The format in which the angle of rotation is specified.  This must
+    be either <code>VE_DEG</code> or <code>VE_RAD</code>.
+    </div>
+<div class="start-param"><span class="tag-param">val</span> - 
+    The angle by which to rotate.</div></div></div>
+<p class="cdoc-item">
+<a name="function_veMatrixTranslate"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veMatrixTranslate</span>
+<div class="body-function">
+<div class="codeblock">void veMatrixTranslate(VeMatrix4 *m, VeVector3 *v, float scale);</div>    <p>Fills in the given matrix with a translation matrix along
+    the given vector.  For vector (<i>x</i>,<i>y</i>,<i>z</i>) the
+    resulting matrix would be:
+    <pre>
+        [  1  0  0  x  ]
+        [  0  1  0  y  ]
+        [  0  0  1  z  ]
+        [  0  0  0  1  ]
+    </pre>
+    </p>
+
+<div class="start-param"><span class="tag-param">m</span> - 
+    The matrix in which to put the generated translation matrix.</div>
+<div class="start-param"><span class="tag-param">v</span> - 
+    The vector along which to translate.</div>
+<div class="start-param"><span class="tag-param">scale</span> - 
+    A scalar value by which to multiply the given vector before
+    generating the translation.  This multiplication does not
+    affect the stored value of the vector.
+ </div></div></div>
+<p class="cdoc-item">
+<a name="function_veMatrixMult"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veMatrixMult</span>
+<div class="body-function">
+<div class="codeblock">void veMatrixMult(VeMatrix4 *a, VeMatrix4 *b, VeMatrix4 *c);</div>    <p>Multiplies two 4x4 matrices.</p>
+
+<div class="start-param"><span class="tag-param">a</span> - 
+    The left matrix of the multiplication.
+    </div>
+<div class="start-param"><span class="tag-param">b</span> - 
+    The right matrix of the multiplication.</div>
+<div class="start-param"><span class="tag-param">c</span> - 
+    The matrix where the result will be stored, i.e. <i>c = ab</i>.</div></div></div>
+<p class="cdoc-item">
+<a name="function_veMatrixMultPoint"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veMatrixMultPoint</span>
+<div class="body-function">
+<div class="codeblock">void veMatrixMultPoint(VeMatrix4 *m, VeVector3 *v, VeVector3 *out, 
+		       float *scale);</div>    <p>Transforms a vector of length 3 using a 4x4 matrix.  The effective
+    calculation is:
+    <pre>
+        out = mv
+    </pre>
+    </p>
+    
+<div class="start-param"><span class="tag-param">m</span> - 
+    The matrix by which to multiply the point.</div>
+<div class="start-param"><span class="tag-param">v</span> - 
+    The vector which represents the point you are multiple.</div>
+<div class="start-param"><span class="tag-param">out</span> - 
+    The vector in which the result will be stored.
+    </div>
+<div class="start-param"><span class="tag-param">scale</span> - 
+    If not NULL, then the float pointed to by this value will be filled
+    with the scaling factor (i.e. the 4th value generated by the 
+    multiplication).</div></div></div>
+<p class="cdoc-item">
+<a name="function_veVectorCross"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veVectorCross</span>
+<div class="body-function">
+<div class="codeblock">void veVectorCross(VeVector3 *a, VeVector3 *b, VeVector3 *c);</div>    <p>Calculates the cross-product of two 3-dimensional vectors.
+    The effective calculation is:
+    <pre>
+        c = a x b
+    </pre>
+    </p>
+    
+<div class="start-param"><span class="tag-param">a</span> - 
+    The left vector in the cross-product.</div>
+<div class="start-param"><span class="tag-param">b</span> - 
+    The right vector in the cross-product.</div>
+<div class="start-param"><span class="tag-param">c</span> - 
+    The vector where the result of the operation will be stored.</div></div></div>
+<p class="cdoc-item">
+<a name="function_veVectorDot"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veVectorDot</span>
+<div class="body-function">
+<div class="codeblock">float veVectorDot(VeVector3 *a, VeVector3 *b);</div>    <p>Calculates the dot-product (or inner-product) of a pair of
+    3-dimensional vectors.</p>
+
+<div class="start-param"><span class="tag-param">a,b</span> - 
+    The operands of the dot-product.</div>
+<div class="start-returns"><span class="label-returns">Returns:</span> 
+    The value of the dot-product.</div></div></div>
+<p class="cdoc-item">
+<a name="function_veVectorMag"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veVectorMag</span>
+<div class="body-function">
+<div class="codeblock">float veVectorMag(VeVector3 *v);</div>    <p>Calculates the magnitude of a vector.
+    
+<div class="start-param"><span class="tag-param">v</span> - 
+    The vector for which to return the magnitude.
+    </div>
+<div class="start-returns"><span class="label-returns">Returns:</span> 
+    The magnitude of the given vector.</div></div></div>
+<p class="cdoc-item">
+<a name="function_veVectorNorm"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veVectorNorm</span>
+<div class="body-function">
+<div class="codeblock">void veVectorNorm(VeVector3 *v);</div>    <p>Normalizes a 3-dimension vector so that its magnitude is 1.
+    If the magnitude of the vector is initially 0 then a warning
+    will be generated, but no other action will be taken.  The
+    vector is changed in-place.</p>
+    
+<div class="start-param"><span class="tag-param">v</span> - 
+    The vector to be normalized.</div></div></div>
+<p class="cdoc-item">
+<a name="function_veQuatNorm"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veQuatNorm</span>
+<div class="body-function">
+<div class="codeblock">void veQuatNorm(VeQuat *q);</div>    <p>Normalizes a quaternion so that its magnitude is 1.
+    If the magnitude of the quaternion is 0 then a warning will
+    be generated, but no other action will be taken.  The quaternion
+    is changed in-place.</p>
+
+<div class="start-param"><span class="tag-param">q</span> - 
+    The quaternion to be normalized.</div></div></div>
+<p class="cdoc-item">
+<a name="function_veQuatToRotMatrix"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veQuatToRotMatrix</span>
+<div class="body-function">
+<div class="codeblock">void veQuatToRotMatrix(VeMatrix4 *m, VeQuat *q);</div>    <p>Converts a quaternion into its corresponding rotation matrix.</p>
+    
+<div class="start-param"><span class="tag-param">m</span> - 
+    The matrix in which the rotation matrix is to be stored.
+    </div>
+<div class="start-param"><span class="tag-param">q</span> - 
+    The quaternion from the rotation matrix is to be derived.</div></div></div>
+<p class="cdoc-item">
+<a name="function_veRotMatrixToQuat"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veRotMatrixToQuat</span>
+<div class="body-function">
+<div class="codeblock">void veRotMatrixToQuat(VeQuat *q, VeMatrix4 *m);</div>    <p>Converts the rotation component of a matrix into a quaternion.</p>
+    
+<div class="start-param"><span class="tag-param">q</span> - 
+    The structure in which the derived quaternion will be stored.</div>
+<div class="start-param"><span class="tag-param">m</span> - 
+    The matrix from which the quaternion will be derived.</div>
+<div class="start-returns"><span class="label-returns">Returns:</span> 
+    0 if successful, non-zero if the diagonal of the matrix is degenerate.</div></div></div>
+<p class="cdoc-item">
+<a name="function_veQuatMult"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veQuatMult</span>
+<div class="body-function">
+<div class="codeblock">void veQuatMult(VeQuat *a, VeQuat *b, VeQuat *c_ret);</div>    <p>Multiplies to quaternions.</p>
+
+<div class="start-param"><span class="tag-param">a,b</span> - 
+    The two quaternions to multiply.</div>
+<div class="start-param"><span class="tag-param">c_ret</span> - 
+    Where the result is stored.</div></div></div>
+<p class="cdoc-item">
+<a name="function_veQuatFromArb"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veQuatFromArb</span>
+<div class="body-function">
+<div class="codeblock">void veQuatFromArb(VeQuat *q_ret, VeVector3 *axis, int fmt, float ang);</div>    <p>Given a rotation axis and an angle about that axis, create a
+    quaternion.</p>
+
+<div class="start-param"><span class="tag-param">axis</span> - 
+    The axis about which to rotate.
+    </div>
+<div class="start-param"><span class="tag-param">fmt</span> - 
+    The format of the angle (VE_RAD or VE_DEG).</div>
+<div class="start-param"><span class="tag-param">ang</span> - 
+    The amount to rotate by.</div>
+<div class="start-param"><span class="tag-param">q_ret</span> - 
+    Where the result is stored.</div></div></div>
+<p class="cdoc-item">
+<a name="function_veQuatToArb"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veQuatToArb</span>
+<div class="body-function">
+<div class="codeblock">void veQuatToArb(VeVector3 *axis_ret, float *ang_ret, int fmt, VeQuat *q);</div>    <p>Given a quaternion, generate the corresponding axis and rotation
+    angle about that axis.</p>
+
+<div class="start-param"><span class="tag-param">axis_ret</span> - 
+    The resulting axis.
+    </div>
+<div class="start-param"><span class="tag-param">fmt</span> - 
+    The format in which the angle should be returned (VE_RAD or VE_DEG).</div>
+<div class="start-param"><span class="tag-param">ang_ret</span> - 
+    The resulting angle.</div>
+<div class="start-param"><span class="tag-param">q</span> - 
+    Where the result is stored.</div></div></div>
+<p class="cdoc-item">
+<a name="function_veMatrixLookAt"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veMatrixLookAt</span>
+<div class="body-function">
+<div class="codeblock">void veMatrixLookAt(VeMatrix4 *m, VeVector3 *loc, VeVector3 *dir, 
+		    VeVector3 *up);</div>    <p>Generates a "look-at" matrix.  The arguments specify where
+    the camera is located, which direction it is looking in, and which 
+    direction is up.  The generated matrix converts from world-space 
+    co-ordinates to camera-space co-ordinates.</p>
+
+<div class="start-param"><span class="tag-param">m</span> - 
+    The matrix where the result is to be stored.</div>
+<div class="start-param"><span class="tag-param">loc</span> - 
+    The origin of the camera.</div>
+<div class="start-param"><span class="tag-param">dir</span> - 
+    The direction in which the camera is looking.</div>
+<div class="start-param"><span class="tag-param">up</span> - 
+    A vector in the direction of up.  This vector must not be parallel
+    to the <i>dir</i> vector need not be perpendicular.</div></div></div>
+<p class="cdoc-item">
+<a name="function_veMatrixInvLookAt"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veMatrixInvLookAt</span>
+<div class="body-function">
+<div class="codeblock">void veMatrixInvLookAt(VeMatrix4 *m, VeVector3 *loc, VeVector3 *dir, 
+		       VeVector3 *up);</div>    <p>Generates the inverse of a "look-at" matrix.  The arguments are
+    the same as for generating a "look-at" matrix, but converts from
+    camera-space to world-space instead.</p>
+
+<div class="start-param"><span class="tag-param">m</span> - 
+    The matrix where the result is to be stored.</div>
+<div class="start-param"><span class="tag-param">loc</span> - 
+    The origin of the camera.</div>
+<div class="start-param"><span class="tag-param">dir</span> - 
+    The direction in which the camera is looking.</div>
+<div class="start-param"><span class="tag-param">up</span> - 
+    A vector in the direction of up.  This vector must not be parallel
+    to the <i>dir</i> vector need not be perpendicular.</div></div></div>
+<p class="cdoc-item">
+<a name="function_veMatrixFrustum"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veMatrixFrustum</span>
+<div class="body-function">
+<div class="codeblock">void veMatrixFrustum(VeMatrix4 *m, float left, float right, float bottom,
+		     float top, float near, float far);</div>    <p>Generates a frustum projection matrix.</p>
+    
+<div class="start-param"><span class="tag-param">m</span> - 
+    The matrix in which the generated matrix is stored.</div>
+<div class="start-param"><span class="tag-param">left</span> - 
+    The location of the left clipping plane (along the x-axis) in the near
+    z-clip plane (as specified by the <i>near</i> argument).</div>
+<div class="start-param"><span class="tag-param">right</span> - 
+    The location of the right clipping plane (along the x-axis) in the near
+    z-clip plane (as specified by the <i>near</i> argument).</div>
+<div class="start-param"><span class="tag-param">bottom</span> - 
+    The location of the bottom clipping plane (along the y-axis) in the near
+    z-clip plane (as specified by the <i>near</i> argument).</div>
+<div class="start-param"><span class="tag-param">top</span> - 
+    The location of the top clipping plane (along the y-axis) in the near
+    z-clip plane (as specified by the <i>near</i> argument).</div>
+<div class="start-param"><span class="tag-param">near</span> - 
+    The location of the near clipping plane (along the z-axis).</div>
+<div class="start-param"><span class="tag-param">far</span> - 
+    The location of the far clipping pplane (along the z-axis).</div></div></div>
+<p class="cdoc-item">
+<a name="function_veMatrixPrint"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veMatrixPrint</span>
+<div class="body-function">
+<div class="codeblock">void veMatrixPrint(VeMatrix4 *m, FILE *f);</div>    <p>Writes out the contents of the given matrix on the given standard
+    I/O channel.  Used primarily for debugging.</p>
+
+<div class="start-param"><span class="tag-param">m</span> - 
+    The matrix to print.</div>
+<div class="start-param"><span class="tag-param">f</span> - 
+    The channel on which to print the matrix.</div></div></div>
+<p class="cdoc-item">
+<a name="function_veVectorPrint"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veVectorPrint</span>
+<div class="body-function">
+<div class="codeblock">void veVectorPrint(VeVector3 *v, FILE *f);</div>    <p>Writes out the contents of the given vector on the given standard
+    I/O channel.  Used primarily for debugging.</p>
+
+<div class="start-param"><span class="tag-param">v</span> - 
+    The vector to print.</div>
+<div class="start-param"><span class="tag-param">f</span> - 
+    The channel on which to print the vector.</div></div></div>
+<p class="cdoc-item">
+<a name="function_veQuatPrint"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veQuatPrint</span>
+<div class="body-function">
+<div class="codeblock">void veQuatPrint(VeQuat *q, FILE *f);</div>    <p>Writes out the contents of the given quaternion on the given
+    standard I/O channel.  Used primarily for debugging.</p>
+    
+<div class="start-param"><span class="tag-param">q</span> - 
+    The quaternion to print.</div>
+<div class="start-param"><span class="tag-param">f</span> - 
+    The channel on which to print the vector.</div></div></div>
+<p class="cdoc-item">
+<a name="function_vePackVector"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">vePackVector</span>
+<div class="body-function">
+<div class="codeblock">void vePackVector(VeVector3 *v, float x, float y, float z);</div>    <p>A convenience function which stores the arguments in the given
+    vector.</p>
+
+<div class="start-param"><span class="tag-param">v</span> - 
+    The vector into which to pack the arguments.
+    </div>
+<div class="start-param"><span class="tag-param">x,y,z</span> - 
+    The values to put in the vector.</div></div></div>
+<p class="cdoc-item">
+<a name="function_veMatrixReduce"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veMatrixReduce</span>
+<div class="body-function">
+<div class="codeblock">int veMatrixReduce(VeMatrix4 *m);</div>    <p>Performs a row-reduction on the given matrix;
+
+<div class="start-returns"><span class="label-returns">Returns:</span> 
+    0 if successful, non-zero if the matrix cannot be reduced.
+ </div></div></div>
+<p class="cdoc-item">
+<a name="function_veMatrixInvert"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veMatrixInvert</span>
+<div class="body-function">
+<div class="codeblock">int veMatrixInvert(VeMatrix4 *m, VeMatrix4 *im);</div>    <p>Inverts the given matrix.
+
+<div class="start-param"><span class="tag-param">m</span> - 
+    The input matrix.</div>
+<div class="start-param"><span class="tag-param">im</span> - 
+    If successful, the inverted matrix is stored here.
+    </div>
+<div class="start-returns"><span class="label-returns">Returns:</span> 
+    0 if successful, non-zero if the matrix cannot be inverted.</div></div></div>
+<p class="cdoc-item">
+<a name="function_veMatrixSolve"></a><div class="start-function"><span class="label-function">Function:</span> <span class="tag-function">veMatrixSolve</span>
+<div class="body-function">
+<div class="codeblock">void veMatrixSolve(VeMatrix4 *A, float *b);</div>    <p>Given a matrix A and vector <i>b</i>, solves the system of equations
+    <i>Ax = b</i>.  The values for <i>x</i> are stored in the same vector
+    that is used to passed <i>b</i>.
+
+<div class="start-param"><span class="tag-param">A</span> - 
+    The matrix</div>
+<div class="start-param"><span class="tag-param">b</span> - 
+    The right-hand side vector.  The results are returned in this vector
+    as well.  There must be space for at least 4 floats in this
+    array.</div></div></div>
+
+<h2 class="cdoc-index">Index</h2>
+<ul>
+<li><a class="link-function" href="#function_veMatrixFrustum">veMatrixFrustum (function)</a></li>
+<li><a class="link-function" href="#function_veMatrixIdentity">veMatrixIdentity (function)</a></li>
+<li><a class="link-function" href="#function_veMatrixInvert">veMatrixInvert (function)</a></li>
+<li><a class="link-function" href="#function_veMatrixInvLookAt">veMatrixInvLookAt (function)</a></li>
+<li><a class="link-function" href="#function_veMatrixLookAt">veMatrixLookAt (function)</a></li>
+<li><a class="link-function" href="#function_veMatrixMult">veMatrixMult (function)</a></li>
+<li><a class="link-function" href="#function_veMatrixMultPoint">veMatrixMultPoint (function)</a></li>
+<li><a class="link-function" href="#function_veMatrixPrint">veMatrixPrint (function)</a></li>
+<li><a class="link-function" href="#function_veMatrixReduce">veMatrixReduce (function)</a></li>
+<li><a class="link-function" href="#function_veMatrixRotate">veMatrixRotate (function)</a></li>
+<li><a class="link-function" href="#function_veMatrixRotateArb">veMatrixRotateArb (function)</a></li>
+<li><a class="link-function" href="#function_veMatrixSolve">veMatrixSolve (function)</a></li>
+<li><a class="link-function" href="#function_veMatrixTranslate">veMatrixTranslate (function)</a></li>
+<li><a class="link-function" href="#function_vePackVector">vePackVector (function)</a></li>
+<li><a class="link-function" href="#function_veQuatFromArb">veQuatFromArb (function)</a></li>
+<li><a class="link-function" href="#function_veQuatMult">veQuatMult (function)</a></li>
+<li><a class="link-function" href="#function_veQuatNorm">veQuatNorm (function)</a></li>
+<li><a class="link-function" href="#function_veQuatPrint">veQuatPrint (function)</a></li>
+<li><a class="link-function" href="#function_veQuatToArb">veQuatToArb (function)</a></li>
+<li><a class="link-function" href="#function_veQuatToRotMatrix">veQuatToRotMatrix (function)</a></li>
+<li><a class="link-function" href="#function_veRotMatrixToQuat">veRotMatrixToQuat (function)</a></li>
+<li><a class="link-function" href="#function_veVectorCross">veVectorCross (function)</a></li>
+<li><a class="link-function" href="#function_veVectorDot">veVectorDot (function)</a></li>
+<li><a class="link-function" href="#function_veVectorMag">veVectorMag (function)</a></li>
+<li><a class="link-function" href="#function_veVectorNorm">veVectorNorm (function)</a></li>
+<li><a class="link-function" href="#function_veVectorPrint">veVectorPrint (function)</a></li>
+<li><a class="link-struct" href="#struct_VeMatrix4">VeMatrix4 (struct)</a></li>
+<li><a class="link-struct" href="#struct_VeQuat">VeQuat (struct)</a></li>
+<li><a class="link-struct" href="#struct_VeVector3">VeVector3 (struct)</a></li>
+</ul>
+</body>
+</html>

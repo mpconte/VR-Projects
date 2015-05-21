@@ -1,0 +1,142 @@
+\documentclass[10pt]{book}
+\usepackage{geometry}
+\usepackage{graphics}
+\usepackage[pdftex]{graphicx}
+\usepackage{comment}
+\usepackage{epstopdf}
+\usepackage{color}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{paralist}
+\usepackage{fancyvrb}
+\usepackage{subfigure}
+
+\usepackage{sectsty}
+\allsectionsfont{\sffamily\mdseries\upshape}
+
+\title{The BlueScript User Manual}
+\author{Matt Robinson}
+\date{This draft dated \today}
+
+% Macros used in this document\\
+%
+% \bscode{x} - identifies an inline piece of code
+%          - rendered in tt font
+\newcommand{\bscode}[1]{\texttt{#1}}
+% \bsfunc{x} - a BlueScript function name in the text
+\newcommand{\bsfunc}[1]{\texttt{#1}}
+% \bstype{x} - a BlueScript type (or part of one) in the text
+\newcommand{\bstype}[1]{\texttt{#1}}
+% \bsfile{x} - a reference to a file or path
+\newcommand{\bsfile}[1]{\texttt{#1}}
+% \bsenv{x} - an environment variable
+\newcommand{\bsenv}[1]{\texttt{#1}}
+% \bsdefn{x} - define a term
+\newcommand{\bsdefn}[1]{\textit{#1}}
+
+% An environment for examples
+% - details to be filled in later
+\newenvironment{eg}{\begin{lrbox}}{\end{lrbox}}
+\definecolor{lgray}{gray}{.8}
+\newcommand{\Example}[1]{{\begin{quote} \colorbox{lgray}{\parbox{5in}{\ttfamily #1}} \end{quote}}}
+\newcommand{\ExampleDesc}[2]{{\begin{quote} \colorbox{lgray}{\parbox{5in}{\ttfamily #1}} \newline #2 \end{quote}}}
+\newcommand{\bs}[0]{$\backslash$}
+
+\begin{document}
+
+\maketitle
+
+\chapter {Introduction}
+
+BlueScript is a simple language which is not meant to be a full programming tool in its own right but to be the basis for constructing task-specific languages and embedded scripting tools.  As part of this goal, the fundamentals of the language are simple, yet the language is easily extensible and can be implemented in a relatively small space.
+
+BlueScript takes some inspiration from the Tcl language.  The syntax is very similar, but some of the semantics are different.  If you are familir with Tcl, you will find that BlueScript scripts look very similar.  A major difference is that BlueScript has few pre-defined procedures.  In fact, is possible to have a BlueScript interpreter that has {\em no} pre-defined procedures at all.  It is this feature in particular that makes BlueScript a desirable tool for use in embedded applications.  A scripting environment can be created which consists solely of that functionality which you desire, making it easier to provide scripting support that is secure and robust.
+
+\chapter{Fundamentals}
+
+\section{The Place of BlueScript in The World}
+
+BlueScript is not meant to be a complete programming tool on its own.  As a language, this definition is not meant to be sufficient to create any general program.  Instead, the language defines the basic constructs and elements that are available
+
+\section{Data and Objects}
+
+BlueScript is a weakly-typed system.  There are different types of data, but efforts are made to adjust type as needed at run-time.  There are a number of fundamental types that BlueScript understands and can manipulate.  The unit of data in BlueScript is the \bsdefn{object}.  An object has a \bsdefn{value}.  This value is an abstract concept.  For the value of an object to be meaningful, this object must have one or more \bsdefn{representations}.  For example, the abstract value "2" may have a string representation (a string of length 1:  "2"), an integer representation (2), and a floating-point representation (2.0).
+
+A particular value need not be representable by all possible representations.  For example, the string "saseifj" is not representable as a floating-point number.  A special case, the opaque type, in general cannot be meaningfully represented by any other type.  However, for any object to have a meaningful value, it must have at least one representation.
+An object with no representations is referred to as a \bsdefn{null object}.  When necessary, it is considered to have a value that is equivalent to the empty string (i.e. a string of length 0).
+
+\subsection{Strings}
+
+The basic type of BlueScript is a \bsdefn{string}.  A string is a sequence of characters with a given length.
+
+The string type is important in that it is the only type which is guaranteed to be available as a representation.  That is, at all times, for all objects, it is possible and valid to retrieve a string representation of that object.  This cannot be said of any other type.
+
+\subsection{Lists}
+
+BlueScript also has a native concept of a list.  Lists are used to represent many internal structures.  For example, an executable BlueScript script is itself a list, and each BlueScript command is represented as a list.
+
+\subsection{Numbers}
+
+BlueScript has two representations for numbers - \bsdefn{integers} and real or 
+\bsdefn{floating-point} numbers.
+
+\subsection{Opaques}
+
+A special representation is the \bsdefn{opaque} type.  An opaque representation is one for which the  value cannot be meaningfully represented as another data type.  For example, the end-point of a network communication stream may be a valid object to consider but cannot be meaningfully represented as a string, or integer, or floating-point number.  As its name implies, this representation is opaque from BlueScript's point of view.
+
+\section{Literals}
+
+There are many methods by which literals can be represented under BlueScript.
+
+\subsection{Strings}
+
+The simplest form of a string literal is a sequence of non-whitespace characters.  For example:
+\Example{qwerty}
+\noindent is a string literal.  In addition to white-space there are a number of characters that cannot be used as part of a string literal in this manner.  These are called {\em special} characters.  These characters are:
+\Example{\$ \{ \} [ ] " \bs}
+To use any of these characters in a string-literal they can be preceded by the {\em escape character} "\bs".  For example the string "need\$\$\$" could be represented as:
+\Example{need\bs\$\bs\$\bs\$}
+This escape mechanism can also be used to include whitespace in the string literal, for example the following:
+\Example{the\bs\ quick\bs\ brown\bs\ fox}
+\noindent represents a single string literal.
+
+Strings can also be quoted with double-quotes (").  A quoted string contains everything between the quotes.  For example:
+\Example{"the quick brown fox"}
+\noindent represents the same string literal as the previous example.  The escape character can be used to include quotes inside a quoted string.  For example:
+\Example{"The quick brown fox says \bs"Hello\bs"."}
+
+Note that other literal formats described below can also be considered to be string literals due to BlueScript's weak typing.  That is, any literal can be considered to be a string literal.
+
+Note that quoting with double-quotes has implications for substitution (see the rules on substitution below).
+
+\section{Lists}
+
+A list literal is a sequence of string literals, with each literal representing an element of the list.  The string literals must be represented by white-space.  For example, the following is a list literal of four elements:
+\Example{apple banana cherry grape}
+
+
+\section{Programming}
+
+%
+% Programming model:
+% - procedures
+% - context procedures
+% - variables
+% - the context stack
+%
+
+\subsection{Commands}
+
+A command is an invocation of a procedure. list with one or more elements.  The first element identifies the command to execute.  The remaining elements are arguments to the command.  For example:
+\Example{set foo bar}
+would be a call to the command "set" with 2 arguments: "foo" and "bar".
+
+\subsection{Variables}
+
+\subsection{Procedures}
+
+\section {Scripts}
+
+A script is a sequence of commands that can be executed.
+
+\end{document}

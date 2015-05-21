@@ -1,0 +1,28 @@
+#!/bin/sh
+# - filter output of tests to remove '\r' - while this could
+#   potentially cause false results, it's needed to keep sanity
+#   when porting between Windows and Posix systems
+tstfilt() {
+	tr -d '\r'
+}
+# usage: run1test outcheck cmd ...
+outcheck=$1
+shift
+echo "testing $@"
+tmp=/tmp/run1test.$$
+rm -f $tmp
+if "$@" >$tmp 
+then
+	:
+else
+	echo >&2 "$1 exited with non-zero value"
+	exit 1
+fi
+if tstfilt <$tmp | diff $outcheck -
+then
+	echo "test passed"
+	exit 0
+else
+	echo >&2 "test failed"
+	exit 1
+fi

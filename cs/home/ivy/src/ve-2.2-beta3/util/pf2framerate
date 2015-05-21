@@ -1,0 +1,17 @@
+#!/bin/bash
+#
+# A script filter that converts profiler output 
+# into framerate stats
+#
+awk 'BEGIN { init = 0 }
+$3 != "ve_main" || $4 != "render-end" { next }
+!init { s0 = olds = $1; n0 = oldn = $2; init = 1; next }
+{ 
+	s = $1 - olds;
+	n = $2 - oldn;
+	olds = $1;
+	oldn = $2;
+	tm = ($2 - n0)*1.0e-9 + ($1 - s0);
+	print tm,1.0/(n*1.0e-9 + s),n*1.0e-9+s;
+}' "$@"
+

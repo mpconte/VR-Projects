@@ -1,0 +1,16 @@
+#!/bin/bash
+#
+# A script filter that converts profiler output from absolute time
+# to relative time in seconds (using floating point)
+#
+awk 'BEGIN { init = 0 }
+!init { olds = $1; oldn $2; $1 = 0.0; $2 = ""; print $0; init = 1; next }
+{ 
+	s = $1 - olds;
+	n = $2 - oldn;
+	olds = $1;
+	oldn = $2;
+	$1 = ""; $2 = "";
+	printf "%f %s\n", n*1.0e-9 + s, $0;
+}' "$@"
+

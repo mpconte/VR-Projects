@@ -1,0 +1,10 @@
+include ../../autocfg.mk
+include ../../Make.config
+
+INCDIR=../../include
+LIBDIR=../../lib
+VELIB=ve
+OPENGL=$(ACFG_OPENGL)
+
+CFLAGS += -I$(INCDIR)
+LDFLAGS = $(CFLAGS) -L$(LIBDIR)

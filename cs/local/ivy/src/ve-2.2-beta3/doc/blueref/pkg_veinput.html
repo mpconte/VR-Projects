@@ -1,0 +1,120 @@
+<html>
+<head>
+<title>BlueScript: VE Input</title>
+<link rel="stylesheet" href="bluescript.css" type="text/css" />
+</head>
+<body>
+<h1>BlueScript: VE Input</h1>
+<h2>Contents</h2>
+<ul>
+<li><a href="#objs">Objects</a>
+<ul>
+<li><a href="#obj_VeDeviceEvent">VeDeviceEvent</a>
+<ul>
+<li><a href="#oproc_VeDeviceEvent__copy"><i>VeDeviceEvent</i> copy</a></li>
+<li><a href="#oproc_VeDeviceEvent__device"><i>VeDeviceEvent</i> device</a></li>
+<li><a href="#oproc_VeDeviceEvent__dump"><i>VeDeviceEvent</i> dump</a></li>
+<li><a href="#oproc_VeDeviceEvent__elem"><i>VeDeviceEvent</i> elem</a></li>
+<li><a href="#oproc_VeDeviceEvent__index"><i>VeDeviceEvent</i> index</a></li>
+<li><a href="#oproc_VeDeviceEvent__key"><i>VeDeviceEvent</i> key</a></li>
+<li><a href="#oproc_VeDeviceEvent__max"><i>VeDeviceEvent</i> max</a></li>
+<li><a href="#oproc_VeDeviceEvent__min"><i>VeDeviceEvent</i> min</a></li>
+<li><a href="#oproc_VeDeviceEvent__push"><i>VeDeviceEvent</i> push</a></li>
+<li><a href="#oproc_VeDeviceEvent__rename"><i>VeDeviceEvent</i> rename</a></li>
+<li><a href="#oproc_VeDeviceEvent__state"><i>VeDeviceEvent</i> state</a></li>
+<li><a href="#oproc_VeDeviceEvent__timestamp"><i>VeDeviceEvent</i> timestamp</a></li>
+<li><a href="#oproc_VeDeviceEvent__type"><i>VeDeviceEvent</i> type</a></li>
+<li><a href="#oproc_VeDeviceEvent__value"><i>VeDeviceEvent</i> value</a></li>
+<li><a href="#oproc_VeDeviceEvent__vmax"><i>VeDeviceEvent</i> vmax</a></li>
+<li><a href="#oproc_VeDeviceEvent__vmin"><i>VeDeviceEvent</i> vmin</a></li>
+<li><a href="#oproc_VeDeviceEvent__vvalue"><i>VeDeviceEvent</i> vvalue</a></li>
+</ul>
+</li>
+</ul>
+<li><a href="#procs">Procedures</a>
+<ul>
+<li><a href="#proc_device">device</a></li>
+<li><a href="#proc_event">event</a></li>
+<li><a href="#proc_filter">filter</a></li>
+<li><a href="#proc_use">use</a></li>
+</ul>
+</ul>
+<h2>Description</h2>
+Procedures for creating input devices and manipulating input
+	events.
+<a name="objs"></a>
+<h2>Objects</h2>
+<ul>
+<li><a href="#obj_VeDeviceEvent">VeDeviceEvent</a></li>
+</ul>
+<a name="obj_VeDeviceEvent"></a>
+<h3>VeDeviceEvent</h3>
+An input event.
+<a name="oproc_VeDeviceEvent__copy"></a>
+<div class="proctitle"><i>VeDeviceEvent</i> copy</div>
+<a name="oproc_VeDeviceEvent__device"></a>
+<div class="proctitle"><i>VeDeviceEvent</i> device</div>
+<a name="oproc_VeDeviceEvent__dump"></a>
+<div class="proctitle"><i>VeDeviceEvent</i> dump</div>
+<a name="oproc_VeDeviceEvent__elem"></a>
+<div class="proctitle"><i>VeDeviceEvent</i> elem</div>
+<a name="oproc_VeDeviceEvent__index"></a>
+<div class="proctitle"><i>VeDeviceEvent</i> index</div>
+<a name="oproc_VeDeviceEvent__key"></a>
+<div class="proctitle"><i>VeDeviceEvent</i> key</div>
+<a name="oproc_VeDeviceEvent__max"></a>
+<div class="proctitle"><i>VeDeviceEvent</i> max</div>
+<a name="oproc_VeDeviceEvent__min"></a>
+<div class="proctitle"><i>VeDeviceEvent</i> min</div>
+<a name="oproc_VeDeviceEvent__push"></a>
+<div class="proctitle"><i>VeDeviceEvent</i> push</div>
+<a name="oproc_VeDeviceEvent__rename"></a>
+<div class="proctitle"><i>VeDeviceEvent</i> rename</div>
+<a name="oproc_VeDeviceEvent__state"></a>
+<div class="proctitle"><i>VeDeviceEvent</i> state</div>
+<a name="oproc_VeDeviceEvent__timestamp"></a>
+<div class="proctitle"><i>VeDeviceEvent</i> timestamp</div>
+<a name="oproc_VeDeviceEvent__type"></a>
+<div class="proctitle"><i>VeDeviceEvent</i> type</div>
+<a name="oproc_VeDeviceEvent__value"></a>
+<div class="proctitle"><i>VeDeviceEvent</i> value</div>
+<a name="oproc_VeDeviceEvent__vmax"></a>
+<div class="proctitle"><i>VeDeviceEvent</i> vmax</div>
+<a name="oproc_VeDeviceEvent__vmin"></a>
+<div class="proctitle"><i>VeDeviceEvent</i> vmin</div>
+<a name="oproc_VeDeviceEvent__vvalue"></a>
+<div class="proctitle"><i>VeDeviceEvent</i> vvalue</div>
+<a name="procs"></a>
+<h2>Procedures</h2>
+<ul>
+<li><a href="#proc_device">device</a></li>
+<li><a href="#proc_event">event</a></li>
+<li><a href="#proc_filter">filter</a></li>
+<li><a href="#proc_use">use</a></li>
+</ul>
+<a name="proc_device"></a>
+<div class="proctitle">device</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>device </b><i>name</i><b> </b><i>type</i><b> </b>[<b></b><i>options</i><b></b>]<b></b><br />
+</div>
+<a name="proc_event"></a>
+<div class="proctitle">event</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>event </b>(<b>trigger</b>|<b>switch</b>|<b>valuator</b>|<b>vector</b>|<b>keyboard</b>)<b></b><br />
+</div>
+<div class="label">Description</div>
+<div class="text">Creates a new event.</div>
+<a name="proc_filter"></a>
+<div class="proctitle">filter</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>filter </b><i>devspec</i><b> </b><i>body</i><b></b><br />
+</div>
+<a name="proc_use"></a>
+<div class="proctitle">use</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>use </b><i>name</i><b> </b>[<b></b>[<b></b><i>type</i><b></b>]<b> </b><i>options</i><b></b>]<b></b><br />
+</div>

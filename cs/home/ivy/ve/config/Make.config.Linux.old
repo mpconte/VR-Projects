@@ -1,0 +1,88 @@
+# Arch: generic (used as a template for other architectures)
+#
+# VE-wide compilation configuration values.  This includes configuration
+# values for all modules of VE.
+
+#
+# General options
+#
+# VEARCH = name of the architecture we are compiling under - used for
+# locating system specific modules.
+#
+VEARCH = linux
+VELIB = ve
+VEGLLIB = veglx
+# CC = C compiler
+CC = cc
+# CFLAGS = general C compiler flags - "-g" or "-O" for debugging or 
+# optimization should be specified here.  Makefiles including this
+# one should add to CFLAGS with the += syntax.  General options for
+# adding specific include directories should go here as well.
+CFLAGS = -g -DTIMER_BUSYWAIT=1 -DDISABLE_SWAP_GROUP=1 
+# AR = Name of the static library program
+AR = ar
+# RANLIB = points to ranlib on systems that use it, /bin/true on others
+RANLIB = /bin/true
+# LD = linking program
+LD = ld
+# SHLD = how to link shared objects - set to /bin/true to avoid generating
+# shared objects
+SHLD = $(LD) -shared
+RM = rm -f
+# LIBPATH - extra linker options specifying libraries to search
+LIBPATH = -L/usr/X11R6/lib
+# OS dependent libraries that should be linked in everywhere
+OSLIBS = -lpthread -ldl -lm
+# JUNK = extra files that should be removed when cleaning
+JUNK = *~ so_locations
+
+# The drivers are only loaded as shared objects right now.
+# If we cannot build shared objects properly, set BUILDRIVERS
+# to blank
+BUILDDRIVERS = yes
+
+#
+# Module-specific options
+#
+
+#
+# NID
+#
+# BUILDNID = set to blank to avoid building nid at all
+BUILDNID = yes
+# BUILDNIDSERVER = set to blank to avoid building the nid server
+BUILDNIDSERVER = yes
+# NIDARCH = architecture for the NID library
+NIDARCH = unix
+# NIDLIBS = extra linker options/libraries, e.g. network libraries
+NIDLIBS = 
+
+#
+# VE Audio
+#
+# BUILDVEAUDIO = set to blank to avoid building the audio stuff at all
+BUILDVEAUDIO = yes
+# AUDIOLIBS = audio libraries for this platform
+AUDIOLIBS = -laudiofile
+
+#
+# VE Clock
+#
+# CLOCKARCH = implementation arch for clock
+CLOCKARCH = unix
+# CLOCKLIBS = clock libraries for this platform
+CLOCKLIBS =
+
+#
+# Main VE module
+#
+# VEITARGETS = actual VE implementations to build
+VEITARGETS = glx
+# THREADARCH = thread implementation to use
+THREADARCH = posix
+# MPARCH = MP communication to use
+MPARCH = posix
+# VELIBS = libraries to link in with VE
+VELIBS = -L../lib -lveclock
+# Implementation-specific libraries:
+VEIGLLIBS = -lGL -lXext -lX11

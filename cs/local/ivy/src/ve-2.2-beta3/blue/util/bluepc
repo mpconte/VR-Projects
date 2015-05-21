@@ -1,0 +1,32 @@
+#!/bin/sh
+# restart with bssh \
+exec bssh "$0" "$@"
+
+#
+# First cut at "bluepc" written natively in BlueScript
+#
+
+proc parser {name {body {}}} {
+    global parser_name pblocks pelems
+
+    cproc handle_block {name arglist body} {
+	global pblocks
+    }
+    
+    cproc handle_elem {name body} {
+	global pelems
+    }
+
+    # parse body
+    foreach x [script $body] {
+	if { [lindex $x 0] == "block" } {
+	    handle_block 
+	} elseif { [lindex $x 0] == "elem" } {
+	} elseif { [lindex $x 0] == "onenter" } {
+	} elseif { [lindex $x 0] == "onexit" } {
+	} elseif { [lindex $x 0] == "onerror" } {
+	} else {
+	    error "invalid parser body member: [lindex $x 0]"
+	}
+    }
+}

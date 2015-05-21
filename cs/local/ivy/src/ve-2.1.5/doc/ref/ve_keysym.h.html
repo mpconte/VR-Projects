@@ -1,0 +1,57 @@
+<html>
+<head>
+<title>File: ve_keysym.h</title>
+</head>
+<body>
+<h1>File: ve_keysym.h</h1>
+
+
+<p>
+    This module defines keycodes for keyboard devices.  All input
+    keyboard devices
+    should return these keycodes when the appropriate keys are pressed.
+    They are all defined as macros, based upon the X11 keysym definitions.
+    All macros begin with the <code>VEK_</code> prefix.  See the header
+    file for the list of macros.
+ 
+<p>
+<a name="function_veKeysymToString"></a><p><em>Function:</em> <b>veKeysymToString</b>
+<blockquote>
+<pre>
+char *veKeysymToString(int ks);</pre>    Converts the given keysym to a printable string.
+    For all keysyms corresponding to printable ASCII characters, this
+    is just the character itself.  Other keysyms have symbolic names,
+    e.g. "Home" or "Page_Up".  Not all keysyms have names.
+
+<p><b>ks</b> - 
+    The keysym to convert.
+
+<p><i>Returns:</i> 
+    A pointer to a static buffer containing the name of the keysym or
+    <code>NULL</code> if there is no known name for the keysym.
+ 
+</blockquote>
+<p>
+<a name="function_veStringToKeysym"></a><p><em>Function:</em> <b>veStringToKeysym</b>
+<blockquote>
+<pre>
+int veStringToKeysym(char *str);</pre>    The inverse operation of veKeysymToString.  Converts a keysym
+    name to the actual keysym value.  As with veKeysymToString, not
+    all keysyms are supported by this function.
+
+<p><b>str</b> - 
+    The string containing the keysym name.
+
+<p><i>Returns:</i> 
+    The retrieved keysym or <code>VEK_UNKNOWN</code> if the name of 
+    the keysym is not recognized.
+
+</blockquote>
+
+<h2>Index</h2>
+<ul>
+<li><a href="#function_veKeysymToString">veKeysymToString (function)</a></li>
+<li><a href="#function_veStringToKeysym">veStringToKeysym (function)</a></li>
+</ul>
+</body>
+</html>

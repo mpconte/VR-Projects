@@ -1,0 +1,46 @@
+#
+# Test logical operators
+#
+[stdout] writeln "OR test"
+if { 0 || 1 } {
+	[stdout] writeln "pass1"
+} else {
+	[stdout] writeln "fail1"
+}
+if { 1 || 0 } {
+	[stdout] writeln "pass2"
+} else {
+	[stdout] writeln "fail2"
+}
+if { 1 || 1 } {
+	[stdout] writeln "pass3"
+} else {
+	[stdout] writeln "fail3"
+}
+if { 0 || 0 } {
+	[stdout] writeln "fail4"
+} else {
+	[stdout] writeln "pass4"
+}
+
+[stdout] writeln "AND test"
+if { 0 && 1 } {
+	[stdout] writeln "fail1"
+} else {
+	[stdout] writeln "pass1"
+}
+if { 1 && 0 } {
+	[stdout] writeln "fail2"
+} else {
+	[stdout] writeln "pass2"
+}
+if { 1 && 1 } {
+	[stdout] writeln "pass3"
+} else {
+	[stdout] writeln "fail3"
+}
+if { 0 && 0 } {
+	[stdout] writeln "fail4"
+} else {
+	[stdout] writeln "pass4"
+}

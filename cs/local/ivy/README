@@ -1,0 +1,23 @@
+This is the main account for the virtual environment project at york.
+The current working name (IVY) is for "Immersive Virtual ... at York".
+It is just a working name.  A quick overview of the top-level directory:
+
+bin  - support programs and scripts.  Demos are typically not kept here
+       as they require other files.
+
+dist - contains distributions of software from the IVY project.  This
+       is for internal storage only.  At this time, this software should
+       not be redistributed.
+
+doc - local documentation for the IVY project.
+
+misc - other files that don't belong above - e.g. the .cmb files we use
+       for the Onyx2.
+
+progs - active programs for the virtual environment.  If you are looking for
+        demos to run, this is the place to look.
+
+src - unpacked and built core software.  This contains the current working
+      version of the VE library.
+
+www - the IVY project web pages.

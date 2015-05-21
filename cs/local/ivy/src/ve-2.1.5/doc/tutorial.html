@@ -1,0 +1,786 @@
+<html>
+<head>
+<title>VE - A Quick and Dirty Tutorial</title>
+<style type="text/css">
+body { background-color: #f0f0f0 }
+.codeblock { background-color: #ffffff ; margin-left: 20px; margin-right: 20px }
+h1,h2,h3 { color: #e00000 }
+</style>
+</head>
+<body>
+<h1>VE - A Quick and Dirty Tutorial</h1>
+<p>As the title implies, this is meant to get you up and coding VE programs
+as quickly as possible.  If you have worked with the GLUT library you will
+find the general structure of VE programs familiar although the interface
+is different in many ways.</p>
+
+<h2>The Major Pieces</h2>
+<p>The purpose of VE is to take care of the repetitive tasks for our 
+virtual environments, as well as to provide an abstraction so that a
+program need only be written once to then run in our cave, on the motion
+platform, in an HMD, on a workstation, etc.  A VE program is made up
+of the following pieces:</p>
+
+<h3>The Environment File (env)</h3>
+<p>An environment file describes what screens are being used, how they
+are arranged in space, how they are accessed, their geometry and any
+calibration information.  There is typically a single environment file
+for any installation (cave, trike, motion platform, etc.).  This environment
+file is read at run-time, so this information does not need to be compiled
+into your program.</p>
+
+<h3>The User Profile (profile)</h3>
+<p>A user profile contains configuration information that is specific to
+the user of the system.  Currently the most crucial information is the
+stereo eye separation.  The format is general in that it can contain
+other user-specific information in the future.  It is expected that in
+the long run, each user will have a single profile.  For now, a default
+is used.</p>
+
+<h3>The Availble Device Manifest (manifest)</h3>
+<p>The manifest describes all of the input devices that are potentially 
+available in the system.  There is typically one for each installation or 
+in some cases, one for all installations.  Listing a device in the manifest 
+makes it possible for a device to be used by a program, but it is up to
+the program to specify which of the available devices will actually be used.
+The manifest helps to specify some information once (e.g. what port is
+a device hooked up to, which host is a server running on, at what speed do
+we talk to the head tracker, etc.) in one location.</p>
+
+<h3>The Device Usage File (devices)</h3>
+<p>Each program typically has one or more device usage files.  These
+files describe explicitly what input devices to use and how to integrate
+them into the program.  The device usage file allows you to remap incoming
+events from various input devices so that you need not rebuild your program
+for each new input device that you want to use.</p>
+
+<h3>The Application</h3>
+<p>In addition to the above data there actually needs to be a program to run.
+The program will be largely concerned with two tasks:  rendering the geometry
+and controlling the logic of the simulation.</p>
+
+<h2>An Annotated Example Program</h2>
+
+<p>The following is a simple annotated example.  The program simulates
+a large cube with a different colour on each face that is rotating around
+the origin.  The user can control which axes (x, y, or z) the cube is
+rotating around; they can toggle the rotation around any one of the
+axes on or off.  Initially the cube is rotating around the y axis.
+The code here is complete except for many of the comments which have
+been replaced with inline text instead.  This program can be found in the
+VE distribution in the <code>examples/cube</code> directory. 
+</p>
+
+<p>Any VE program must include the appropriate header files.  There are
+two that are critical:
+<ul>
+<li><code>ve.h</code> - This is the main VE header file.</li>
+<li><code>vei_gl.h</code> - This file defines the OpenGL-specific 
+pieces of VE.</li>
+</ul>
+</p>
+
+<div class="codeblock">
+<pre>
+#include &lt;stdlib.h>
+
+#include &lt;ve.h>
+#include &lt;vei_gl.h></pre>
+</div>
+
+<p>
+We define some constants for the program.  <code>ROTSPEED</code> is the
+speed in degrees/second that we want to turn.  <code>FRAME_INTERVAL</code>
+is the minimum amount of time that will elapse between animating frames in
+milliseconds.  The value defined here will turn out to be slightly more
+than 60 frames/second.
+</p>
+
+<div class="codeblock">
+<pre>
+#define ROTSPEED 45.0
+#define FRAME_INTERVAL (1000/60)</pre>
+</div>
+
+<p>
+The following are the state variables for the program.  We're tracking
+the rotation angle around each access and a flag indicating whether or
+not we should increment the angle around each access.
+</p>
+
+<div class="codeblock">
+<pre>
+float x_ang = 0.0, y_ang = 0.0, z_ang = 0.0;
+int x_rot = 0, y_rot = 1, z_rot = 0;</pre>
+</div>
+
+<p>
+The following are the declarations for the callback functions we will
+be using.  We'll discuss them in greater detail when we define them
+below.
+</p>
+
+<div class="codeblock">
+<pre>
+void setupwin(VeWindow *w);
+void display(VeWindow *w, long tm, VeWallView *wv);
+void recv_data(int tag, void *data, int dlen);
+void update_angles(void *);
+int axis_toggle(VeDeviceEvent *, void *);</pre>
+</div>
+
+<div class="codeblock">
+<pre>
+int main(int argc, char **argv) {</pre>
+</div>
+
+<p>
+Every VE program should start with a call to "veInit()".
+This sets up basic structures and allows the library to parse and
+process any command-line arguments.
+After returning from veInit(), any arguments the library recognized
+will have been removed.  Thus, if we so desired, we could check for
+program-specific options at this point.
+</p>
+
+<div class="codeblock">
+<pre>
+  veInit(&amp;argc,argv);</pre>
+</div>
+  
+<p>If we have specific needs for the framebuffer configuration that we
+will be using, we need to let the library know at this point by
+setting options.  Option names and values are strings.
+</p>
+
+<div class="codeblock">
+<pre>
+  veSetOption("depth","1");          /* request a depth buffer (Z-buffer) */
+  veSetOption("doublebuffer","1");   /* request a double-buffered config */</pre>
+</div>
+
+<p>
+Other recognized OpenGL/GLX-layer options are:
+<ul>
+<li><code>red</code>, <code>green</code>, 
+<code>blue</code>, <code>alpha</code> - requests a specific minimum depth for 
+       red, green, blue, and alpha components.  All buffers will have 
+       bits for red, green, and blue, but not necessarily alpha.  If your
+       program needs an alpha component in the frame-buffer you should include
+<blockquote><code>veSetOption("alpha","1");</code></blockquote>
+</li>
+</ul>
+<p>
+     Note that options can also be set via the command-line, e.g.
+<blockquote><code>prog -ve_opt alpha 1</code></blockquote>
+     but in general, requirements of the program should be hardcoded.
+</p>
+
+<p>
+We need to setup two OpenGL callbacks - one for initializing a window
+when it is created, and another for rendering a window (similar to a
+GLUT display callback).
+</p>
+<div class="codeblock">
+<pre>
+  veiGlSetWindowCback(setupwin);
+  veiGlSetDisplayCback(display);</pre>
+</div>
+
+<p>
+We shold also setup a multi-processing data handler.  This is crucial in 
+configurations where there are multiple rendering processes.
+This function will be called on each of the slave procsses to
+receive data that is sent from the master.
+Note that we can have multiple handlers with different tags,
+but in this case we'll send all incoming messages to a single
+handler.
+</p>
+
+<div class="codeblock">
+<pre>
+  veMPDataAddHandler(VE_DTAG_ANY,recv_data);</pre>
+</div>
+
+<p>
+At this point we will setup other processing callbacks.
+Notice that this block is protected by a call to veMPIsMaster() -
+this insures that this code is only executed once in the master process.
+This is important for cases where VE is used in a cluster or
+other multiple-process environment.
+</p>
+
+<div class="codeblock">
+<pre>
+  if (veMPIsMaster()) {</pre>
+</div>
+
+<p>Now we setup the input event callbacks.
+In this case, any event with a device name "axis" (regardless of
+element name) will be passed to the axis_toggle() function.
+</p>
+
+<div class="codeblock">
+<pre>
+    veDeviceAddCallback(axis_toggle,NULL,"axis");</pre>
+</div>
+
+<p>
+Now we setup a timer procedure.  This is a callback that will be called
+once after the specified amount of time has elapsed.  We can
+have the function repeatedly every 'n' seconds by registering
+a new timer procedure in the callback itself (see the code for 
+update_angles() below).  In this case, we will call the update_angles()
+in "0" milliseconds, which means "as soon as possible".
+</p>
+
+<div class="codeblock">
+<pre>
+    veAddTimerProc(0,update_angles,NULL);
+  }</pre>
+</div>
+
+<p>
+It is generally a good idea to set the Z clip planes at this point.
+There is only one set of global values.  This will likely be improved
+in a later version of the library.
+</p>
+
+<div class="codeblock">
+<pre>
+  veSetZClip(0.1,10.0);</pre>
+</div>
+
+<p>
+Once our initialization is complete, we enter VE's event loop and
+let the library take over from here. 
+veRun() should never return, but good form indicates we should
+handle the unexpected as gracefully as possible.
+</p>
+
+<div class="codeblock">
+<pre>
+  veRun();
+  return 0;
+}</pre>
+</div>
+
+<p>
+The GL initialization callback.  This is called once for each window.
+At this point, it is safe to make OpenGL calls.  It is generally used
+to setup the OpenGL context.  Many VE programs will use multiple windows
+and will not share OpenGL contexts.  Thus you should be sure to
+define any lights, materials, textures, etc. in *every* window.
+</p>
+<p>
+Calls to this callback are serialized - that is, there are no other threads
+in the user program when this function is called.
+</p>
+
+<div class="codeblock">
+<pre>
+void setupwin(VeWindow *w) {
+  glEnable(GL_DEPTH_TEST);
+  glShadeModel(GL_FLAT);
+}
+
+void draw_cube(float f) {
+  glBegin(GL_QUADS);
+
+  glColor3f(1.0,0.0,0.0); /* red */
+  glVertex3f(-f,-f,-f);
+  glVertex3f(-f,-f,f);
+  glVertex3f(f,-f,f);
+  glVertex3f(f,-f,-f);
+  
+  glColor3f(0.0,1.0,0.0); /* green */
+  glVertex3f(f,-f,f);
+  glVertex3f(f,-f,-f);
+  glVertex3f(f,f,-f);
+  glVertex3f(f,f,f);
+
+  glColor3f(0.0,0.0,1.0); /* blue */
+  glVertex3f(f,f,-f);
+  glVertex3f(f,f,f);
+  glVertex3f(-f,f,f);
+  glVertex3f(-f,f,-f);
+
+  glColor3f(1.0,1.0,0.0); /* yellow */
+  glVertex3f(-f,f,f);
+  glVertex3f(-f,f,-f);
+  glVertex3f(-f,-f,-f);
+  glVertex3f(-f,-f,f);
+
+  glColor3f(0.0,1.0,1.0); /* cyan */
+  glVertex3f(-f,-f,-f);
+  glVertex3f(f,-f,-f);
+  glVertex3f(f,f,-f);
+  glVertex3f(-f,f,-f);
+
+  glColor3f(1.0,0.0,1.0); /* magenta */
+  glVertex3f(-f,-f,f);
+  glVertex3f(f,-f,f);
+  glVertex3f(f,f,f);
+  glVertex3f(-f,f,f);
+
+  glEnd();
+}</pre>
+</div>
+
+<p>
+The GL rendering callback.  This is called once for each window in each
+frame that is rendered.  Note that these callbacks may be called in
+parallel - that is, it is possible for multiple threads to be executing
+this code at once.
+
+You should not initialize the projection or modelview matrices - VE
+sets these up for you.  You can push/pop/multiply the existing matrices
+as you normally would, or read the existing matrices to help in culling.
+</p>
+
+<div class="codeblock">
+<pre>
+void display(VeWindow *w, long tm, VeWallView *wv) {
+  glClear(GL_DEPTH_BUFFER_BIT|GL_COLOR_BUFFER_BIT);
+  glPushMatrix();
+  /* rotate */
+  glRotatef(x_ang,1.0,0.0,0.0);
+  glRotatef(y_ang,0.0,1.0,0.0);
+  glRotatef(z_ang,0.0,0.0,1.0);
+  /* draw the cube */
+  draw_cube(5.0);
+  glPopMatrix();
+}</pre>
+</div>
+
+<p> 
+In multi-processing setups, the slave rendering processes do not
+necessarily share the same memory space as the master.  Thus we need
+to push updates to them.  The recv_data() function has been setup in
+the main() function as the handler for all incoming messages.  Incoming
+messages are tagged to identify what they are.  The values of these
+tags must greater than or equal to 0.
+
+In this case, we only need to push the rotation angles out, so we'll
+define it as one tag.
+</p>
+
+<div class="codeblock">
+<pre>
+#define TAG_ANGLES  0</pre>
+</div>
+
+<p>
+In recv_data, we want to handle any incoming messages so that we
+can update the state information in the renderers appropriately.
+Note that it is possible, but not necessary, for the master and any
+number of slaves to share the same memory space (e.g. in a multi-threaded
+setup) so be careful when updating global variables.  It can be safely
+assumed that this function is serialized in any particular memory space
+(i.e. there won't be two threads in this call at the same time).
+</p>
+
+<div class="codeblock">
+<pre>
+void recv_data(int tag, void *data, int dlen) {
+  /* even we've only defined one tag, it's a good idea to protect ourselves
+     against future modifications. */
+  switch (tag) {
+  case TAG_ANGLES:
+    {
+      float *f = (float *)data;
+      if (dlen != sizeof(float)*3)
+        veFatalError("cube","received invalid TAG_ANGLES data"
+                     " - expected %d bytes, got %d", sizeof(float)*3,dlen);
+      x_ang = f[0];
+      y_ang = f[1];
+      z_ang = f[2];
+    }
+    break;
+  default:
+    veFatalError("cube","unexpected data tag: %d",tag);
+    break;
+  }
+}</pre>
+</div>
+
+<p>
+update_angles() is our timer callback, and we effectively use it as
+an animation loop.  Note that since our state changes in update_angles,
+we'll also push data out to our slaves.
+</p>
+
+<div class="codeblock">
+<pre>
+void update_angles(void *v) {
+  static long last_time = -1;
+  long now;
+  float tm;
+
+  if (last_time &lt; 0) {
+    /* this is our first call - store the current value of the clock,
+       so we can measure the real interval that we are being called on. */
+    last_time = veClock();
+  } else {
+    /* update any angles that need updating */
+    now = veClock();
+    /* calculate elapsed time */
+    tm = (now-last_time)*1.0e-3;
+    if (x_rot) {
+      x_ang += ROTSPEED*tm;
+      if (x_ang > 360.0)
+        x_ang -= 360.0;
+    }
+    if (y_rot) {
+      y_ang += ROTSPEED*tm;
+      if (y_ang > 360.0)
+        y_ang -= 360.0;
+    }
+    if (z_rot) {
+      z_ang += ROTSPEED*tm;
+      if (z_ang > 360.0)
+        z_ang -= 360.0;
+    }
+
+    /* did we actually change anything? */
+    if (x_rot || y_rot || z_rot) {
+      /* push these changes out to the slaves */
+      float ang[3];
+      ang[0] = x_ang;
+      ang[1] = y_ang;
+      ang[2] = z_ang;
+      veMPDataPush(TAG_ANGLES,(void *)&amp;ang,sizeof(ang));
+      /* let the library know that the screen should be redrawn */
+      vePostRedisplay();
+    }
+    /* save the current value of the clock */
+    last_time = now;
+  }</pre>
+</div>
+
+<p>
+  Since update_angles() is called as a timer procedure, it is only
+  called once and then the library (deliberately) forgets about it.
+  If we want to use it as an animation loop, we need to keep requeueing
+  it, with an appropriate delay.  The delay is in milliseconds, and
+  is defined using the FRAME_INTERVAL macro (see the top of the code).
+  Increasing the value of FRAME_INTERVAL makes for slower updates.
+  Decreasing the value of FRAME_INTERVAL makes for faster updates.
+  Note that the speed of the animation is bounded by how fast the 
+  screen can actually be rendered.
+</p>
+<p>
+   As a matter of good practice, we will add the timer procedure again
+  with the same argument it was called with (v).  In this particular
+  program, this value is always NULL, but again we are protecting against
+  future modifications.
+</p>
+
+<div class="codeblock">
+<pre>
+  veAddTimerProc(FRAME_INTERVAL,update_angles,v);
+}</pre>
+</div>
+
+<p>
+We handle incoming device events in the axis_toggle() callback
+that we setup earlier.  We'll use these events to update which
+angles to rotate around.
+Note that we do not need to push this data out to the slaves - the
+processing which determines the new value of the angles is done on
+the master.
+</p>
+<p>
+"arg" is an optional argument that is supplied by the program and
+is not derived from the event (second argument to veDeviceAddCallback).
+In this case, we are not using it (it will always be NULL).
+</p>
+<p>
+An event callback should always return 0.  Future support may allow
+control of how further processing is done through return codes.
+</p>
+
+<div class="codeblock">
+<pre>
+int axis_toggle(VeDeviceEvent *e, void *arg) {
+  /* ignore everything except for:
+     - switch or keyboard events that are "down" (i.e. state is non-zero)
+     - trigger events
+  */
+  if (VE_EVENT_TYPE(e) != VE_ELEM_TRIGGER &amp;&amp;
+      !(VE_EVENT_TYPE(e) == VE_ELEM_SWITCH &amp;&amp; 
+        VE_EVENT_SWITCH(e)->state) &amp;&amp;
+      !(VE_EVENT_TYPE(e) == VE_ELEM_KEYBOARD &amp;&amp; 
+        VE_EVENT_KEYBOARD(e)->state)) {
+    return 0;
+  }
+  
+  /* The event indicates that we should do something.  Based upon
+     the element name in the event, toggle the various axis flags.
+   */
+  if (e->elem) {
+    if (strcmp(e->elem,"x") == 0)
+      x_rot = !x_rot;
+    else if (strcmp(e->elem,"y") == 0)
+      y_rot = !y_rot;
+    else if (strcmp(e->elem,"z") == 0)
+      z_rot = !z_rot;
+  }
+
+  return 0;
+}</pre>
+</div>
+
+<h2>Compiling and Running The Program</h2>
+<p>It is generally a good idea to set the <code>VEROOT</code> environment
+variable when compiling or running VE programs.  When compiling, it makes
+it easier to point the compiler and the include files and libraries, and
+when running tells the library where to locate default configuration files
+and device drivers.</p>
+<p>For our local installation of VE, there is a version compiled for bigiron 
+(the SGI Onyx2) in the <code>ivy</code> account.  If you are using csh or tcsh,
+then you would set the path as:</p>
+<div class="codeblock">
+<blockquote><code>setenv VEROOT /cs/home/ivy/ve</code></blockquote>
+</div>
+<p>
+In sh or bash, this would be:
+</p>
+<div class="codeblock">
+<blockquote><code>VEROOT=/cs/home/ivy/ve ; export VEROOT</code></blockquote>
+</div>
+<p>
+The rest of these instructions assume that you have set this variable.
+</p>
+<h3>Compiling</h3>
+<p>Assuming that the above program has been saved in a file called <code>cube.c</code> compile it as follows:</p>
+<div class="codeblock">
+<blockquote><code>cc -I$VEROOT/include -o cube cube.c -L$VEROOT/lib -Wl,-rpath,$VEROOT/lib -lveglx -lve -lveclock -lGL -lpthread -lm</code></blockquote>
+</div>
+<p>Let's look at what's going on in this compile command:</p>
+<ul>
+<li><b>-I$VEROOT/include</b> - points the compiler to where the VE include
+                files are installed (assuming you set VEROOT appropriately
+                as described above)</li>
+<li><b>-L$VEROOT/lib</b> - points the compiler to where the VE libraries
+                are installed</li>
+<li><b>-Wl,-rpath,$VEROOT/lib</b> - the VE libraries are shared objects by
+                default which means that they are loaded at run-time, not
+                at link-time.  This means that the binary program you create
+                must be able to find the shared objects at run-time.  This
+                complex little option passes the right argument to the linker
+                so that the binary knows to look in "$VEROOT/lib" for shared
+                objects when it is executed.</li>
+<li><b>-lveglx</b> - this is the GLX (OpenGL on X11) layer for VE</li>
+<li><b>-lve</b> - this is the main VE library</li>
+<li><b>-lveclock</b> - the VE clock library.  The clock library is
+                separated so that all pieces which use the VE clock library
+                are assured that they are referencing the same clock code.</li>
+<li><b>-lGL</b> - the OpenGL library</li>
+<li><b>-lpthread</b> - VE uses pthreads for threading in the library.</li>
+<li><b>-lm</b> - the math library.</li>
+</ul>
+
+<h3>Running</h3>
+<p>If VE has been setup properly, you should just be able to execute the
+program:</p>
+<div class="codeblock"><blockquote><code>./cube</code></blockquote></div>
+<p>With the defaults, you should get a single window showing the cube from
+the inside rotating around the y axis.  If you encounter an error then
+one or more configuration files may be missing or incorrect.</p>
+<p>When you run a VE program without any options, it searches for default
+configuration files in the following locations:</p>
+<ul>
+<li>environment file
+<ul>
+<li>./default.env</li>
+<li>$VEROOT/env/default.env</li>
+<li>$VEROOT/default.env</li>
+</ul>
+</li>
+<li>profile
+<ul>
+<li>./default.pro</li>
+<li>$VEROOT/profile/default.pro</li>
+<li>$VEROOT/default.pro</li>
+</ul>
+</li>
+<li>available device manifest
+<ul>
+<li>./manifest</li>
+<li>$VEROOT/manifest/manifest</li>
+<li>$VEROOT/manifest</li>
+</ul>
+</li>
+<li>devices to use
+<ul>
+<li>./devices</li>
+<li>$VEROOT/devices/devices</li>
+<li>$VEROOT/devices</li>
+</ul>
+</li>
+</ul>
+<p>If you want to use a different file other than the default, you can
+use either an environment variable or command-line option to set a different
+file name:</p>
+<table align="center" border="3">
+<tr><th>Value</th><th>Env Var</th><th>Cmd Line Opt</th></tr>
+<tr><td>environment</td><td>VEENV</td><td>-ve_env</td></tr>
+<tr><td>profile</td><td>VEPROFILE</td><td>-ve_profile</td></tr>
+<tr><td>manifest</td><td>VEMANIFEST</td><td>-ve_manifest</td></tr>
+<tr><td>devices</td><td>VEDEVICES</td><td>-ve_devices</td></tr>
+</table>
+<p>If you override any of the default file names, (command-line options
+take precedence over environment variables) then the new name is used instead.
+If the new name is not absolute (i.e. it does not begin with "/") then the
+same locations in $VEROOT are searched.  For example, if you specified the
+name "foo.env" as the environment, the library would search "./foo.env",
+"$VEROOT/env/foo.env", and "$VEROOT/foo.env".</p>
+
+<h2>Controlling Input Devices</h2>
+<p>The program compiles and runs, but we would like to be able to control
+it.  In the same directory as the "cube.c" file, there is also a file called
+"devices" which contains a sample set of event mappings for the cube program.
+If you copied that file to same directory where you ran the program, then
+input devices were mapped for you already, even if you were not aware.</p>
+<p>
+The specifics
+of the devices (type, how to connect to them, etc.) are located in
+the manifest file.  The model is that there is typically a single
+manifest for an installation and then a devices file for each particular
+program describing what devices to use and how to use them.  The following
+are some examples of how a devices file may be constructed for the cube
+program.</p>
+
+<p>Every device that you want to the program to use, must be explicitly
+used in the "devices" file:</p>
+<div class="codeblock">
+<pre>
+# We'll use the "keyboard" device for input.
+use keyboard</pre>
+</div>
+
+<p>We can also specify <i>override</i> options for a device at the
+same time that we use it.  These are options that are in addition to
+the options specified in the manifest.  Of particular interest at this
+point is the <i>optional</i> option.  If specified, then it indicates
+that it is okay for this device to be inaccessible.  If a device
+is used but not marked as optional and is not available when the
+program starts, then the program will fail with an error message.
+The following
+example uses the device called "joystick", but notes that it is optional.
+</p>
+
+<div class="codeblock">
+<pre>
+use joystick {
+	optional 1
+}</pre>
+</div>
+
+<p>Events are identified by names which have two parts - a "device"
+and an "element" (an "element" is a part of a device).  For example,
+a joystick may be a device with several buttons, each one an element.</p>
+
+<p>For our cube program, meaningful event names are "axis.x", "axis.y", 
+and "axis.z".
+But these are not the names that the "keyboard" device will generate.  We use
+filters to modify incoming events.  Filters are put together in chains
+guarded by a specification.  During processing, an incoming event is
+compared to the specification at the beginning of each chain.  If it
+matches, then the event is passed through all the filters in the chain.
+</p>
+
+<div class="codeblock">
+<pre>
+# Apply a filter to the "x" key so that it toggles the x axis.
+# The built-in filter "rename" allows us to change the name of an event.
+filter keyboard.x {
+	rename axis.x
+}
+
+# Similary for y and z
+filter keyboard.y {
+	rename axis.y
+}
+
+filter keyboard.z {
+	rename axis.z
+}</pre>
+</div>
+
+<p>Note that if we wanted to, we could achieve all of the above with
+just:
+<blockquote><code>filter keyboard { rename axis }</code></blockquote>
+which would rename the "device" part of an events.  However,
+this would rename all incoming keyboard events to "axis" events,
+which would make the following filter useless.
+</p>
+
+<p>We should also setup some way for use to exit the program.
+"exit" is not a filter, but a reserved keyword which will exit
+the program.  Other reserved keywords are:
+<ul>
+<li><b>discard</b> - throw away this event (abort all processing)</li>
+<li><b>deliver</b> - stop processing this event and deliver it to the application
+               (i.e. call the callback if there is one)</li>
+</ul>
+</p>
+
+<div class="codeblock">
+<pre>
+filter keyboard.Escape { exit }</pre>
+</div>
+
+<p>
+We can also generate new events, in this case, using "copy".  "copy"
+has the same semantics as "rename", but pushes the new event into
+the event queue for processing leaving the original event untouched.
+In this case, we'll use it for a key 'a' that will toggle all axes at
+once.
+</p>
+
+<div class="codeblock">
+<pre>
+filter keyboard.a {
+	copy axis.x
+	copy axis.y
+	# Notice that our last step is a rename rather than a copy.
+	# If we don't do this then we should discard this event or
+	# otherwise be prepared for it to be processed as "keyboard.a"
+	rename axis.z
+}</pre>
+</div>
+
+<p>
+Sometimes we want to change the type of an event to match our
+specs.  For example, the built-in filter "to_switch" allows us
+to convert any incoming event to a "switch" event.  Various
+options exist to help us specify the conditions of the conversion.
+In this case, assuming that the joystick has an "axis0" that runs
+from -1.0 to 1.0, we'll mimic a switch down event when the value is
+greater "0.5".
+</p>
+
+<div class="codeblock">
+<pre>
+filter joystick.axis0 {
+	to_switch threshold=0.5
+}</pre>
+</div>
+
+<p>
+A handy built-in filter is "dump" which will print out any event
+that is passed to it.  It is handy for determining what events are
+really being delivered to your program.
+</p>
+
+<div class="codeblock">
+<pre>
+filter *.* {
+	dump
+}</pre>
+</div> 
+
+</body>
+</html>

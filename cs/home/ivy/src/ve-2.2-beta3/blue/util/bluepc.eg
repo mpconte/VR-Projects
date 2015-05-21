@@ -1,0 +1,51 @@
+#
+# Fundamental constructs of bluepc:
+#
+
+# language we are compiling to
+lang C
+
+# A block of native code (passed through unchanged)
+native {
+#include <stdio.h>
+#include <stdlib.h>
+}
+
+#
+# block:  an object that looks like:
+#    <name> <arg> ... {
+#        <body>
+#    }
+#
+#    where <body> will be interpreted as more elements/blocks
+#
+# elem:  similar except there is no "body" and no
+#        processing of pieces, e.g. just
+#
+#    <name> <arg> ...
+#
+#  - arglists behave like procedure lists for proc/cproc in
+#    that defaults can be specified and the "args" catchall
+#    can be used
+#
+#  - native blocks use '$' as a substitution *anywhere* in
+#    the code.  (unless '\' precedes it)
+#
+#    '$arg' == substitute arg as string (char *)
+#
+block verb {args} {
+	# contains other peices 
+
+	_enter {
+		# native code executed when block is entered
+	}
+	
+	elem ename {args} {
+		# "ename" can only exist within the "verb" context
+	}	
+
+	_exit {
+		# native code executed when block is exited
+	}
+}
+

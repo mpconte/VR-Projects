@@ -1,0 +1,5 @@
+#
+# Escape handling test
+#
+[stdout] writeln Hello\nWorld
+[stdout] writeln "Hello\nWorld"

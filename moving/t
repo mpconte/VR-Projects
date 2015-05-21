@@ -1,0 +1,2 @@
+play2 : play2.o
+	$(CC) play2.o $(LDFLAGS) -o play2.osx ${LIBPATH}  ${OPENGL} ${OSLIBS} -framework AGL

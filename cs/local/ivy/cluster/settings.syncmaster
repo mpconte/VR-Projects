@@ -1,0 +1,6 @@
+FrameLockMaster=1
+FrameLockPolarity=1
+FrameLockSyncDelay=0
+FrameLockEnable=1
+FrameLockSyncInterval=0
+FrameLockHouseFormat=0

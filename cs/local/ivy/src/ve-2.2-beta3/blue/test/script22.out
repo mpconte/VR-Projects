@@ -1,0 +1,6 @@
+x is set
+y is not set
+x is not set after 'unset'
+proc foo exists
+proc obviouslyphonyproc does not exist
+result = ok

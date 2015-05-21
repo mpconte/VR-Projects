@@ -1,0 +1,21 @@
+BASE=${HOME}/VR_Projects/cs/home/ivy
+TXM=txm
+
+include ${BASE}/ve-2.2/autocfg.mk
+include ${BASE}/ve-2.2/Make.config
+
+INCDIR=${BASE}/ve-2.2/include
+LIBDIR=${BASE}/ve-2.2/lib 
+OPENGL=${ACFG_OPENGL}
+
+CFLAGS+= -I${INCDIR} -I../3ds -I../vem
+LDFLAGS= ${CFLAGS} -L${LIBDIR} -lve -L../3ds/linux -l3ds -L../vem/linux -lvem
+
+OBJS=	a1.o 
+
+
+a1 : ${OBJS} 
+	$(CC) ${OBJS} $(LDFLAGS) -o a1.linux ${LIBPATH}  ${OPENGL} ${OSLIBS}
+
+
+

@@ -1,0 +1,11 @@
+include autocfg.mk
+include ../../Make.config
+
+TARGET = glx$(ACFG_SOEXT)
+OBJS = glx.o
+
+ifeq ($(HAS_GLX),1)
+BUILD = $(TARGET)
+LIBS = $(ACFG_GLX)
+endif
+include ../Make.driver

@@ -1,0 +1,24 @@
+To run VE programs you need the following environment variables set
+
+VEROOT ~ivy/ve-2.2
+LD_LIBRARY_PATH ~ivy/ve-2.2/lib
+
+Try running the program in this directory
+
+./3dsviewer.linux newbeetle newbeetle.3ds
+
+You should have a window with a red and white checkerboard and part of a beetle showing. The
+following keyboard commands are understood (cursor must be on the window)
+
+s/S - scale the object
+x/X - translate the object in x
+y/Y - translate the object in y
+z/Z - translate the object in z
+p/P - rotate the object
+q/Q - rotate the object
+t/T - rotate the object
+a/d - move forward and backwards
+arrow keys move you as well.
+
+You should be able to copy this program and run it anywhere.
+

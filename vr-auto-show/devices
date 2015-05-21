@@ -1,0 +1,146 @@
+use keyboard
+
+use joystick joystick {
+  optional 1
+}
+
+
+filter joytsick.button1 {
+	$e    rename axisChange
+}
+
+filter joystick.button0 {
+	$e    rename switch_pan
+}
+
+filter joystick.button3 {
+	$e    rename ccw
+}
+
+filter joystick.button2 {
+	$e    rename stop
+}
+
+filter joystick.button4 {
+	$e    rename cw
+}
+
+filter joystick.button8 {
+	$e    rename tilt_inc
+}
+
+filter joystick.button7 {
+	$e    rename tilt_dec
+}
+
+
+# axis 1 is the forward
+filter joystick.axis1 {
+	$e    rename moving
+}
+
+# axis 0 is the paning
+filter joystick.axis0 {
+	$e    rename paning
+}
+
+
+filter keyboard.b {
+   
+   $e rename toggle_boundary
+}
+
+
+filter keyboard.x {
+   $e rename txm
+}
+filter keyboard.X {
+   $e rename txp
+}
+filter keyboard.y {
+   $e rename tym
+}
+filter keyboard.Y {
+   $e rename typ
+}
+filter keyboard.z {
+   $e rename tzm
+}
+filter keyboard.Z {
+   $e rename tzp
+}
+filter keyboard.p {
+   $e rename rxm
+}
+filter keyboard.P {
+   $e rename rxp
+}
+filter keyboard.q {
+   $e rename rym
+}
+filter keyboard.Q {
+   $e rename ryp
+}
+filter keyboard.r {
+   $e rename rzm
+}
+filter keyboard.R {
+   $e rename rzp
+}
+filter keyboard.s {
+   $e rename stop
+}
+filter keyboard.S {
+   $e rename sp
+}
+filter keyboard.0 {
+   $e rename reset
+}
+filter keyboard.8 {
+   $e rename tilt_inc}
+
+filter keyboard.2 { 
+   $e rename tilt_dec}
+
+filter keyboard.6 { 
+   $e rename pan_dec}
+
+filter keyboard.4 { 
+   $e rename pan_inc}
+
+filter keyboard.Right { 
+   $e rename pan_dec}
+
+filter keyboard.Left { 
+   $e rename pan_inc}
+
+filter keyboard.5 { 
+   $e rename reset}
+
+filter keyboard.d { 
+   $e rename cw}
+
+filter keyboard.a { 
+   $e rename ccw}
+
+filter keyboard.w {
+   $e rename axisChange}
+
+filter keyboard.Up { 
+   $e rename forward}
+
+filter keyboard.Down { 
+   $e rename backward}
+
+filter keyboard.7 { 
+   $e rename twist_inc}
+
+filter keyboard.9 { 
+   $e rename twist_dec}
+
+filter keyboard.Escape { exit }
+
+filter *.* {
+  $e dump
+}
+

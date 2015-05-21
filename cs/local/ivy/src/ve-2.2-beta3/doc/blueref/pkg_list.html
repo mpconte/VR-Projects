@@ -1,0 +1,243 @@
+<html>
+<head>
+<title>BlueScript: List Procedures</title>
+<link rel="stylesheet" href="bluescript.css" type="text/css" />
+</head>
+<body>
+<h1>BlueScript: List Procedures</h1>
+<h2>Contents</h2>
+<ul>
+<li><a href="#procs">Procedures</a>
+<ul>
+<li><a href="#proc_lconcat">lconcat</a></li>
+<li><a href="#proc_lempty">lempty</a></li>
+<li><a href="#proc_lindex">lindex</a></li>
+<li><a href="#proc_list">list</a></li>
+<li><a href="#proc_llength">llength</a></li>
+<li><a href="#proc_lpop">lpop</a></li>
+<li><a href="#proc_lpush">lpush</a></li>
+<li><a href="#proc_lrange">lrange</a></li>
+<li><a href="#proc_lreplace">lreplace</a></li>
+<li><a href="#proc_lshift">lshift</a></li>
+<li><a href="#proc_lunshift">lunshift</a></li>
+</ul>
+</ul>
+<h2>Description</h2>
+Procedures for creating and manipulating lists.
+<h2>Documentation</h2>
+Many of the procedures in this package allow for
+	the specification of an <em>index</em> into a string.
+	An index can have any of the following formats:
+	<ul>
+	<li><i>n</i> - where <i>n</i> is an integer representing an
+	offset into the list.  The first element in the list is index
+	0, the second element is 1, etc.</li>
+	<li><code>end</code> - indicating the last element in the list.</li>
+	<li><code>end-</code><i>n</i> - indicating the
+	last-but-<i>n</i>'th element of the list.  For example,
+	<code>end-0</code> is equivalent to <code>end</code> while
+	<code>end-1</code> is the second-last element of the list.</li>
+	</ul>
+	All elements outside of a list's valid elements are
+	assumed to be empty strings.  For example, "lindex $l -1" will
+	always return an empty string.  However, if a request is made
+	for a range of elements that extends outside of the list then
+	the result is trimmed to be just those elements that are part
+	of the actual list.  For example, "lrange $l -3 5" has the
+	same result as "lrange $l 0 5".  If "$l" has only 3 elements,
+	then "lrange $l 0 5" has the same result as "lrange $l 0 2".
+    
+<a name="procs"></a>
+<h2>Procedures</h2>
+<ul>
+<li><a href="#proc_lconcat">lconcat</a></li>
+<li><a href="#proc_lempty">lempty</a></li>
+<li><a href="#proc_lindex">lindex</a></li>
+<li><a href="#proc_list">list</a></li>
+<li><a href="#proc_llength">llength</a></li>
+<li><a href="#proc_lpop">lpop</a></li>
+<li><a href="#proc_lpush">lpush</a></li>
+<li><a href="#proc_lrange">lrange</a></li>
+<li><a href="#proc_lreplace">lreplace</a></li>
+<li><a href="#proc_lshift">lshift</a></li>
+<li><a href="#proc_lunshift">lunshift</a></li>
+</ul>
+<a name="proc_lconcat"></a>
+<div class="proctitle">lconcat</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>lconcat </b>[<b></b><i>list</i><b> </b>...<b></b>]<b></b><br />
+</div>
+<div class="label">Examples</div>
+<div class="example">1. Concatenating two lists
+<div class="eg">lconcat {a b c} {d e f}</div>
+<div class="result">Result: <span class="egspan">a b c
+	d e f</span></div></div>
+</div>
+<a name="proc_lempty"></a>
+<div class="proctitle">lempty</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>lempty </b><i>list</i><b></b><br />
+</div>
+<div class="label">Examples</div>
+<div class="example">1. Testing an empty list
+<div class="eg">lempty {}</div>
+<div class="result">Result: <span class="egspan">1</span></div></div>
+</div>
+<div class="example">2. Testing a non-empty list
+<div class="eg">lempty {a b c}</div>
+<div class="result">Result: <span class="egspan">0</span></div></div>
+</div>
+<a name="proc_lindex"></a>
+<div class="proctitle">lindex</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>lindex </b><i>list</i><b> </b><i>i</i><b></b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">The element located at index <i>i</i> in <i>list</i>.</div>
+<div class="label">Examples</div>
+<div class="example">1. Retrieve the third element in the list {a b c}.
+<div class="eg">lindex
+	{a b c} 2</div>
+<div class="result">Result: <span class="egspan">c</span></div></div>
+</div>
+<a name="proc_list"></a>
+<div class="proctitle">list</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>list </b>[<b></b><i>elem</i><b> </b>...<b></b>]<b></b><br />
+</div>
+<div class="label"></div>
+Generally, creating a list via the <code>list</code> command
+	is safer and faster than explicitly creating a string
+	(e.g. through quote substitution) and then allowing the engine
+	to parse the generated string.
+    
+<div class="label">Examples</div>
+<div class="example">1. Creating an empty list
+<div class="eg">list</div>
+<div class="result">Result: <i>none</i></div>
+</div>
+<div class="example">2. Creating a list of three elements
+<div class="eg">list a b c</div>
+<div class="result">Result: <span class="egspan">a b c</span></div></div>
+</div>
+<a name="proc_llength"></a>
+<div class="proctitle">llength</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>llength </b><i>list</i><b></b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">The number of elements in the list.</div>
+<div class="label">Examples</div>
+<div class="example">1. Getting the length of a list
+<div class="eg">llength {a b c d}</div>
+<div class="result">Result: <span class="egspan">4</span></div></div>
+</div>
+<a name="proc_lpop"></a>
+<div class="proctitle">lpop</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>lpop </b><i>var</i><b></b><br />
+</div>
+<div class="label">Examples</div>
+<div class="example">1. Popping an element
+<div class="eg">set x {a b c}<br />
+	lpop x</div>
+<div class="result">Result: <span class="egspan">c</span></div></div>
+</div>
+<div class="example">2. List after popping
+<div class="eg">set x</div>
+<div class="result">Result: <span class="egspan">a b</span></div></div>
+</div>
+<a name="proc_lpush"></a>
+<div class="proctitle">lpush</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>lpush </b><i>var</i><b> </b><i>elem</i><b></b><br />
+</div>
+<div class="label">Examples</div>
+<div class="example">1. Pushing an element
+<div class="eg">set x {a b c}<br />
+	lpush x d<br />
+	set x</div>
+<div class="result">Result: <span class="egspan">a b c d</span></div></div>
+</div>
+<a name="proc_lrange"></a>
+<div class="proctitle">lrange</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>lrange </b><i>list</i><b> </b><i>start</i><b> </b><i>finish</i><b></b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">A list containing the elements of <i>list</i> between indices
+	<i>start</i> and <i>finish</i> inclusive.</div>
+<div class="label">Examples</div>
+<div class="example">1. Return the first three elements of the list {a b c d e
+	f}
+<div class="eg">lrange {a b c d e f} 0 2</div>
+<div class="result">Result: <span class="egspan">a b c</span></div></div>
+</div>
+<div class="example">2. Return the last 2 elements of the list {a b c d e f}
+<div class="eg">lrange {a b c d e f} end-1 end</div>
+<div class="result">Result: <span class="egspan">e f</span></div></div>
+</div>
+<a name="proc_lreplace"></a>
+<div class="proctitle">lreplace</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>lreplace </b><i>list</i><b> </b><i>start</i><b> </b><i>finish</i><b> </b>[<b></b><i>elem</i><b> </b>...<b></b>]<b></b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">A modified copy of <i>list</i>.</div>
+<div class="label"></div>
+Creates a copy of <i>list</i>
+	with the range of elements between <i>start</i> and
+	<i>finish</i> inclusive replaced with the new elements
+	(<i>elem</i> ...) specified on the command line.  If no
+	new elements are specified, then the returned copy of
+	<i>list</i> will merely have the elements between <i>start</i>
+	and <i>finish</i> inclusive, deleted.
+    
+<div class="label">Examples</div>
+<div class="example">1. Replace the third element of {a b c d} with {e f}
+<div class="eg">lreplace {a b c d} 2 2 e f</div>
+<div class="result">Result: <span class="egspan">a b e f d</span></div></div>
+</div>
+<div class="example">2. Remove the first two elements of {a b c d e f}
+<div class="eg">lreplace
+	{a b c d e f} 0 1</div>
+<div class="result">Result: <span class="egspan">c d e f</span></div></div>
+</div>
+<a name="proc_lshift"></a>
+<div class="proctitle">lshift</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>lshift </b><i>var</i><b></b><br />
+</div>
+<div class="label">Examples</div>
+<div class="example">1. Shifting an element
+<div class="eg">set x {a b c}<br />
+	lshift x</div>
+<div class="result">Result: <span class="egspan">a</span></div></div>
+</div>
+<div class="example">2. List after shifting
+<div class="eg">set x</div>
+<div class="result">Result: <span class="egspan">b c</span></div></div>
+</div>
+<a name="proc_lunshift"></a>
+<div class="proctitle">lunshift</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>lunshift </b><i>var</i><b> </b><i>elem</i><b></b><br />
+</div>
+<div class="label">Examples</div>
+<div class="example">1. Unshifting an element
+<div class="eg">set x {a b c}<br />
+	lunshift x d<br />
+	set x</div>
+<div class="result">Result: <span class="egspan">d a b c</span></div></div>
+</div>

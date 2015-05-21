@@ -1,0 +1,9 @@
+Requirements/Controllers:  None
+
+This is a port of the "rollercoaster" demo from the glut-3.7 distribution.
+The rollercoaster runs a little quickly and there is a pause early in the
+animation.  If someone wants to grok the animation code I'm sure it can
+be fixed.  Some of the symbol names are in German so occasionally it is
+unclear for non-German-speaking people.
+
+ESC exits.

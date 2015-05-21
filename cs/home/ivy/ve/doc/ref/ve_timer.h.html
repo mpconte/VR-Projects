@@ -1,0 +1,96 @@
+<html>
+<head>
+<title>File: ve_timer.h</title>
+</head>
+<body>
+<h1>File: ve_timer.h</h1>
+
+
+<p>
+    The ve_timer module provides a simple timer callback model based upon
+    ve_clock library.  It allows timer callbacks to be called at particular
+    points in the future.  Timer callbacks have the following type:
+    <blockquote><code>void (*VeTimerProc)(void *arg)</code></blockquote>
+    The argument is provided as a hoook for the application to pass its
+    own data to the timer callback.  The system using this library
+    must provide a thread to process the events.  The thread should look
+    something like:
+<pre>
+        while (1) {
+                while (!veTimerEventsPending())
+                        veTimerWaitForEvents();
+                while (veTimerEventsPending())
+                        veTimerProcEvent();
+        }
+</pre>
+    The main VE library provides such a thread if you are using the
+    <code>veInit()</code> and <code>veRun()</code> or <code>veEventLoop()</code>
+    calls.
+
+<p>
+<a name="function_veTimerInit"></a><p><em>Function:</em> <b>veTimerInit</b>
+<blockquote>
+<pre>
+void veTimerInit();</pre>    Must be called to initialize the timer callback mechanism before
+    calling any other timer functions.  Programs that use <code>veInit()</code>
+    do not need to call this function.
+
+</blockquote>
+<p>
+<a name="function_veAddTimerProc"></a><p><em>Function:</em> <b>veAddTimerProc</b>
+<blockquote>
+<pre>
+void veAddTimerProc(long msecs, VeTimerProc proc, void *arg);</pre>    Adds a timer callback.  Note that after adding a timer callback, the
+    reference point of the clock should not be changed.
+
+<p><b>msecs</b> - 
+    The time that must elapse before the timer is called, in milliseconds.
+    
+<p><b>proc</b> - 
+    The procedure to call after <i>time</i> milliseconds pass.
+
+<p><b>arg</b> - 
+    An argument to pass to the callback when it is called.
+
+</blockquote>
+<p>
+<a name="function_veTimerEventsPending"></a><p><em>Function:</em> <b>veTimerEventsPending</b>
+<blockquote>
+<pre>
+int veTimerEventsPending();</pre>    Checks to see if there are any timer callbacks that are ready to
+    be serviced.
+    
+<p><i>Returns:</i> 
+    1 if there are timer callbacks which should be processed now
+    and 0 otherwise.
+
+</blockquote>
+<p>
+<a name="function_veTimerProcEvent"></a><p><em>Function:</em> <b>veTimerProcEvent</b>
+<blockquote>
+<pre>
+int veTimerProcEvent();</pre>    Processes a single timer callback if there are any to process.
+
+<p><i>Returns:</i> 
+    0 if successful, non-zero otherwise.
+
+</blockquote>
+<p>
+<a name="function_veTimerWaitForEvents"></a><p><em>Function:</em> <b>veTimerWaitForEvents</b>
+<blockquote>
+<pre>
+void veTimerWaitForEvents();</pre>    Puts the current thread to sleep until there are timer events to
+    be processed.
+
+</blockquote>
+
+<h2>Index</h2>
+<ul>
+<li><a href="#function_veAddTimerProc">veAddTimerProc (function)</a></li>
+<li><a href="#function_veTimerEventsPending">veTimerEventsPending (function)</a></li>
+<li><a href="#function_veTimerInit">veTimerInit (function)</a></li>
+<li><a href="#function_veTimerProcEvent">veTimerProcEvent (function)</a></li>
+<li><a href="#function_veTimerWaitForEvents">veTimerWaitForEvents (function)</a></li>
+</ul>
+</body>
+</html>

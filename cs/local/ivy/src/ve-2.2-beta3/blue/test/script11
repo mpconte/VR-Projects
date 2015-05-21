@@ -1,0 +1,8 @@
+#
+# Check negation operator
+#
+set x 10
+set y [expr {-$x}]
+[stdout] writeln -10
+[stdout] writeln $y
+

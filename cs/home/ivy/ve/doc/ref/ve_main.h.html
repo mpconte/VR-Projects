@@ -1,0 +1,223 @@
+<html>
+<head>
+<title>File: ve_main.h</title>
+</head>
+<body>
+<h1>File: ve_main.h</h1>
+
+
+<p>
+    The ve_main module defines the functions and structures that bring
+    the whole library together.
+
+<p>
+<a name="function_veInit"></a><p><em>Function:</em> <b>veInit</b>
+<blockquote>
+<pre>
+void veInit(int *argc, char **argv);</pre>  The main VE initialization function.  All VE applications must call
+  this function at the beginning to initialize the library.  This
+  library has a number of side effects.  In particular, it will
+  extract VE-relevant command-line options from the given argc/argv
+  pair.  Along with <code>veRun()</code> it is part of the basic common
+  VE program structure.  For example:
+<p>
+<pre>
+        int main(int argc, char **argv) 
+        {
+            veInit(&amp;argc,argv);
+            veSetOption(...);
+            veDeviceAddCallback(...);
+            <i>... initialize program and implementation specifics ...</i>
+            veRun();
+        }
+</pre>
+  
+  <p>After it finishes parsing VE-specific command-line arguments,
+  it removes them from the command-line.  It will stop parsing as
+  soon as it sees an argument it doesn't understand, or "--".
+
+<p><b>argc</b> - 
+  A pointer to the argc value passed to the main() function.
+
+<p><b>argv</b> - 
+  The argv array of command-line arguments.
+  
+<p><i>Returns:</i> 
+  Zero if successful, a non-zero value if an error is encountered.
+  Errors are reported using the standard VE error reporting routines.
+  
+</blockquote>
+<p>
+<a name="function_veSetOption"></a><p><em>Function:</em> <b>veSetOption</b>
+<blockquote>
+<pre>
+void veSetOption(char *name, char *value);</pre>    Sets run-time options.  Run-time options can be set either from the
+    command-line, the environment or via this call.  The following options
+    are recognized, along with their command-line and environment variable
+    equivalents:
+<p align="center">
+<table border="2" cellpadding="2">
+<tr><th><b>Name</b></th><th><b>Command-Line</b></th><th><b>Environment Variable</b></th><th><b>Purpose</b></th></tr>
+<tr><td>env</td><td>-ve_env</td><td>VEENV</td><td>The environment file to load.</td></tr>
+<tr><td>user</td><td>-ve_user</td><td>VEUSER</td><td>The user profile to load.</td></tr>
+<tr><td>debug</td><td>-ve_debug</td><td>VEDEBUG</td><td>The debug level (as an integer).  A level of 0 means no debugging output.</td></tr>
+<tr><td>manifest</td><td>-ve_manifest</td><td>VEMANIFEST</td><td>The device manifest to load.</td></tr>
+<tr><td>devices</td><td>-ve_devices</td><td>VEDEVICES</td><td>The device usage file to load.</td></tr>
+<tr><td>root</td><td>-ve_root</td><td>VEROOT</td><td>Path to the VE installation.  Used to located device driver files.</td></tr>
+</table>
+</p>   
+
+<p><b>name</b> - 
+    The name of the option to set.
+
+<p><b>value</b> - 
+    The new value of the option.  This is just treated as a string.
+    A copy of this value is stored.  After returning, this string can
+    be modified or freed.
+ 
+</blockquote>
+<p>
+<a name="function_veGetOption"></a><p><em>Function:</em> <b>veGetOption</b>
+<blockquote>
+<pre>
+char *veGetOption(char *name);</pre>    Retrieves the current value of a run-time option.
+
+<p><b>name</b> - 
+    The name of the option to return.
+
+<p><i>Returns:</i> 
+    A string containing the value of the option.  This string should not
+    be modified or freed.
+ 
+</blockquote>
+<p>
+<a name="function_veSetIdleProc"></a><p><em>Function:</em> <b>veSetIdleProc</b>
+<blockquote>
+<pre>
+void veSetIdleProc(VeIdleProc proc);</pre>    When no rendering needs to be done, the idle processing callback will
+    be continuously called.  The callback should have the following type:
+    <blockquote><code>void (*VeIdleProc)(void)</code></blockquote>
+    <p>Idle callbacks are generally inefficient and should generally be
+    avoided.  Timer callbacks are generally better (see 
+    <a href="ve_timer.h.html">ve_timer</a> for more information).
+
+<p><b>proc</b> - 
+    The idle callback to set.  If <code>NULL</code> then any existing
+    idle callback will be cleared.
+ 
+</blockquote>
+<p>
+<a name="function_vePostRedisplay"></a><p><em>Function:</em> <b>vePostRedisplay</b>
+<blockquote>
+<pre>
+void vePostRedisplay();</pre>    Notifies the rendering threads that the screen needs to be redrawn.
+    Normally the screen is not redrawn unless the application indicates
+    that the state of the system has changed.
+
+</blockquote>
+<p>
+<a name="function_veEventLoop"></a><p><em>Function:</em> <b>veEventLoop</b>
+<blockquote>
+<pre>
+void veEventLoop();</pre>    The event loop starts up input and timer and rendering threads and
+    then lets them run.  This function never returns.
+ 
+</blockquote>
+<p>
+<a name="function_veRun"></a><p><em>Function:</em> <b>veRun</b>
+<blockquote>
+<pre>
+void veRun();</pre>    Sets a VE application in motion.  This function never returns.  It
+    starts the rendering threads running, releases any delayed threads
+    and then enters the event loop.  See the notes for <code>veInit()</code>
+    for more details.
+
+</blockquote>
+<p>
+<a name="function_veHeadTrackInit"></a><p><em>Function:</em> <b>veHeadTrackInit</b>
+<blockquote>
+<pre>
+void veHeadTrackInit();</pre>    Initializes the built-in head tracking filter which provides a simple
+    way for an input device to be redirected to the default eye reference
+    frame.  The built-in filter (called "headtrack") also provides for
+    simple linear correction of the incoming data.  This function is
+    typically called by <code>veInit()</code>.
+ 
+</blockquote>
+<p>
+<a name="function_veHeadTrackGetLocCorr"></a><p><em>Function:</em> <b>veHeadTrackGetLocCorr</b>
+<blockquote>
+<pre>
+VeMatrix4 *veHeadTrackGetLocCorr();</pre>    This function is for interactive calibration purposes and should
+    be considered fragile.
+    
+<p><i>Returns:</i> 
+    A pointer to the location correction matrix used by the head-tracker
+    filter.  If multiple independent head-tracking filters are defined
+    that handle positional data, then this matrix corresponds to the first
+    filter that is defined.  This points to live data, so changes to
+    this matrix will be reflected the next time the head-tracking filter
+    receives data.
+
+</blockquote>
+<p>
+<a name="function_veHeadTrackGetDirCorr"></a><p><em>Function:</em> <b>veHeadTrackGetDirCorr</b>
+<blockquote>
+<pre>
+VeMatrix4 *veHeadTrackGetDirCorr();</pre>    This function is for interactive calibration purposes and should
+    be considered fragile.
+    
+<p><i>Returns:</i> 
+    A pointer to the orientation correction matrix used by the head-tracker
+    filter.  If multiple independent head-tracking filters are defined
+    that handle orientation data, then this matrix corresponds to the first
+    filter that is defined.  This points to live data, so changes to
+    this matrix will be reflected the next time the head-tracking filter
+    receives data.
+
+</blockquote>
+<p>
+<a name="function_veFindFile"></a><p><em>Function:</em> <b>veFindFile</b>
+<blockquote>
+<pre>
+FILE *veFindFile(char *type, char *fname);</pre>    Searches through known locations for the given file.  If the
+    specified file name is absolute, then no searching is done.
+    If it is relative then other locations will be searched (if it
+    is not present in the current directory).
+
+<p><b>type</b> - 
+    The type of file to look up.  This will be used to
+    find the given file.  Known values are:
+    <ul>
+    <li><code>"env"</code> - environment files
+    <li><code>"profile"</code> - user profiles
+    <li><code>"manifest"</code> - device manifests
+    <li><code>"devices"</code> - device use files
+    <li><code>"driver"</code> - loadable drivers
+    </ul>
+
+<p><b>fname</b> - 
+    The file to search for.
+    
+<p><i>Returns:</i> 
+    A pointer to a stdio file structure which is opened for reading if
+    successful, or <code>NULL</code> if no file can be found and opened.
+ 
+</blockquote>
+
+<h2>Index</h2>
+<ul>
+<li><a href="#function_veEventLoop">veEventLoop (function)</a></li>
+<li><a href="#function_veFindFile">veFindFile (function)</a></li>
+<li><a href="#function_veGetOption">veGetOption (function)</a></li>
+<li><a href="#function_veHeadTrackGetDirCorr">veHeadTrackGetDirCorr (function)</a></li>
+<li><a href="#function_veHeadTrackGetLocCorr">veHeadTrackGetLocCorr (function)</a></li>
+<li><a href="#function_veHeadTrackInit">veHeadTrackInit (function)</a></li>
+<li><a href="#function_veInit">veInit (function)</a></li>
+<li><a href="#function_vePostRedisplay">vePostRedisplay (function)</a></li>
+<li><a href="#function_veRun">veRun (function)</a></li>
+<li><a href="#function_veSetIdleProc">veSetIdleProc (function)</a></li>
+<li><a href="#function_veSetOption">veSetOption (function)</a></li>
+</ul>
+</body>
+</html>

@@ -1,0 +1,16 @@
+#
+#
+# This is similar to script5, but instead it uses file
+# functions to read itself.
+#
+#
+set f [fopen script10]
+set count 0
+while { [$f readln l] } {
+    incr count
+    # set count [expr {$count + 1}]
+}
+# explicitly close file
+$f close
+[stdout] writeln "$count lines"
+

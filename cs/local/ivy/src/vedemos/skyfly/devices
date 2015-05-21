@@ -1,0 +1,38 @@
+use keyboard
+use mouse
+#use joystick linuxjs {
+#	optional 1
+#}
+#use gamepad {
+#	optional 1
+#	update 100
+#}
+#use _latency
+filter keyboard { dump }
+filter keyboard.Escape { rename exit }
+filter keyboard.q { rename exit }
+filter mouse.axes.0 { rename controls.x }
+filter mouse.axes.1 { rename controls.y }
+filter mouse.left { rename controls.shoot }
+filter gamepad.axis0 { rename controls.x }
+filter gamepad.axis1 { rename controls.y }
+filter gamepad.button0 { rename controls.shoot }
+filter gamepad.axis2 {
+        rename controls.throttle
+        to_valuator expr=((-x)+1)/2
+}
+filter joystick.axis0 { rename controls.x }
+filter joystick.axis1 { rename controls.y }
+filter joystick.axis3 { 
+	rename controls.throttle
+	to_valuator expr=((-x)+1)/2
+}
+filter joystick.button0 { rename controls.shoot }
+#use fobtrack
+#use fobtrack {
+#	optional 1
+#}
+#filter fobtrack.quat {
+#        headtrack format=quat {dircorr.dir=1.0 0.0 0.0} {dircorr.up=0.0 0.0 -1.0} {dirbase.dir=1.0 0.0 0.0} {dirbase.up=0.0 0.0 -1.0}
+#}
+

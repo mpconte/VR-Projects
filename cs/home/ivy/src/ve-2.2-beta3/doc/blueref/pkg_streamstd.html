@@ -1,0 +1,137 @@
+<html>
+<head>
+<title>BlueScript: Standard Streams</title>
+<link rel="stylesheet" href="bluescript.css" type="text/css" />
+</head>
+<body>
+<h1>BlueScript: Standard Streams</h1>
+<h2>Contents</h2>
+<ul>
+<li><a href="#procs">Procedures</a>
+<ul>
+<li><a href="#proc_fopen">fopen</a></li>
+<li><a href="#proc_popen">popen</a></li>
+<li><a href="#proc_stderr">stderr</a></li>
+<li><a href="#proc_stdin">stdin</a></li>
+<li><a href="#proc_stdio">stdio</a></li>
+<li><a href="#proc_stdout">stdout</a></li>
+</ul>
+</ul>
+<h2>Description</h2>
+
+	Common functions for creating streams (files, commands, stdio).
+    
+<h2>Documentation</h2>
+
+	These functions are not included in a standard BlueScript
+	interpreter by default.  Check the documentation for your
+	specific interpreter implementation to see if they are included.
+    
+<a name="procs"></a>
+<h2>Procedures</h2>
+<ul>
+<li><a href="#proc_fopen">fopen</a></li>
+<li><a href="#proc_popen">popen</a></li>
+<li><a href="#proc_stderr">stderr</a></li>
+<li><a href="#proc_stdin">stdin</a></li>
+<li><a href="#proc_stdio">stdio</a></li>
+<li><a href="#proc_stdout">stdout</a></li>
+</ul>
+<a name="proc_fopen"></a>
+<div class="proctitle">fopen</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>fopen </b><i>filename</i><b> </b>[<b></b><i>mode</i><b></b>]<b></b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">A new stream object which points at the contents of the
+	given file.</div>
+<div class="label"></div>
+
+	Opens a file for reading or writing as a stream object.  The
+	<i>mode</i> corresponds to the modes used in the Standard C
+	<code>fopen()</code> function:
+	<ul>
+	<li><code>r</code> - opens a file for reading at the
+	beginning.</li>
+	<li><code>r+</code> - opens a file for reading and
+	writing at the beginning.</li>
+	<li><code>w</code> - truncates or creates a file for writing.</li>
+	<li><code>w+</code> - truncates or creates a file for
+	reading and writing.</li>
+	<li><code>a</code> - opens or creates a file for writing
+	at the end.</li>
+	<li><code>a+</code> - opens or creates a file for reading
+	and writing at the end.</li>
+	</ul>
+	If <i>mode</i> is omitted then the mode defaults to <code>r</code>.
+    
+<div class="label">Examples</div>
+<div class="example">1. Opening a file for reading
+<div class="eg">fopen /etc/passwd r</div>
+<div class="result">Result: <span class="egspan"><i>stream</i></span></div></div>
+</div>
+<a name="proc_popen"></a>
+<div class="proctitle">popen</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>popen </b><i>cmd</i><b> </b>[<b></b><i>mode</i><b></b>]<b></b><br />
+</div>
+<div class="label"></div>
+
+	Executes a command and allows the script to read from its
+	standard output and/or write to its standard intput.  The
+	<i>mode</i> parameter determines what kind of input/output is
+	supported:
+	<ul>
+	<li><code>r</code> - allow reading from command's standard
+	output</li>
+	<li><code>w</code> - allow writing to command's standard
+	input</li>
+	</ul>
+	If <i>mode</i> is omitted then it defaults to <code>r</code>.
+	<p>
+	This command depends upon the presence and functionality of
+	the underlying <code>popen()</code> C library function.  On
+	some platforms (e.g. Windows) the availability and
+	functionality of this procedure may be constrained.
+    
+<div class="label">Examples</div>
+<div class="example">1. Reading a command's output
+<div class="eg">popen {grep ^root
+	/etc/passwd} r</div>
+<div class="result">Result: <span class="egspan"><i>stream</i></span></div></div>
+</div>
+<a name="proc_stderr"></a>
+<div class="proctitle">stderr</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>stderr</b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">A write-only stream object corresponding to standard error.</div>
+<a name="proc_stdin"></a>
+<div class="proctitle">stdin</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>stdin</b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">A read-only stream object corresponding to standard input.</div>
+<a name="proc_stdio"></a>
+<div class="proctitle">stdio</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>stdio</b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">A read-write stream object where input is taken from
+	standard input and output is written to standard output.</div>
+<a name="proc_stdout"></a>
+<div class="proctitle">stdout</div>
+<div class="label">Usage</div>
+<div class="usage">
+<b>stdout</b><br />
+</div>
+<div class="label">Returns</div>
+<div class="text">A write-only stream object corresponding to standard output.</div>
