@@ -1,4 +1,5 @@
-BASE=../cs/home/ivy
+BASE=/cs/home/ivy
+TXM=txm
 
 include ${BASE}/ve-2.2/autocfg.mk
 include ${BASE}/ve-2.2/Make.config
@@ -8,15 +9,18 @@ LIBDIR=${BASE}/ve-2.2/lib
 OPENGL=${ACFG_OPENGL}
 
 CFLAGS+= -I${INCDIR}
-LDFLAGS= ${CFLAGS} -L${LIBDIR} -lve 
 
-OBJS=	vem.o 
+OBJS=	loadTexture.o 3ds.o 3dsRenderer.o 
 
 
-vemlib: ${OBJS} 
-	ar r linux/libvem.a ${OBJS}
-	ranlib linux/libvem.a
+3dslib: ${OBJS} 
+	ar r linux/lib3ds.a ${OBJS}
+	ranlib linux/lib3ds.a
 
 clean:
-	rm -f ${OBJS} linux/libvem.a
+	rm -f ${OBJS} linux/lib3ds.a
+
+
+
+
 

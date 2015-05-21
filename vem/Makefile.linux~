@@ -1,4 +1,4 @@
-BASE=../cs/home/ivy
+BASE=/cs/home/ivy
 
 include ${BASE}/ve-2.2/autocfg.mk
 include ${BASE}/ve-2.2/Make.config

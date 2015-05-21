@@ -1,4 +1,4 @@
-BASE=${HOME}/VR_Projects/cs/home/ivy
+BASE=../cs/home/ivy
 TXM=txm
 
 include ${BASE}/ve-2.2/autocfg.mk

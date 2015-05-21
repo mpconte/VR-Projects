@@ -1,4 +1,4 @@
-BASE=../cs/home/ivy
+BASE=/cs/home/ivy
 TXM=txm
 
 include ${BASE}/ve-2.2/autocfg.mk
@@ -11,11 +11,11 @@ OPENGL=${ACFG_OPENGL}
 CFLAGS+= -I${INCDIR} -I../3ds -I../vem
 LDFLAGS= ${CFLAGS} -L${LIBDIR} -lve -L../3ds/linux -l3ds -L../vem/linux -lvem
 
-OBJS=	a1.o 
+OBJS=	3dsviewer.o 
 
 
-a1 : ${OBJS} 
-	$(CC) ${OBJS} $(LDFLAGS) -o a1.linux ${LIBPATH}  ${OPENGL} ${OSLIBS}
+3dsviewer : ${OBJS} 
+	$(CC) ${OBJS} $(LDFLAGS) -o 3dsviewer.linux ${LIBPATH}  ${OPENGL} ${OSLIBS}
 
 
 
